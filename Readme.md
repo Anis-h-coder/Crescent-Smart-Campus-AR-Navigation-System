@@ -6,7 +6,7 @@ A mobile-first Progressive Web Application that helps students and visitors navi
 
 ## Live Demo
 
-- Frontend: [Netlify Link](#)
+- Frontend: [admirable-kheer-2e630e.netlify.app](#)
 
 ---
 
