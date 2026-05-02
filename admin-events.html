@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Event Management — Crescent Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;1,9..144,300&display=swap" rel="stylesheet"/>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --navy:        #08172E;
+  --navy-2:      #0F2340;
+  --navy-3:      #162F54;
+  --gold:        #C9A84C;
+  --gold-2:      #DDB95E;
+  --gold-3:      #EDD080;
+  --gold-pale:   #FBF3DC;
+  --white:       #FFFFFF;
+  --off:         #F4F6F9;
+  --muted:       #8FA3BC;
+  --text:        #0F2340;
+  --card-bg:     #FFFFFF;
+  --border:      rgba(0,0,0,0.06);
+  --card-shadow: 0 2px 14px rgba(8,23,46,0.07);
+  --success:     #10B981;
+  --danger:      #EF4444;
+  --amber:       #C9A84C;
+}
+
+html, body { overflow-x: hidden; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--off);
+  color: var(--text);
+  min-height: 100vh;
+  padding-bottom: 48px;
+}
+
+/* ── TOPBAR ── */
+.topbar {
+  background: var(--navy);
+  padding: 14px 20px;
+  display: flex; align-items: center; justify-content: space-between;
+  position: sticky; top: 0; z-index: 200;
+}
+
+.topbar-left { display: flex; align-items: center; gap: 10px; }
+
+.back-btn {
+  display: flex; align-items: center; gap: 6px;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.1);
+  color: rgba(255,255,255,0.7);
+  padding: 7px 13px 7px 10px;
+  border-radius: 10px; font-size: 13px; font-weight: 500;
+  cursor: pointer; transition: background 0.2s;
+  font-family: 'DM Sans', sans-serif;
+}
+.back-btn:hover { background: rgba(255,255,255,0.14); }
+
+.topbar-title strong {
+  display: block;
+  font-family: 'Fraunces', serif;
+  font-size: 15px; font-weight: 600; color: var(--white);
+}
+.topbar-title span { font-size: 10.5px; color: var(--muted); letter-spacing: 0.05em; text-transform: uppercase; }
+
+.add-btn {
+  display: flex; align-items: center; gap: 7px;
+  background: linear-gradient(135deg, var(--gold), var(--gold-2));
+  color: var(--navy); padding: 9px 18px;
+  border-radius: 10px; font-size: 13px; font-weight: 600;
+  border: none; cursor: pointer; transition: all 0.22s;
+  font-family: 'DM Sans', sans-serif;
+  box-shadow: 0 4px 14px rgba(201,168,76,0.4);
+  position: relative; overflow: hidden;
+}
+.add-btn::after {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.25) 0%, transparent 60%);
+}
+.add-btn:hover { transform: translateY(-1px); box-shadow: 0 8px 20px rgba(201,168,76,0.5); }
+
+/* ── HERO ── */
+.hero {
+  background: var(--navy);
+  padding: 0 20px 28px;
+  position: relative; overflow: hidden;
+}
+.hero-mesh {
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse 60% 80% at 95% 40%, rgba(201,168,76,0.12) 0%, transparent 70%),
+    radial-gradient(ellipse 40% 60% at 5%  90%, rgba(59,130,246,0.07) 0%, transparent 70%);
+}
+.hero-grid {
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(rgba(201,168,76,0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(201,168,76,0.06) 1px, transparent 1px);
+  background-size: 28px 28px;
+  -webkit-mask-image: linear-gradient(to bottom, transparent, black 40%, black 70%, transparent);
+  mask-image: linear-gradient(to bottom, transparent, black 40%, black 70%, transparent);
+}
+.hero-content { position: relative; z-index: 2; padding-top: 20px; }
+.hero-tag {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: rgba(201,168,76,0.15);
+  border: 1px solid rgba(201,168,76,0.3);
+  padding: 4px 12px; border-radius: 40px;
+  font-size: 11px; font-weight: 600; color: var(--gold-2);
+  letter-spacing: 0.04em; text-transform: uppercase;
+  margin-bottom: 12px;
+}
+.hero-tag-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--gold); animation: blink 1.8s ease-in-out infinite; }
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+.hero-title { font-family: 'Fraunces', serif; font-size: 24px; font-weight: 600; color: var(--white); line-height: 1.2; letter-spacing: -0.02em; margin-bottom: 6px; }
+.hero-title .accent { color: var(--gold-2); font-style: italic; }
+.hero-sub { font-size: 13px; color: rgba(255,255,255,0.45); }
+
+/* ── STAT STRIP ── */
+.stats-row {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 12px; padding: 18px 16px 0;
+  animation: fadeUp 0.4s ease 0.1s both;
+}
+.sf {
+  background: var(--card-bg); border-radius: 14px;
+  padding: 14px 10px 12px; text-align: center;
+  border: 1px solid var(--border); box-shadow: var(--card-shadow);
+  transition: all 0.22s; position: relative; overflow: hidden;
+}
+.sf::before {
+  content: ''; position: absolute; bottom: 0; left: 0; right: 0;
+  height: 3px; border-radius: 0 0 14px 14px; opacity: 0; transition: opacity 0.22s;
+}
+.sf.amber::before { background: linear-gradient(90deg, var(--gold), var(--gold-3)); }
+.sf.blue::before  { background: linear-gradient(90deg, #3B82F6, #60A5FA); }
+.sf.green::before { background: linear-gradient(90deg, #10B981, #34D399); }
+.sf:hover { transform: translateY(-2px); box-shadow: 0 8px 22px rgba(0,0,0,0.1); }
+.sf:hover::before { opacity: 1; }
+.sf-emoji { font-size: 18px; margin-bottom: 6px; display: block; }
+.sf-num { font-family: 'Fraunces', serif; font-size: 22px; font-weight: 600; color: var(--navy); line-height: 1; margin-bottom: 3px; }
+.sf-label { font-size: 10px; color: var(--muted); font-weight: 500; letter-spacing: 0.04em; }
+
+/* ── SECTION ── */
+.section { padding: 22px 16px 0; }
+.sec-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+.sec-title { font-family: 'Fraunces', serif; font-size: 17px; font-weight: 600; color: var(--text); }
+.sec-sub { font-size: 12px; color: var(--muted); margin-top: 2px; }
+
+/* ── FORM CARD ── */
+.form-card {
+  background: var(--card-bg); border-radius: 20px;
+  border: 1px solid var(--border); box-shadow: var(--card-shadow);
+  overflow: hidden; margin-bottom: 4px;
+  display: none;
+  animation: fadeUp 0.35s ease both;
+}
+.form-card.open { display: block; }
+
+.form-card-header {
+  padding: 18px 20px 16px;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.form-card-title {
+  font-family: 'Fraunces', serif; font-size: 16px; font-weight: 600; color: var(--text);
+}
+.form-close {
+  width: 30px; height: 30px; border-radius: 8px;
+  background: var(--off); border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; cursor: pointer; color: var(--muted);
+  transition: all 0.2s;
+}
+.form-close:hover { background: #FEE2E2; color: var(--danger); border-color: rgba(239,68,68,0.2); }
+
+.form-body { padding: 20px; }
+
+.form-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 14px;
+  margin-bottom: 14px;
+}
+
+.form-group { display: flex; flex-direction: column; gap: 6px; }
+.form-group.full { grid-column: 1 / -1; }
+
+.form-group label {
+  font-size: 11px; font-weight: 600; color: var(--muted);
+  letter-spacing: 0.05em; text-transform: uppercase;
+}
+
+.form-group input,
+.form-group select {
+  padding: 12px 14px;
+  border-radius: 11px;
+  border: 1.5px solid var(--border);
+  font-size: 13.5px; font-weight: 400;
+  font-family: 'DM Sans', sans-serif;
+  outline: none; background: var(--off); color: var(--text);
+  transition: all 0.22s;
+}
+.form-group input:focus,
+.form-group select:focus {
+  border-color: var(--gold);
+  background: var(--white);
+  box-shadow: 0 0 0 3px rgba(201,168,76,0.12);
+}
+.form-group input::placeholder { color: var(--muted); opacity: 0.7; }
+
+/* Image preview */
+.img-preview {
+  width: 100%; border-radius: 12px; margin-top: 8px;
+  display: none; max-height: 160px; object-fit: cover;
+  border: 1px solid var(--border);
+}
+
+.form-actions { display: flex; gap: 10px; margin-top: 4px; }
+
+.save-btn {
+  flex: 1; padding: 13px;
+  background: linear-gradient(135deg, var(--gold), var(--gold-2));
+  color: var(--navy); border: none; border-radius: 12px;
+  font-size: 14px; font-weight: 600;
+  font-family: 'DM Sans', sans-serif; cursor: pointer;
+  box-shadow: 0 6px 18px rgba(201,168,76,0.4); transition: all 0.22s;
+  position: relative; overflow: hidden;
+}
+.save-btn::after {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.25) 0%, transparent 60%);
+}
+.save-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 24px rgba(201,168,76,0.5); }
+
+.cancel-btn {
+  padding: 13px 20px;
+  background: var(--off); color: var(--muted);
+  border: 1.5px solid var(--border); border-radius: 12px;
+  font-size: 14px; font-weight: 500;
+  font-family: 'DM Sans', sans-serif; cursor: pointer;
+  transition: all 0.22s;
+}
+.cancel-btn:hover { border-color: var(--danger); color: var(--danger); background: #FEE2E2; }
+
+/* ── EVENT LIST ── */
+.event-list { display: flex; flex-direction: column; gap: 11px; }
+
+.event-card {
+  background: var(--card-bg); border-radius: 16px;
+  border: 1px solid var(--border); box-shadow: var(--card-shadow);
+  overflow: hidden; display: flex; align-items: stretch;
+  transition: all 0.25s;
+}
+.event-card:hover { transform: translateY(-2px); box-shadow: 0 10px 28px rgba(8,23,46,0.1); }
+
+.event-stripe {
+  width: 4px; flex-shrink: 0;
+  background: linear-gradient(to bottom, var(--gold), var(--gold-3));
+}
+.event-stripe.tech     { background: linear-gradient(to bottom, #3B82F6, #60A5FA); }
+.event-stripe.cultural { background: linear-gradient(to bottom, #EC4899, #F472B6); }
+
+.event-inner { flex: 1; padding: 16px 16px 14px; display: flex; align-items: center; gap: 14px; }
+
+.event-icon-wrap {
+  width: 44px; height: 44px; flex-shrink: 0;
+  border-radius: 12px;
+  display: flex; align-items: center; justify-content: center; font-size: 20px;
+}
+.event-icon-wrap.tech     { background: rgba(59,130,246,0.1); }
+.event-icon-wrap.cultural { background: rgba(236,72,153,0.1); }
+.event-icon-wrap.default  { background: rgba(201,168,76,0.1); }
+
+.event-info { flex: 1; min-width: 0; }
+.event-name { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.event-meta { display: flex; flex-wrap: wrap; gap: 10px; }
+.event-meta span { font-size: 11px; color: var(--muted); display: flex; align-items: center; gap: 3px; }
+
+.event-category {
+  font-size: 10px; font-weight: 600; padding: 3px 9px;
+  border-radius: 20px; white-space: nowrap; margin-top: 6px; display: inline-block;
+}
+.event-category.tech     { background: rgba(59,130,246,0.10); color: #1D4ED8; }
+.event-category.cultural { background: rgba(236,72,153,0.10); color: #9D174D; }
+.event-category.default  { background: rgba(201,168,76,0.12); color: #92660A; }
+
+.event-actions { display: flex; flex-direction: column; gap: 7px; padding: 14px 14px 14px 0; flex-shrink: 0; }
+
+.act-btn {
+  padding: 7px 14px; border-radius: 9px;
+  font-size: 12px; font-weight: 600;
+  border: none; cursor: pointer;
+  transition: all 0.2s; font-family: 'DM Sans', sans-serif;
+  white-space: nowrap;
+}
+.act-btn.edit   { background: rgba(16,185,129,0.1); color: #065F46; border: 1px solid rgba(16,185,129,0.2); }
+.act-btn.edit:hover   { background: #10B981; color: var(--white); }
+.act-btn.delete { background: rgba(239,68,68,0.1); color: #991B1B; border: 1px solid rgba(239,68,68,0.2); }
+.act-btn.delete:hover { background: #EF4444; color: var(--white); }
+
+/* Empty state */
+.empty-state {
+  text-align: center; padding: 40px 20px;
+  background: var(--card-bg); border-radius: 16px;
+  border: 1px solid var(--border); box-shadow: var(--card-shadow);
+}
+.empty-state span { font-size: 40px; display: block; margin-bottom: 12px; }
+.empty-state h3 { font-family: 'Fraunces', serif; font-size: 16px; color: var(--text); margin-bottom: 6px; }
+.empty-state p  { font-size: 13px; color: var(--muted); }
+
+/* ── TOAST ── */
+.toast {
+  position: fixed; top: 20px; left: 50%;
+  transform: translateX(-50%) translateY(-80px);
+  padding: 12px 20px; border-radius: 12px;
+  font-size: 13px; font-weight: 500;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+  z-index: 500; transition: transform 0.35s ease;
+  display: flex; align-items: center; gap: 8px;
+  white-space: nowrap; font-family: 'DM Sans', sans-serif;
+}
+.toast.show { transform: translateX(-50%) translateY(0); }
+.toast.success { background: #F0FDF4; color: #065F46; border: 1px solid #A7F3D0; }
+.toast.error   { background: #FEF2F2; color: #991B1B; border: 1px solid #FECACA; }
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.hero      { animation: fadeUp 0.4s ease both; }
+.section:nth-of-type(1) { animation: fadeUp 0.4s ease 0.12s both; }
+.section:nth-of-type(2) { animation: fadeUp 0.4s ease 0.18s both; }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 520px) {
+  .form-grid { grid-template-columns: 1fr; }
+  .event-inner { gap: 10px; }
+  .event-icon-wrap { display: none; }
+  .act-btn { padding: 6px 10px; font-size: 11px; }
+}
+</style>
+</head>
+<body>
+
+<!-- Toast -->
+<div class="toast" id="toast"><span id="toastMsg"></span></div>
+
+<!-- ── TOPBAR ── -->
+<header class="topbar">
+  <div class="topbar-left">
+    <button class="back-btn" onclick="location.href='admin-dashboard.html'">← Back</button>
+    <div class="topbar-title">
+      <strong>Event Management</strong>
+      <span>Admin Panel</span>
+    </div>
+  </div>
+  <button class="add-btn" onclick="openForm()">＋ Add Event</button>
+</header>
+
+<!-- ── HERO ── -->
+<section class="hero">
+  <div class="hero-mesh"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-content">
+    <div class="hero-tag"><span class="hero-tag-dot"></span>Event Control</div>
+    <h1 class="hero-title"><span class="accent">Event</span> Location Management</h1>
+    <p class="hero-sub">Schedule, update and manage campus events in real-time</p>
+  </div>
+</section>
+
+<!-- ── STATS ── -->
+<div class="stats-row">
+  <div class="sf amber">
+    <span class="sf-emoji">🎉</span>
+    <div class="sf-num" id="totalCount">0</div>
+    <div class="sf-label">Total Events</div>
+  </div>
+  <div class="sf blue">
+    <span class="sf-emoji">💻</span>
+    <div class="sf-num" id="techCount">0</div>
+    <div class="sf-label">Tech Events</div>
+  </div>
+  <div class="sf green">
+    <span class="sf-emoji">🎭</span>
+    <div class="sf-num" id="culturalCount">0</div>
+    <div class="sf-label">Cultural</div>
+  </div>
+</div>
+
+<!-- ── FORM SECTION ── -->
+<div class="section">
+  <div class="form-card" id="formCard">
+    <div class="form-card-header">
+      <div class="form-card-title" id="formTitle">Add New Event</div>
+      <div class="form-close" onclick="closeForm()">✕</div>
+    </div>
+    <div class="form-body">
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Event Name *</label>
+          <input id="eventName" placeholder="e.g. Tech Symposium 2025"/>
+        </div>
+        <div class="form-group">
+          <label>Venue *</label>
+          <input id="venue" placeholder="e.g. Convocation Hall"/>
+        </div>
+        <div class="form-group">
+          <label>Date *</label>
+          <input id="dateInput" type="date"/>
+        </div>
+        <div class="form-group">
+          <label>Capacity (0 = Unlimited)</label>
+          <input id="capacity" type="number" placeholder="e.g. 200"/>
+        </div>
+        <div class="form-group">
+          <label>Category *</label>
+          <select id="category">
+            <option value="">Select Category</option>
+            <option value="Tech">💻 Tech</option>
+            <option value="Cultural">🎭 Cultural</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Registration Link</label>
+          <input id="formLink" placeholder="https://forms.google.com/..."/>
+        </div>
+        <div class="form-group full">
+          <label>Navigation Guidance</label>
+          <input id="guide" placeholder="e.g. Enter main gate, turn left at CS block"/>
+        </div>
+        <div class="form-group">
+          <label>Event Image</label>
+          <input type="file" id="imageInput" accept="image/*"/>
+          <img id="preview" class="img-preview"/>
+        </div>
+        <div class="form-group">
+          <label>PDF Poster</label>
+          <input type="file" id="pdfInput" accept="application/pdf"/>
+        </div>
+      </div>
+      <div class="form-actions">
+        <button class="save-btn" onclick="saveEvent()">💾 Save Event</button>
+        <button class="cancel-btn" onclick="closeForm()">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── EVENT LIST ── -->
+<div class="section" style="padding-bottom: 24px;">
+  <div class="sec-head">
+    <div>
+      <div class="sec-title">All Events</div>
+      <div class="sec-sub">Live from Firebase</div>
+    </div>
+  </div>
+  <div class="event-list" id="eventList">
+    <div class="empty-state">
+      <span>🎉</span>
+      <h3>No events yet</h3>
+      <p>Tap "+ Add Event" to create your first campus event</p>
+    </div>
+  </div>
+</div>
+
+<!-- Firebase -->
+<script type="module">
+import { initializeApp } from
+  "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
+import { getAuth, onAuthStateChanged }
+  from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
+import { getDatabase, ref, push, onValue, update, remove }
+  from "https://www.gstatic.com/firebasejs/12.9.0/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey:        "AIzaSyBPykUmk_KgytoMbDjhOLR8AwwoSmt4EL4",
+  authDomain:    "crescent-navigation-system.firebaseapp.com",
+  databaseURL:   "https://crescent-navigation-system-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId:     "crescent-navigation-system",
+  appId:         "1:418104083143:web:279d0dfa88f2b700fd74e2"
+};
+
+const app  = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db   = getDatabase(app);
+
+onAuthStateChanged(auth, user => {
+  if (!user) location.href = "admin-login.html";
+});
+
+let editId     = null;
+let eventsData = {};
+
+const eventRef = ref(db, "events");
+
+/* ── IMAGE PREVIEW ── */
+document.getElementById("imageInput").addEventListener("change", function() {
+  const file = this.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    const prev = document.getElementById("preview");
+    prev.src = e.target.result;
+    prev.style.display = "block";
+  };
+  reader.readAsDataURL(file);
+});
+
+/* ── REALTIME LOAD ── */
+onValue(eventRef, snapshot => {
+  const list = document.getElementById("eventList");
+
+  if (!snapshot.exists()) {
+    eventsData = {};
+    list.innerHTML = `
+      <div class="empty-state">
+        <span>🎉</span>
+        <h3>No events yet</h3>
+        <p>Tap "+ Add Event" to create your first campus event</p>
+      </div>`;
+    updateStats({});
+    return;
+  }
+
+  eventsData = snapshot.val();
+  updateStats(eventsData);
+
+  list.innerHTML = Object.keys(eventsData).map(id => {
+    const e   = eventsData[id];
+    const cat = (e.category || "").toLowerCase();
+    const stripeClass = cat === "tech" ? "tech" : cat === "cultural" ? "cultural" : "";
+    const iconClass   = cat === "tech" ? "tech" : cat === "cultural" ? "cultural" : "default";
+    const icon        = cat === "tech" ? "💻" : cat === "cultural" ? "🎭" : "🎉";
+    const catLabel    = cat === "tech" ? "Tech" : cat === "cultural" ? "Cultural" : (e.category || "General");
+    const capLabel    = e.capacity ? `${e.capacity} seats` : "Unlimited";
+
+    return `
+      <div class="event-card">
+        <div class="event-stripe ${stripeClass}"></div>
+        <div class="event-inner">
+          <div class="event-icon-wrap ${iconClass}">${icon}</div>
+          <div class="event-info">
+            <div class="event-name">${e.name}</div>
+            <div class="event-meta">
+              <span>📍 ${e.venue || "—"}</span>
+              <span>📅 ${e.date || "—"}</span>
+              <span>👥 ${capLabel}</span>
+            </div>
+            <span class="event-category ${iconClass}">${catLabel}</span>
+          </div>
+        </div>
+        <div class="event-actions">
+          <button class="act-btn edit"   onclick="editEvent('${id}')">✏️ Edit</button>
+          <button class="act-btn delete" onclick="deleteEvent('${id}')">🗑️ Delete</button>
+        </div>
+      </div>`;
+  }).join("");
+});
+
+function updateStats(data) {
+  const keys   = Object.keys(data);
+  const tech   = keys.filter(k => (data[k].category || "").toLowerCase() === "tech").length;
+  const cult   = keys.filter(k => (data[k].category || "").toLowerCase() === "cultural").length;
+  document.getElementById("totalCount").innerText    = keys.length;
+  document.getElementById("techCount").innerText     = tech;
+  document.getElementById("culturalCount").innerText = cult;
+}
+
+/* ── SAVE EVENT ── */
+window.saveEvent = async function() {
+  const name     = document.getElementById("eventName").value.trim();
+  const venueVal = document.getElementById("venue").value.trim();
+  const dateVal  = document.getElementById("dateInput").value;
+  const catVal   = document.getElementById("category").value;
+  const guideVal = document.getElementById("guide").value.trim();
+  const linkVal  = document.getElementById("formLink").value.trim();
+  const capVal   = parseInt(document.getElementById("capacity").value) || 0;
+
+  if (!name || !venueVal || !dateVal || !catVal) {
+    showToast("Please fill all required fields (*)", "error");
+    return;
+  }
+
+  const eventData = { name, venue: venueVal, date: dateVal, guide: guideVal, category: catVal, formLink: linkVal, capacity: capVal };
+
+  const btn = document.querySelector(".save-btn");
+  btn.innerText = "Saving...";
+
+  try {
+    if (editId) {
+      await update(ref(db, "events/" + editId), eventData);
+      showToast("✅ Event updated successfully!", "success");
+    } else {
+      await push(eventRef, eventData);
+      showToast("✅ Event added successfully!", "success");
+    }
+    closeForm();
+    resetForm();
+  } catch (err) {
+    showToast("❌ Failed to save. Try again.", "error");
+  }
+  btn.innerText = "💾 Save Event";
+};
+
+/* ── EDIT ── */
+window.editEvent = function(id) {
+  editId = id;
+  const e = eventsData[id];
+  document.getElementById("eventName").value = e.name   || "";
+  document.getElementById("venue").value     = e.venue  || "";
+  document.getElementById("dateInput").value = e.date   || "";
+  document.getElementById("guide").value     = e.guide  || "";
+  document.getElementById("category").value  = e.category || "";
+  document.getElementById("formLink").value  = e.formLink || "";
+  document.getElementById("capacity").value  = e.capacity || "";
+  document.getElementById("formTitle").innerText = "Edit Event";
+  openForm();
+  window.scrollTo({ top: 0, behavior: "smooth" });
+};
+
+/* ── DELETE ── */
+window.deleteEvent = function(id) {
+  if (confirm("Are you sure you want to delete this event?")) {
+    remove(ref(db, "events/" + id))
+      .then(() => showToast("🗑️ Event deleted", "success"))
+      .catch(() => showToast("❌ Delete failed", "error"));
+  }
+};
+
+/* ── FORM CONTROLS ── */
+window.openForm = function() {
+  document.getElementById("formCard").classList.add("open");
+};
+
+window.closeForm = function() {
+  document.getElementById("formCard").classList.remove("open");
+  resetForm();
+};
+
+function resetForm() {
+  editId = null;
+  ["eventName","venue","dateInput","guide","formLink","capacity"].forEach(id => {
+    document.getElementById(id).value = "";
+  });
+  document.getElementById("category").value = "";
+  const prev = document.getElementById("preview");
+  prev.src = ""; prev.style.display = "none";
+  document.getElementById("formTitle").innerText = "Add New Event";
+}
+
+/* ── TOAST ── */
+window.showToast = function(msg, type = "success") {
+  const toast = document.getElementById("toast");
+  document.getElementById("toastMsg").innerText = msg;
+  toast.className = `toast ${type} show`;
+  setTimeout(() => toast.classList.remove("show"), 3500);
+};
+</script>
+
+</body>
+</html>

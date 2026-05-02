@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Admin Dashboard — Crescent Campus</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;1,9..144,300&display=swap" rel="stylesheet"/>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --navy:        #08172E;
+  --navy-2:      #0F2340;
+  --navy-3:      #162F54;
+  --gold:        #C9A84C;
+  --gold-2:      #DDB95E;
+  --gold-3:      #EDD080;
+  --gold-pale:   #FBF3DC;
+  --white:       #FFFFFF;
+  --off:         #F4F6F9;
+  --muted:       #8FA3BC;
+  --text:        #0F2340;
+  --card-bg:     #FFFFFF;
+  --border:      rgba(0,0,0,0.05);
+  --card-shadow: 0 2px 14px rgba(8,23,46,0.07);
+}
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--off);
+  color: var(--text);
+  min-height: 100vh;
+  padding-bottom: 40px;
+  overflow-x: hidden;
+}
+
+/* ── TOPBAR ── */
+.topbar {
+  background: var(--navy);
+  padding: 14px 24px;
+  display: flex; align-items: center; justify-content: space-between;
+  position: sticky; top: 0; z-index: 200;
+}
+
+.topbar-brand { display: flex; align-items: center; gap: 12px; }
+
+.brand-mark {
+  width: 40px; height: 40px;
+  background: linear-gradient(135deg, var(--gold), var(--gold-3));
+  border-radius: 11px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px;
+  box-shadow: 0 4px 14px rgba(201,168,76,0.4);
+  flex-shrink: 0; position: relative; overflow: hidden;
+}
+.brand-mark::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.3) 0%, transparent 60%);
+}
+.brand-mark img {
+  width: 26px; height: 26px; object-fit: contain;
+  position: relative; z-index: 1;
+}
+
+.brand-text strong {
+  display: block;
+  font-family: 'Fraunces', serif;
+  font-size: 15px; font-weight: 600;
+  color: var(--white); letter-spacing: -0.01em;
+}
+.brand-text span {
+  font-size: 10.5px; color: var(--muted);
+  letter-spacing: 0.05em; text-transform: uppercase;
+}
+
+.topbar-right { display: flex; align-items: center; gap: 10px; }
+
+.admin-chip {
+  display: flex; align-items: center; gap: 7px;
+  background: rgba(201,168,76,0.15);
+  border: 1px solid rgba(201,168,76,0.3);
+  padding: 6px 14px 6px 8px;
+  border-radius: 40px; cursor: pointer;
+}
+
+.admin-av {
+  width: 28px; height: 28px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--gold), var(--gold-3));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 700; color: var(--navy);
+}
+
+.admin-chip span { font-size: 12.5px; color: var(--gold-2); font-weight: 600; }
+
+.logout-btn {
+  display: flex; align-items: center; gap: 6px;
+  background: rgba(239,68,68,0.12);
+  border: 1px solid rgba(239,68,68,0.25);
+  color: #FCA5A5;
+  padding: 8px 16px; border-radius: 10px;
+  font-size: 13px; font-weight: 500;
+  cursor: pointer; transition: all 0.22s;
+  font-family: 'DM Sans', sans-serif;
+}
+.logout-btn:hover {
+  background: rgba(239,68,68,0.22);
+  color: var(--white);
+  transform: translateY(-1px);
+}
+
+/* ── HERO ── */
+.hero {
+  background: var(--navy);
+  padding: 0 24px 32px;
+  position: relative; overflow: hidden;
+}
+
+.hero-mesh {
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse 60% 80% at 90% 40%, rgba(201,168,76,0.12) 0%, transparent 70%),
+    radial-gradient(ellipse 50% 60% at 5% 90%,  rgba(59,130,246,0.07) 0%, transparent 70%);
+}
+.hero-grid {
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(rgba(201,168,76,0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(201,168,76,0.06) 1px, transparent 1px);
+  background-size: 28px 28px;
+  -webkit-mask-image: linear-gradient(to bottom, transparent, black 40%, black 70%, transparent);
+  mask-image: linear-gradient(to bottom, transparent, black 40%, black 70%, transparent);
+}
+
+.hero-nodes {
+  position: absolute; right: 20px; top: 14px;
+  width: 110px; height: 110px; opacity: 0.55;
+}
+.hero-nodes svg { width: 100%; height: 100%; }
+
+.hero-content { position: relative; z-index: 2; padding-top: 24px; }
+
+.hero-tag {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: rgba(239,68,68,0.15);
+  border: 1px solid rgba(239,68,68,0.3);
+  padding: 4px 12px; border-radius: 40px;
+  font-size: 11px; font-weight: 600;
+  color: #FCA5A5;
+  letter-spacing: 0.04em; text-transform: uppercase;
+  margin-bottom: 14px;
+}
+.shield-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: #EF4444;
+  animation: blink 1.8s ease-in-out infinite;
+}
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+.hero-title {
+  font-family: 'Fraunces', serif;
+  font-size: 26px; font-weight: 600; color: var(--white);
+  line-height: 1.2; letter-spacing: -0.02em; margin-bottom: 8px;
+}
+.hero-title .accent { color: var(--gold-2); font-style: italic; }
+
+.hero-sub { font-size: 13px; color: rgba(255,255,255,0.45); line-height: 1.5; }
+
+/* ── STAT CARDS (float) ── */
+.stats-float {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  padding: 20px 20px 0;
+  margin-top: -1px;
+  position: relative; z-index: 10;
+  animation: fadeUp 0.45s ease 0.1s both;
+}
+
+.sf {
+  background: var(--card-bg);
+  border-radius: 16px;
+  padding: 18px 14px 16px;
+  border: 1px solid var(--border);
+  box-shadow: var(--card-shadow);
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.25s;
+  position: relative; overflow: hidden;
+}
+.sf::before {
+  content: ''; position: absolute; bottom: 0; left: 0; right: 0;
+  height: 3px; border-radius: 0 0 16px 16px;
+  opacity: 0; transition: opacity 0.22s;
+}
+.sf.pink::before   { background: linear-gradient(90deg, #EC4899, #F472B6); }
+.sf.blue::before   { background: linear-gradient(90deg, #3B82F6, #60A5FA); }
+.sf.amber::before  { background: linear-gradient(90deg, var(--gold), var(--gold-3)); }
+.sf.green::before  { background: linear-gradient(90deg, #10B981, #34D399); }
+
+.sf:hover { transform: translateY(-3px); box-shadow: 0 10px 28px rgba(0,0,0,0.1); }
+.sf:hover::before { opacity: 1; }
+
+.sf-emoji { font-size: 22px; margin-bottom: 10px; display: block; }
+.sf-num {
+  font-family: 'Fraunces', serif;
+  font-size: 28px; font-weight: 600; color: var(--navy);
+  line-height: 1; margin-bottom: 5px;
+  transition: all 0.5s ease;
+}
+.sf-label { font-size: 10px; color: var(--muted); font-weight: 500; letter-spacing: 0.04em; }
+
+/* ── SECTION ── */
+.section { padding: 28px 20px 0; }
+
+.sec-head {
+  display: flex; align-items: flex-end; justify-content: space-between;
+  margin-bottom: 16px;
+}
+.sec-title {
+  font-family: 'Fraunces', serif;
+  font-size: 18px; font-weight: 600; color: var(--text);
+}
+.sec-sub { font-size: 12px; color: var(--muted); margin-top: 2px; }
+
+/* ── ADMIN PANELS ── */
+.panel-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+}
+
+.panel {
+  background: var(--card-bg);
+  border-radius: 18px;
+  border: 1px solid var(--border);
+  box-shadow: var(--card-shadow);
+  overflow: hidden; cursor: pointer;
+  transition: all 0.25s;
+  display: flex; flex-direction: column;
+}
+.panel:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 40px rgba(8,23,46,0.13);
+}
+
+.panel-strip { height: 4px; flex-shrink: 0; }
+.panel.pink   .panel-strip { background: linear-gradient(90deg, #EC4899, #F472B6); }
+.panel.blue   .panel-strip { background: linear-gradient(90deg, #3B82F6, #60A5FA); }
+.panel.amber  .panel-strip { background: linear-gradient(90deg, var(--gold), var(--gold-3)); }
+.panel.green  .panel-strip { background: linear-gradient(90deg, #10B981, #34D399); }
+
+.panel-body { padding: 18px 18px 20px; flex: 1; display: flex; flex-direction: column; }
+
+.panel-icon {
+  width: 46px; height: 46px;
+  border-radius: 13px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px; margin-bottom: 14px; flex-shrink: 0;
+}
+.panel.pink  .panel-icon { background: linear-gradient(135deg, rgba(236,72,153,0.1), rgba(244,114,182,0.16)); }
+.panel.blue  .panel-icon { background: linear-gradient(135deg, rgba(59,130,246,0.1), rgba(96,165,250,0.16)); }
+.panel.amber .panel-icon { background: linear-gradient(135deg, rgba(201,168,76,0.12),rgba(237,208,128,0.18)); }
+.panel.green .panel-icon { background: linear-gradient(135deg, rgba(16,185,129,0.1), rgba(52,211,153,0.16)); }
+
+.panel-label { font-size: 11px; font-weight: 500; color: var(--muted); letter-spacing: 0.04em; text-transform: uppercase; margin-bottom: 4px; }
+
+.panel-title { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 14px; }
+
+.panel-count {
+  font-family: 'Fraunces', serif;
+  font-size: 38px; font-weight: 600; line-height: 1;
+  margin-bottom: 4px;
+}
+.panel.pink  .panel-count { color: #EC4899; }
+.panel.blue  .panel-count { color: #3B82F6; }
+.panel.amber .panel-count { color: var(--gold); }
+.panel.green .panel-count { color: #10B981; }
+
+.panel-hint { font-size: 11px; color: var(--muted); }
+
+.panel-footer {
+  padding: 12px 18px;
+  border-top: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.panel-footer span { font-size: 11.5px; color: var(--muted); }
+.panel-arrow {
+  width: 28px; height: 28px; border-radius: 8px;
+  background: var(--off);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; color: var(--muted);
+  transition: all 0.22s;
+}
+.panel:hover .panel-arrow { background: var(--navy); color: var(--white); transform: translateX(2px); }
+
+/* ── QUICK ACTIONS ── */
+.quick-actions {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+
+.qa {
+  background: var(--card-bg);
+  border-radius: 14px;
+  padding: 16px 10px 13px;
+  border: 1px solid var(--border);
+  box-shadow: var(--card-shadow);
+  display: flex; flex-direction: column;
+  align-items: center; gap: 7px;
+  cursor: pointer; text-align: center;
+  transition: all 0.22s;
+  position: relative; overflow: hidden;
+}
+.qa::after {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(135deg, rgba(201,168,76,0.08), transparent);
+  opacity: 0; transition: opacity 0.22s;
+}
+.qa:hover { transform: translateY(-3px); box-shadow: 0 10px 26px rgba(0,0,0,0.1); border-color: rgba(201,168,76,0.3); }
+.qa:hover::after { opacity: 1; }
+.qa-icon { font-size: 22px; }
+.qa-label { font-size: 10.5px; font-weight: 500; color: var(--text); line-height: 1.3; }
+
+/* ── SYSTEM STATUS ── */
+.status-card {
+  background: var(--navy);
+  border-radius: 18px;
+  padding: 20px 22px;
+  border: 1px solid rgba(255,255,255,0.05);
+  box-shadow: 0 8px 28px rgba(8,23,46,0.18);
+  position: relative; overflow: hidden;
+}
+.status-card::before {
+  content: ''; position: absolute; right: -20px; top: -20px;
+  width: 120px; height: 120px;
+  background: radial-gradient(circle, rgba(201,168,76,0.12) 0%, transparent 70%);
+}
+
+.status-title {
+  font-family: 'Fraunces', serif;
+  font-size: 15px; font-weight: 600; color: var(--white);
+  margin-bottom: 14px; position: relative; z-index: 1;
+}
+
+.status-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  position: relative; z-index: 1;
+}
+.status-row:last-child { border-bottom: none; padding-bottom: 0; }
+
+.status-label { font-size: 12.5px; color: rgba(255,255,255,0.55); display: flex; align-items: center; gap: 8px; }
+.status-label span { font-size: 15px; }
+
+.status-pill {
+  display: flex; align-items: center; gap: 5px;
+  padding: 3px 10px; border-radius: 20px;
+  font-size: 11px; font-weight: 600;
+}
+.status-pill.online  { background: rgba(16,185,129,0.15); color: #34D399; }
+.status-pill.warning { background: rgba(201,168,76,0.15); color: var(--gold-2); }
+.status-pill.offline { background: rgba(239,68,68,0.15);  color: #FCA5A5; }
+
+.status-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+}
+.online  .status-dot { background: #10B981; animation: blink 2s ease-in-out infinite; }
+.warning .status-dot { background: var(--gold); animation: blink 1.2s ease-in-out infinite; }
+.offline .status-dot { background: #EF4444; }
+
+/* ── FOOTER ── */
+.footer {
+  margin: 28px 20px 0;
+  text-align: center;
+  font-size: 12px; color: var(--muted);
+  padding: 16px;
+  background: var(--card-bg);
+  border-radius: 14px;
+  border: 1px solid var(--border);
+}
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.hero           { animation: fadeUp 0.4s ease both; }
+.stats-float    { animation: fadeUp 0.4s ease 0.1s both; }
+.section:nth-of-type(1) { animation: fadeUp 0.4s ease 0.15s both; }
+.section:nth-of-type(2) { animation: fadeUp 0.4s ease 0.2s both; }
+.section:nth-of-type(3) { animation: fadeUp 0.4s ease 0.25s both; }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 640px) {
+  .stats-float   { grid-template-columns: repeat(2, 1fr); }
+  .panel-grid    { grid-template-columns: 1fr; }
+  .quick-actions { grid-template-columns: repeat(4, 1fr); }
+  .topbar        { padding: 12px 16px; }
+  .hero          { padding: 0 16px 28px; }
+  .section       { padding: 20px 16px 0; }
+  .hero-nodes    { display: none; }
+}
+
+@media (max-width: 400px) {
+  .stats-float { gap: 8px; }
+  .sf-num { font-size: 22px; }
+  .brand-text strong { font-size: 13px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ── TOPBAR ── -->
+<header class="topbar">
+  <div class="topbar-brand">
+    <div class="brand-mark">
+      <img src="assets/cres-logo1.png" alt="Crescent" onerror="this.outerHTML='🏛️'"/>
+    </div>
+    <div class="brand-text">
+      <strong>Crescent Campus</strong>
+      <span>Admin Panel</span>
+    </div>
+  </div>
+  <div class="topbar-right">
+    <div class="admin-chip">
+      <div class="admin-av">A</div>
+      <span>Administrator</span>
+    </div>
+    <button class="logout-btn" onclick="logout()">🚪 Logout</button>
+  </div>
+</header>
+
+<!-- ── HERO ── -->
+<section class="hero">
+  <div class="hero-mesh"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-nodes">
+    <svg viewBox="0 0 110 110" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="15"  cy="25"  r="4" fill="rgba(201,168,76,0.6)"/>
+      <circle cx="75"  cy="15"  r="6" fill="rgba(201,168,76,0.4)"/>
+      <circle cx="95"  cy="65"  r="4" fill="rgba(201,168,76,0.5)"/>
+      <circle cx="35"  cy="85"  r="3" fill="rgba(201,168,76,0.35)"/>
+      <circle cx="55"  cy="50"  r="5" fill="rgba(201,168,76,0.7)"/>
+      <line x1="15" y1="25" x2="75" y2="15" stroke="rgba(201,168,76,0.2)" stroke-width="1"/>
+      <line x1="75" y1="15" x2="95" y2="65" stroke="rgba(201,168,76,0.2)" stroke-width="1"/>
+      <line x1="95" y1="65" x2="55" y2="50" stroke="rgba(201,168,76,0.2)" stroke-width="1"/>
+      <line x1="55" y1="50" x2="35" y2="85" stroke="rgba(201,168,76,0.15)" stroke-width="1"/>
+      <line x1="15" y1="25" x2="55" y2="50" stroke="rgba(201,168,76,0.15)" stroke-width="1"/>
+    </svg>
+  </div>
+  <div class="hero-content">
+    <div class="hero-tag">
+      <span class="shield-dot"></span>
+      Administrator Access
+    </div>
+    <h1 class="hero-title">Campus <span class="accent">Control</span> Panel</h1>
+    <p class="hero-sub">Monitor faculty, labs, events & workshops in real-time</p>
+  </div>
+</section>
+
+<!-- ── STAT CARDS ── -->
+<div class="stats-float">
+  <div class="sf pink" onclick="location.href='admin-staff.html'">
+    <span class="sf-emoji">👩‍🏫</span>
+    <div class="sf-num" id="staffCount">—</div>
+    <div class="sf-label">Faculty</div>
+  </div>
+  <div class="sf blue" onclick="location.href='admin-labs.html'">
+    <span class="sf-emoji">🧪</span>
+    <div class="sf-num" id="labCount">—</div>
+    <div class="sf-label">Labs</div>
+  </div>
+  <div class="sf amber" onclick="location.href='admin-events.html'">
+    <span class="sf-emoji">🎉</span>
+    <div class="sf-num" id="eventCount">—</div>
+    <div class="sf-label">Events</div>
+  </div>
+  <div class="sf green" onclick="location.href='admin-workshops.html'">
+    <span class="sf-emoji">🛠️</span>
+    <div class="sf-num" id="workshopCount">—</div>
+    <div class="sf-label">Workshops</div>
+  </div>
+</div>
+
+<!-- ── MANAGEMENT PANELS ── -->
+<div class="section">
+  <div class="sec-head">
+    <div>
+      <div class="sec-title">Management Panels</div>
+      <div class="sec-sub">Tap to manage institutional data</div>
+    </div>
+  </div>
+
+  <div class="panel-grid">
+
+    <div class="panel pink" onclick="location.href='admin-staff.html'">
+      <div class="panel-strip"></div>
+      <div class="panel-body">
+        <div class="panel-icon">👩‍🏫</div>
+        <div class="panel-label">Faculty</div>
+        <div class="panel-title">Faculty Management</div>
+        <div class="panel-count" id="staffCount2">—</div>
+        <div class="panel-hint">Registered faculty members</div>
+      </div>
+      <div class="panel-footer">
+        <span>Manage staff records</span>
+        <div class="panel-arrow">›</div>
+      </div>
+    </div>
+
+    <div class="panel blue" onclick="location.href='admin-labs.html'">
+      <div class="panel-strip"></div>
+      <div class="panel-body">
+        <div class="panel-icon">🧪</div>
+        <div class="panel-label">Labs</div>
+        <div class="panel-title">Laboratory Management</div>
+        <div class="panel-count" id="labCount2">—</div>
+        <div class="panel-hint">Operational laboratories</div>
+      </div>
+      <div class="panel-footer">
+        <span>Manage lab records</span>
+        <div class="panel-arrow">›</div>
+      </div>
+    </div>
+
+    <div class="panel amber" onclick="location.href='admin-events.html'">
+      <div class="panel-strip"></div>
+      <div class="panel-body">
+        <div class="panel-icon">🎉</div>
+        <div class="panel-label">Events</div>
+        <div class="panel-title">Event Management</div>
+        <div class="panel-count" id="eventCount2">—</div>
+        <div class="panel-hint">Scheduled campus events</div>
+      </div>
+      <div class="panel-footer">
+        <span>Manage event records</span>
+        <div class="panel-arrow">›</div>
+      </div>
+    </div>
+
+    <div class="panel green" onclick="location.href='admin-workshops.html'">
+      <div class="panel-strip"></div>
+      <div class="panel-body">
+        <div class="panel-icon">🛠️</div>
+        <div class="panel-label">Workshops</div>
+        <div class="panel-title">Workshop Management</div>
+        <div class="panel-count" id="workshopCount2">—</div>
+        <div class="panel-hint">Conducted workshops</div>
+      </div>
+      <div class="panel-footer">
+        <span>Manage workshop records</span>
+        <div class="panel-arrow">›</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ── QUICK ACTIONS ── -->
+<div class="section">
+  <div class="sec-head">
+    <div>
+      <div class="sec-title">Quick Actions</div>
+      <div class="sec-sub">Jump to any section</div>
+    </div>
+  </div>
+
+  <div class="quick-actions">
+    <div class="qa" onclick="location.href='admin-staff.html'">
+      <span class="qa-icon">👩‍🏫</span>
+      <span class="qa-label">Staff</span>
+    </div>
+    <div class="qa" onclick="location.href='admin-labs.html'">
+      <span class="qa-icon">🧪</span>
+      <span class="qa-label">Labs</span>
+    </div>
+    <div class="qa" onclick="location.href='admin-events.html'">
+      <span class="qa-icon">🎉</span>
+      <span class="qa-label">Events</span>
+    </div>
+    <div class="qa" onclick="location.href='admin-workshops.html'">
+      <span class="qa-icon">🛠️</span>
+      <span class="qa-label">Workshops</span>
+    </div>
+  </div>
+</div>
+
+<!-- ── SYSTEM STATUS ── -->
+<div class="section">
+  <div class="sec-head">
+    <div>
+      <div class="sec-title">System Status</div>
+      <div class="sec-sub">Live infrastructure health</div>
+    </div>
+  </div>
+
+  <div class="status-card">
+    <div class="status-title">🛰️ Infrastructure Monitor</div>
+    <div class="status-row">
+      <div class="status-label"><span>🔥</span> Firebase Realtime DB</div>
+      <div class="status-pill online"><span class="status-dot"></span>Online</div>
+    </div>
+    <div class="status-row">
+      <div class="status-label"><span>🔐</span> Firebase Auth</div>
+      <div class="status-pill online"><span class="status-dot"></span>Online</div>
+    </div>
+    <div class="status-row">
+      <div class="status-label"><span>🗺️</span> AR Navigation</div>
+      <div class="status-pill online"><span class="status-dot"></span>Active</div>
+    </div>
+    <div class="status-row">
+      <div class="status-label"><span>🤖</span> AI Chatbot</div>
+      <div class="status-pill online"><span class="status-dot"></span>Running</div>
+    </div>
+    <div class="status-row">
+      <div class="status-label"><span>📷</span> Landmark Model</div>
+      <div class="status-pill warning"><span class="status-dot"></span>Standby</div>
+    </div>
+  </div>
+</div>
+
+<!-- ── FOOTER ── -->
+<div class="footer">
+  Crescent Campus Navigation System &nbsp;·&nbsp; Firebase Realtime Database &nbsp;·&nbsp;
+  <span id="liveTime"></span>
+</div>
+
+<!-- Firebase -->
+<script type="module">
+import { initializeApp } from
+  "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
+import { getAuth, onAuthStateChanged, signOut }
+  from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
+import { getDatabase, ref, onValue }
+  from "https://www.gstatic.com/firebasejs/12.9.0/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey:        "AIzaSyBPykUmk_KgytoMbDjhOLR8AwwoSmt4EL4",
+  authDomain:    "crescent-navigation-system.firebaseapp.com",
+  databaseURL:   "https://crescent-navigation-system-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId:     "crescent-navigation-system",
+  appId:         "1:418104083143:web:279d0dfa88f2b700fd74e2"
+};
+
+const app  = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db   = getDatabase(app);
+
+/* ── AUTH CHECK ── */
+onAuthStateChanged(auth, user => {
+  if (!user) location.href = "admin-login.html";
+});
+
+/* ── LOGOUT ── */
+window.logout = function() {
+  signOut(auth).then(() => { location.href = "admin-login.html"; });
+};
+
+/* ── ANIMATED COUNT ── */
+function animateCount(el, target) {
+  let current = 0;
+  const step  = Math.ceil(target / 20);
+  const timer = setInterval(() => {
+    current = Math.min(current + step, target);
+    el.innerText = current;
+    if (current >= target) clearInterval(timer);
+  }, 40);
+}
+
+function setCount(ids, val) {
+  ids.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) animateCount(el, val);
+  });
+}
+
+/* ── REALTIME DATA ── */
+onValue(ref(db, "faculty"), snapshot => {
+  if (!snapshot.exists()) { setCount(["staffCount","staffCount2"], 0); return; }
+  let total = 0;
+  Object.keys(snapshot.val()).forEach(dept => {
+    total += Object.keys(snapshot.val()[dept]).length;
+  });
+  setCount(["staffCount", "staffCount2"], total);
+});
+
+onValue(ref(db, "labs"), snapshot => {
+  const n = snapshot.exists() ? Object.keys(snapshot.val()).length : 0;
+  setCount(["labCount", "labCount2"], n);
+});
+
+onValue(ref(db, "events"), snapshot => {
+  const n = snapshot.exists() ? Object.keys(snapshot.val()).length : 0;
+  setCount(["eventCount", "eventCount2"], n);
+});
+
+onValue(ref(db, "workshops"), snapshot => {
+  const n = snapshot.exists() ? Object.keys(snapshot.val()).length : 0;
+  setCount(["workshopCount", "workshopCount2"], n);
+});
+</script>
+
+<script>
+/* ── LIVE CLOCK ── */
+function updateTime() {
+  const now = new Date();
+  document.getElementById("liveTime").innerText =
+    now.toLocaleString("en-IN", { dateStyle: "medium", timeStyle: "short" });
+}
+updateTime();
+setInterval(updateTime, 1000);
+</script>
+
+</body>
+</html>

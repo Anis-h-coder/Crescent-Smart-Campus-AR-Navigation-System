@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Classroom Detail — Crescent Campus</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;1,9..144,300&display=swap" rel="stylesheet"/>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --navy:        #08172E;
+  --navy-2:      #0F2340;
+  --navy-3:      #162F54;
+  --gold:        #C9A84C;
+  --gold-2:      #DDB95E;
+  --gold-3:      #EDD080;
+  --gold-pale:   #FBF3DC;
+  --white:       #FFFFFF;
+  --off:         #F4F6F9;
+  --muted:       #8FA3BC;
+  --text:        #0F2340;
+  --card-bg:     #FFFFFF;
+  --border:      rgba(0,0,0,0.06);
+  --card-shadow: 0 2px 14px rgba(8,23,46,0.07);
+}
+
+body.dark {
+  --off:         #07111F;
+  --card-bg:     #0F2340;
+  --text:        #E8EEF5;
+  --muted:       #6B85A0;
+  --border:      rgba(255,255,255,0.06);
+  --card-shadow: 0 2px 14px rgba(0,0,0,0.3);
+}
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--off);
+  color: var(--text);
+  min-height: 100vh;
+  padding-bottom: 40px;
+  overflow-x: hidden;
+  transition: background 0.3s, color 0.3s;
+}
+
+/* ── HERO HEADER ── */
+.hero {
+  background: var(--navy);
+  padding: 20px 20px 62px;
+  position: relative; overflow: hidden;
+}
+.hero-mesh {
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse 70% 90% at 100% 20%, rgba(201,168,76,0.13) 0%, transparent 70%),
+    radial-gradient(ellipse 50% 60% at 0% 100%, rgba(59,130,246,0.07) 0%, transparent 70%);
+}
+.hero-grid {
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(rgba(201,168,76,0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(201,168,76,0.06) 1px, transparent 1px);
+  background-size: 26px 26px;
+  -webkit-mask-image: linear-gradient(to bottom, transparent, black 40%, black 70%, transparent);
+  mask-image: linear-gradient(to bottom, transparent, black 40%, black 70%, transparent);
+}
+
+.hero-top {
+  position: relative; z-index: 2;
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 20px;
+}
+.back-btn {
+  display: flex; align-items: center; gap: 6px;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.1);
+  color: rgba(255,255,255,0.75);
+  padding: 8px 14px 8px 10px; border-radius: 10px;
+  font-size: 13px; font-weight: 500; cursor: pointer;
+  transition: background 0.2s; font-family: 'DM Sans', sans-serif;
+}
+.back-btn:hover { background: rgba(255,255,255,0.14); }
+
+.h-btn {
+  width: 36px; height: 36px;
+  background: rgba(255,255,255,0.07);
+  border: 1px solid rgba(255,255,255,0.09);
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 17px; cursor: pointer; transition: background 0.2s;
+}
+.h-btn:hover { background: rgba(255,255,255,0.13); }
+
+.hero-body { position: relative; z-index: 2; }
+.hero-eyebrow {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: rgba(255,255,255,0.07);
+  border: 1px solid rgba(255,255,255,0.1);
+  padding: 4px 12px; border-radius: 20px;
+  font-size: 11px; color: rgba(255,255,255,0.5);
+  letter-spacing: 0.06em; text-transform: uppercase;
+  margin-bottom: 10px;
+}
+.hero-title {
+  font-family: 'Fraunces', serif;
+  font-size: 26px; font-weight: 600; color: var(--white);
+  line-height: 1.2; letter-spacing: -0.02em; margin-bottom: 8px;
+}
+.hero-sub {
+  font-size: 12.5px; color: rgba(255,255,255,0.45);
+  display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+}
+.hero-sub-dot {
+  width: 3px; height: 3px; border-radius: 50%;
+  background: rgba(255,255,255,0.25); flex-shrink: 0;
+}
+
+/* ── MAIN CARD (floats over hero) ── */
+.main-card {
+  background: var(--card-bg);
+  border-radius: 20px;
+  margin: -44px 16px 0;
+  border: 1px solid var(--border);
+  box-shadow: 0 16px 40px rgba(8,23,46,0.13);
+  overflow: hidden;
+  position: relative; z-index: 10;
+  animation: fadeUp 0.45s ease both;
+}
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.card-strip {
+  height: 4px;
+  background: linear-gradient(90deg, var(--gold), var(--gold-3), var(--gold));
+  background-size: 200% 100%;
+  animation: shimmer 3s ease-in-out infinite;
+}
+@keyframes shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* ── INFO GRID ── */
+.info-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1px; background: var(--border);
+}
+
+.info-cell {
+  background: var(--card-bg);
+  padding: 16px 18px;
+  transition: background 0.18s;
+}
+.info-cell:hover { background: var(--off); }
+.info-cell.full { grid-column: 1 / -1; }
+
+.cell-icon {
+  width: 32px; height: 32px; border-radius: 9px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 15px; margin-bottom: 8px;
+}
+.cell-icon.gold   { background: rgba(201,168,76,0.12); }
+.cell-icon.blue   { background: rgba(59,130,246,0.10); }
+.cell-icon.green  { background: rgba(16,185,129,0.10); }
+.cell-icon.purple { background: rgba(139,92,246,0.10); }
+
+.cell-label {
+  font-size: 10.5px; font-weight: 600; color: var(--muted);
+  letter-spacing: 0.04em; text-transform: uppercase; margin-bottom: 4px;
+}
+.cell-value { font-size: 14px; font-weight: 600; color: var(--text); }
+
+/* Class status pill */
+.class-now {
+  display: inline-flex; align-items: center; gap: 5px;
+  background: rgba(16,185,129,0.1);
+  border: 1px solid rgba(16,185,129,0.2);
+  padding: 3px 9px; border-radius: 20px;
+  font-size: 10.5px; font-weight: 600; color: #065F46;
+  margin-top: 5px;
+}
+body.dark .class-now { color: #34D399; }
+.class-now-dot {
+  width: 5px; height: 5px; border-radius: 50%;
+  background: #10B981;
+  animation: blink 2s ease-in-out infinite;
+}
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+/* ── NEXT CLASSES ── */
+.schedule-section {
+  margin: 16px 16px 0;
+  background: var(--card-bg);
+  border-radius: 16px;
+  border: 1px solid var(--border);
+  box-shadow: var(--card-shadow);
+  overflow: hidden;
+  animation: fadeUp 0.45s ease 0.1s both;
+}
+
+.schedule-header {
+  padding: 14px 18px 12px;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.schedule-title {
+  font-family: 'Fraunces', serif;
+  font-size: 15px; font-weight: 600; color: var(--text);
+}
+.schedule-sub { font-size: 11px; color: var(--muted); margin-top: 1px; }
+
+.class-row {
+  display: flex; align-items: center; gap: 13px;
+  padding: 13px 18px;
+  border-bottom: 1px solid var(--border);
+  transition: background 0.18s;
+}
+.class-row:last-child { border-bottom: none; }
+.class-row:hover { background: var(--off); }
+.class-row.active-class { background: linear-gradient(135deg, rgba(201,168,76,0.06), var(--off)); }
+
+.class-time-col { flex-shrink: 0; text-align: center; width: 44px; }
+.class-hr {
+  font-family: 'Fraunces', serif;
+  font-size: 16px; font-weight: 600; color: var(--navy); line-height: 1;
+}
+body.dark .class-hr { color: var(--white); }
+.class-ampm { font-size: 9.5px; color: var(--muted); letter-spacing: 0.03em; }
+
+.class-vline { width: 1px; height: 36px; background: var(--border); flex-shrink: 0; }
+
+.class-info { flex: 1; min-width: 0; }
+.class-subject { font-size: 13.5px; font-weight: 600; color: var(--text); margin-bottom: 3px; }
+.class-meta    { font-size: 11px; color: var(--muted); }
+
+.now-badge {
+  flex-shrink: 0;
+  background: rgba(201,168,76,0.12);
+  border: 1px solid rgba(201,168,76,0.25);
+  padding: 3px 8px; border-radius: 20px;
+  font-size: 10px; font-weight: 700; color: #92660A;
+}
+body.dark .now-badge { color: var(--gold-2); }
+
+/* ── NAVIGATE BUTTON ── */
+.nav-action {
+  padding: 16px;
+  animation: fadeUp 0.45s ease 0.2s both;
+}
+
+.nav-btn {
+  width: 100%; padding: 15px;
+  background: linear-gradient(135deg, var(--gold), var(--gold-2));
+  color: var(--navy); border: none; border-radius: 14px;
+  font-size: 15px; font-weight: 600; font-family: 'DM Sans', sans-serif;
+  cursor: pointer; box-shadow: 0 8px 24px rgba(201,168,76,0.4);
+  transition: all 0.25s; position: relative; overflow: hidden;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+}
+.nav-btn::after {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.25) 0%, transparent 60%);
+}
+.nav-btn:hover { transform: translateY(-2px); box-shadow: 0 12px 32px rgba(201,168,76,0.5); }
+.nav-btn:active { transform: scale(0.98); }
+
+.nav-btn.unavailable {
+  background: var(--off); color: var(--muted);
+  border: 1.5px solid var(--border);
+  box-shadow: none; cursor: not-allowed;
+}
+.nav-btn.unavailable::after { display: none; }
+.nav-btn.unavailable:hover { transform: none; }
+
+/* ── DARK TOGGLE ── */
+.dark-toggle {
+  position: fixed; bottom: 24px; right: 16px;
+  width: 46px; height: 46px;
+  background: var(--card-bg);
+  border: 1px solid var(--border); border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px; cursor: pointer;
+  box-shadow: var(--card-shadow); z-index: 200;
+  transition: all 0.22s;
+}
+.dark-toggle:hover { transform: scale(1.08); }
+</style>
+</head>
+<body>
+
+<script>
+  if (localStorage.dark === "on") document.body.classList.add("dark");
+</script>
+
+<!-- ── HERO ── -->
+<div class="hero">
+  <div class="hero-mesh"></div>
+  <div class="hero-grid"></div>
+
+  <div class="hero-top">
+    <button class="back-btn" onclick="history.back()">← Back</button>
+    <div class="h-btn" id="darkBtn" onclick="toggleDark()">🌙</div>
+  </div>
+
+  <div class="hero-body">
+    <div class="hero-eyebrow">🏫 Classroom</div>
+    <h1 class="hero-title" id="roomTitle">Loading...</h1>
+    <div class="hero-sub" id="heroSub">
+      <span id="subBlock">—</span>
+      <span class="hero-sub-dot"></span>
+      <span id="subFloor">—</span>
+    </div>
+  </div>
+</div>
+
+<!-- ── MAIN CARD ── -->
+<div class="main-card">
+  <div class="card-strip"></div>
+  <div class="info-grid">
+
+    <div class="info-cell">
+      <div class="cell-icon gold">🏢</div>
+      <div class="cell-label">Block</div>
+      <div class="cell-value" id="blockVal">—</div>
+    </div>
+
+    <div class="info-cell">
+      <div class="cell-icon blue">🏗️</div>
+      <div class="cell-label">Floor</div>
+      <div class="cell-value" id="floorVal">—</div>
+    </div>
+
+    <div class="info-cell full">
+      <div class="cell-icon green">📚</div>
+      <div class="cell-label">Today's Class</div>
+      <div class="cell-value" id="classInfo">Not scheduled</div>
+      <div class="class-now" id="classNow" style="display:none;">
+        <span class="class-now-dot"></span>
+        In progress
+      </div>
+    </div>
+
+    <div class="info-cell full">
+      <div class="cell-icon purple">👩‍🏫</div>
+      <div class="cell-label">Faculty</div>
+      <div class="cell-value" id="facultyVal">—</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ── SCHEDULE ── -->
+<div class="schedule-section">
+  <div class="schedule-header">
+    <div>
+      <div class="schedule-title">📅 Today's Schedule</div>
+      <div class="schedule-sub">Classes in this room</div>
+    </div>
+  </div>
+
+  <div class="class-row active-class">
+    <div class="class-time-col">
+      <div class="class-hr">9</div>
+      <div class="class-ampm">AM</div>
+    </div>
+    <div class="class-vline"></div>
+    <div class="class-info">
+      <div class="class-subject">Data Structures</div>
+      <div class="class-meta">👩‍🏫 Dr. Priya &nbsp;·&nbsp; CSE Dept.</div>
+    </div>
+    <div class="now-badge">NOW</div>
+  </div>
+
+  <div class="class-row">
+    <div class="class-time-col">
+      <div class="class-hr">11</div>
+      <div class="class-ampm">AM</div>
+    </div>
+    <div class="class-vline"></div>
+    <div class="class-info">
+      <div class="class-subject">Operating Systems</div>
+      <div class="class-meta">👨‍🏫 Mr. Anand &nbsp;·&nbsp; CSE Dept.</div>
+    </div>
+  </div>
+
+  <div class="class-row">
+    <div class="class-time-col">
+      <div class="class-hr">2</div>
+      <div class="class-ampm">PM</div>
+    </div>
+    <div class="class-vline"></div>
+    <div class="class-info">
+      <div class="class-subject">Engineering Maths</div>
+      <div class="class-meta">👩‍🏫 Dr. Leena &nbsp;·&nbsp; Maths Dept.</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ── NAVIGATE BUTTON ── -->
+<div class="nav-action">
+  <button class="nav-btn" id="navBtn" onclick="navigate()">
+    🧭 Navigate to Classroom
+  </button>
+</div>
+
+<!-- Dark toggle -->
+<div class="dark-toggle" onclick="toggleDark()">
+  <span id="darkIcon">🌙</span>
+</div>
+
+<script>
+  /* ── PARAMS ── */
+  const p         = new URLSearchParams(location.search);
+  const roomName  = p.get("room")  || "Classroom";
+  const blockName = p.get("block") || "Block";
+  const floorName = p.get("floor") || "Floor";
+
+  /* ── POPULATE ── */
+  document.getElementById("roomTitle").innerText  = roomName;
+  document.getElementById("heroSub").querySelector("#subBlock").innerText = blockName;
+  document.getElementById("heroSub").querySelector("#subFloor").innerText = floorName;
+  document.getElementById("blockVal").innerText   = blockName;
+  document.getElementById("floorVal").innerText   = floorName;
+  document.getElementById("classInfo").innerText  = "Data Structures · 9:00 AM";
+  document.getElementById("facultyVal").innerText = "Dr. Priya";
+
+  /* Show "In progress" if within class hour */
+  const nowHr = new Date().getHours();
+  if (nowHr === 9) document.getElementById("classNow").style.display = "inline-flex";
+
+  /* ── BLOCK → AR INDEX ── */
+  const blockIndexMap = {
+    "Electrical Science Block":  3,
+    "Computer Science Block":    4,
+    "Mechanical Science Block":  5,
+    "Basic Science Block":       6,
+    "Life Science Block":        7
+  };
+
+  /* Disable nav button if no mapping */
+  const navIndex = blockIndexMap[blockName];
+  if (navIndex === undefined) {
+    const btn = document.getElementById("navBtn");
+    btn.classList.add("unavailable");
+    btn.innerHTML = "⚠️ AR Navigation Unavailable";
+  }
+
+  /* ── NAVIGATE ── */
+  function navigate() {
+    const index = blockIndexMap[blockName];
+    if (index === undefined) return;
+    location.href = `confirm.html?place=${index}&role=student`;
+  }
+
+  /* ── DARK MODE ── */
+  function toggleDark() {
+    const isDark = document.body.classList.toggle("dark");
+    localStorage.dark = isDark ? "on" : "off";
+    document.getElementById("darkBtn").innerText  = isDark ? "☀️" : "🌙";
+    document.getElementById("darkIcon").innerText = isDark ? "☀️" : "🌙";
+  }
+  if (localStorage.dark === "on") {
+    document.getElementById("darkBtn").innerText  = "☀️";
+    document.getElementById("darkIcon").innerText = "☀️";
+  }
+</script>
+
+</body>
+</html>

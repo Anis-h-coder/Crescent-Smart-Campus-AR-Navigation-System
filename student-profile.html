@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Student Profile — Crescent Campus</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;1,9..144,300&display=swap" rel="stylesheet"/>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --navy:      #08172E;
+  --navy-2:    #0F2340;
+  --navy-3:    #162F54;
+  --gold:      #C9A84C;
+  --gold-2:    #DDB95E;
+  --gold-3:    #EDD080;
+  --gold-pale: #FBF3DC;
+  --white:     #FFFFFF;
+  --off:       #F4F6F9;
+  --muted:     #8FA3BC;
+  --text:      #0F2340;
+  --card-bg:   #FFFFFF;
+  --card-shadow: 0 2px 14px rgba(8,23,46,0.07);
+  --border:    rgba(0,0,0,0.05);
+}
+
+body.dark {
+  --off:       #07111F;
+  --card-bg:   #0F2340;
+  --text:      #E8EEF5;
+  --muted:     #6B85A0;
+  --border:    rgba(255,255,255,0.06);
+  --card-shadow: 0 2px 14px rgba(0,0,0,0.3);
+}
+
+body.accessible { font-size: 18px; line-height: 1.7; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--off);
+  color: var(--text);
+  min-height: 100vh;
+  transition: background 0.3s, color 0.3s;
+  padding-bottom: 40px;
+  overflow-x: hidden;
+}
+
+/* ── HERO HEADER ── */
+.header {
+  background: var(--navy);
+  padding: 20px 20px 72px;
+  position: relative;
+  overflow: hidden;
+}
+
+.header-mesh {
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse 70% 90% at 100% 30%, rgba(201,168,76,0.13) 0%, transparent 70%),
+    radial-gradient(ellipse 50% 60% at 0%  100%, rgba(59,130,246,0.07) 0%, transparent 70%);
+}
+
+.header-grid {
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(rgba(201,168,76,0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(201,168,76,0.06) 1px, transparent 1px);
+  background-size: 26px 26px;
+  -webkit-mask-image: linear-gradient(to bottom, transparent, black 40%, black 70%, transparent);
+  mask-image: linear-gradient(to bottom, transparent, black 40%, black 70%, transparent);
+}
+
+.header-top {
+  position: relative; z-index: 2;
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 0;
+}
+
+.back-btn {
+  display: flex; align-items: center; gap: 6px;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.1);
+  color: rgba(255,255,255,0.75);
+  padding: 8px 14px 8px 10px;
+  border-radius: 10px;
+  font-size: 13px; font-weight: 500;
+  cursor: pointer; transition: background 0.2s;
+  font-family: 'DM Sans', sans-serif;
+}
+.back-btn:hover { background: rgba(255,255,255,0.14); }
+
+.header-actions { display: flex; gap: 8px; }
+
+.h-btn {
+  width: 36px; height: 36px;
+  background: rgba(255,255,255,0.07);
+  border: 1px solid rgba(255,255,255,0.09);
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 17px; cursor: pointer;
+  transition: background 0.2s;
+}
+.h-btn:hover { background: rgba(255,255,255,0.14); }
+
+/* ── PROFILE CARD (floats over header) ── */
+.profile-card {
+  background: var(--card-bg);
+  border-radius: 22px;
+  margin: -52px 16px 0;
+  padding: 0 0 24px;
+  box-shadow: 0 20px 50px rgba(8,23,46,0.18);
+  border: 1px solid var(--border);
+  overflow: hidden;
+  position: relative;
+  z-index: 10;
+  animation: fadeUp 0.45s ease both;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Gold top strip on profile card */
+.profile-card-strip {
+  height: 4px;
+  background: linear-gradient(90deg, var(--gold), var(--gold-3), var(--gold));
+  background-size: 200% 100%;
+  animation: shimmer 3s ease-in-out infinite;
+}
+@keyframes shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+.profile-top {
+  padding: 24px 24px 20px;
+  display: flex; align-items: center; gap: 18px;
+}
+
+.avatar-wrap { position: relative; flex-shrink: 0; }
+
+.avatar-ring {
+  width: 72px; height: 72px;
+  border-radius: 50%;
+  border: 2.5px solid rgba(201,168,76,0.4);
+  padding: 3px;
+}
+
+.avatar-inner {
+  width: 100%; height: 100%;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--gold), var(--gold-3));
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Fraunces', serif;
+  font-size: 28px; font-weight: 600;
+  color: var(--navy);
+  line-height: 1;
+}
+
+.avatar-status {
+  position: absolute; bottom: 3px; right: 3px;
+  width: 14px; height: 14px;
+  background: #10B981;
+  border-radius: 50%;
+  border: 2.5px solid var(--card-bg);
+}
+
+.profile-info { flex: 1; min-width: 0; }
+
+.profile-info h2 {
+  font-family: 'Fraunces', serif;
+  font-size: 19px; font-weight: 600;
+  color: var(--text); letter-spacing: -0.01em;
+  margin-bottom: 4px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+
+.profile-info .dept {
+  font-size: 12px; color: var(--muted); margin-bottom: 8px;
+}
+
+.active-badge {
+  display: inline-flex; align-items: center; gap: 5px;
+  background: rgba(16,185,129,0.1);
+  border: 1px solid rgba(16,185,129,0.25);
+  padding: 3px 10px; border-radius: 20px;
+  font-size: 11px; font-weight: 600;
+  color: #065F46;
+}
+body.dark .active-badge { color: #34D399; }
+
+.active-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: #10B981;
+  animation: blink 2s ease-in-out infinite;
+}
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+/* ── INFO GRID ── */
+.info-divider {
+  height: 1px; background: var(--border); margin: 0 24px;
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1px;
+  background: var(--border);
+  margin-top: 1px;
+}
+
+.info-tile {
+  background: var(--card-bg);
+  padding: 16px 18px;
+  transition: background 0.2s;
+}
+.info-tile:hover { background: var(--off); }
+.info-tile.full { grid-column: 1 / -1; }
+
+.tile-icon {
+  width: 32px; height: 32px;
+  border-radius: 9px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px; margin-bottom: 8px;
+}
+
+.tile-icon.gold   { background: rgba(201,168,76,0.12); }
+.tile-icon.blue   { background: rgba(59,130,246,0.10); }
+.tile-icon.green  { background: rgba(16,185,129,0.10); }
+.tile-icon.purple { background: rgba(139,92,246,0.10); }
+
+.tile-label { font-size: 10.5px; color: var(--muted); font-weight: 500; letter-spacing: 0.03em; margin-bottom: 3px; }
+.tile-value { font-size: 13px; font-weight: 600; color: var(--text); word-break: break-all; }
+
+/* ── NEXT CLASS ALERT ── */
+.next-alert {
+  display: none;
+  margin: 16px 16px 0;
+  background: var(--card-bg);
+  border: 1px solid rgba(201,168,76,0.3);
+  border-left: 4px solid var(--gold);
+  border-radius: 14px;
+  padding: 14px 16px;
+  display: flex; align-items: center; gap: 12px;
+  box-shadow: var(--card-shadow);
+  animation: fadeUp 0.4s ease 0.2s both;
+}
+.next-alert.hidden { display: none; }
+
+.alert-icon-wrap {
+  width: 38px; height: 38px; flex-shrink: 0;
+  background: rgba(201,168,76,0.12);
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px;
+}
+
+.alert-text strong { font-size: 13px; font-weight: 600; color: var(--text); display: block; margin-bottom: 2px; }
+.alert-text span   { font-size: 11.5px; color: var(--muted); }
+
+/* ── TIMETABLE CARD ── */
+.timetable-card {
+  background: var(--card-bg);
+  border-radius: 20px;
+  margin: 16px 16px 0;
+  border: 1px solid var(--border);
+  box-shadow: var(--card-shadow);
+  overflow: hidden;
+  animation: fadeUp 0.45s ease 0.25s both;
+}
+
+.tt-header {
+  padding: 18px 20px 14px;
+  display: flex; align-items: center; justify-content: space-between;
+  border-bottom: 1px solid var(--border);
+}
+
+.tt-title {
+  font-family: 'Fraunces', serif;
+  font-size: 16px; font-weight: 600; color: var(--text);
+}
+
+.tt-sub { font-size: 11px; color: var(--muted); margin-top: 1px; }
+
+/* Day selector */
+.days-row {
+  display: flex; gap: 6px;
+  padding: 14px 16px 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.days-row::-webkit-scrollbar { display: none; }
+
+.day-btn {
+  flex-shrink: 0;
+  padding: 7px 16px;
+  border-radius: 20px;
+  border: 1.5px solid var(--border);
+  background: var(--off);
+  color: var(--muted);
+  font-size: 12px; font-weight: 600;
+  cursor: pointer; transition: all 0.2s;
+  font-family: 'DM Sans', sans-serif;
+}
+.day-btn:hover { border-color: var(--gold); color: var(--gold); }
+.day-btn.active {
+  background: linear-gradient(135deg, var(--gold), var(--gold-2));
+  border-color: var(--gold);
+  color: var(--navy);
+  box-shadow: 0 4px 12px rgba(201,168,76,0.35);
+}
+
+/* Class list */
+.class-list { padding: 14px 16px 18px; display: flex; flex-direction: column; gap: 10px; }
+
+.class-item {
+  background: var(--off);
+  border-radius: 14px;
+  padding: 14px 16px;
+  border: 1px solid var(--border);
+  display: flex; align-items: center; gap: 14px;
+  transition: all 0.22s;
+  position: relative; overflow: hidden;
+}
+.class-item:hover { box-shadow: 0 6px 20px rgba(8,23,46,0.08); transform: translateY(-1px); }
+
+.class-item.active-class {
+  border-left: 4px solid var(--gold);
+  background: linear-gradient(135deg, rgba(201,168,76,0.07), var(--off));
+}
+
+.class-time-col {
+  flex-shrink: 0; text-align: center;
+  width: 46px;
+}
+.class-time {
+  font-family: 'Fraunces', serif;
+  font-size: 17px; font-weight: 600; color: var(--navy); line-height: 1;
+}
+body.dark .class-time { color: var(--white); }
+.class-ampm { font-size: 10px; color: var(--muted); letter-spacing: 0.03em; }
+
+.class-divider {
+  width: 1px; height: 40px; background: var(--border); flex-shrink: 0;
+}
+
+.class-info { flex: 1; min-width: 0; }
+.class-subject { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+.class-meta { display: flex; flex-wrap: wrap; gap: 8px; }
+.class-meta span {
+  font-size: 11px; color: var(--muted);
+  display: flex; align-items: center; gap: 3px;
+}
+
+.class-now-badge {
+  flex-shrink: 0;
+  background: rgba(201,168,76,0.15);
+  border: 1px solid rgba(201,168,76,0.3);
+  color: #92660A;
+  font-size: 10px; font-weight: 700;
+  padding: 3px 8px; border-radius: 20px;
+  white-space: nowrap;
+}
+body.dark .class-now-badge { color: var(--gold-2); }
+
+.no-class {
+  text-align: center; padding: 28px 16px;
+  color: var(--muted); font-size: 13px;
+}
+.no-class span { font-size: 28px; display: block; margin-bottom: 8px; }
+
+/* ── DARK TOGGLE ── */
+.dark-toggle {
+  position: fixed; bottom: 24px; right: 16px;
+  width: 46px; height: 46px;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px; cursor: pointer;
+  box-shadow: var(--card-shadow);
+  z-index: 200; transition: all 0.22s;
+}
+.dark-toggle:hover { transform: scale(1.08); }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 360px) {
+  .profile-top { gap: 13px; }
+  .avatar-ring { width: 60px; height: 60px; }
+  .profile-info h2 { font-size: 16px; }
+}
+</style>
+</head>
+<body>
+
+<script>
+  if (!localStorage.getItem("student")) location.href = "student-login.html";
+  if (localStorage.dark   === "on") document.body.classList.add("dark");
+  if (localStorage.access === "on") document.body.classList.add("accessible");
+</script>
+
+<!-- ── HEADER ── -->
+<div class="header">
+  <div class="header-mesh"></div>
+  <div class="header-grid"></div>
+  <div class="header-top">
+    <button class="back-btn" onclick="history.back()">← Back</button>
+    <div class="header-actions">
+      <div class="h-btn" id="darkBtn" onclick="toggleDark()" title="Toggle theme">🌙</div>
+    </div>
+  </div>
+</div>
+
+<!-- ── PROFILE CARD ── -->
+<div class="profile-card">
+  <div class="profile-card-strip"></div>
+
+  <div class="profile-top">
+    <div class="avatar-wrap">
+      <div class="avatar-ring">
+        <div class="avatar-inner" id="avatarInitial">S</div>
+      </div>
+      <div class="avatar-status"></div>
+    </div>
+    <div class="profile-info">
+      <h2 id="name">Student</h2>
+      <p class="dept" id="dept">Department of Computer Science</p>
+      <span class="active-badge">
+        <span class="active-dot"></span> Active Student
+      </span>
+    </div>
+  </div>
+
+  <div class="info-divider"></div>
+
+  <div class="info-grid">
+    <div class="info-tile">
+      <div class="tile-icon gold">🏫</div>
+      <div class="tile-label">Department</div>
+      <div class="tile-value">Computer Science</div>
+    </div>
+    <div class="info-tile">
+      <div class="tile-icon blue">🆔</div>
+      <div class="tile-label">Register No.</div>
+      <div class="tile-value" id="regNo">CS2024XXX</div>
+    </div>
+    <div class="info-tile full">
+      <div class="tile-icon green">📧</div>
+      <div class="tile-label">College Email</div>
+      <div class="tile-value" id="emailDisplay">—</div>
+    </div>
+    <div class="info-tile full">
+      <div class="tile-icon purple">📅</div>
+      <div class="tile-label">Academic Year</div>
+      <div class="tile-value">2024 – 2025 &nbsp;·&nbsp; Semester III</div>
+    </div>
+  </div>
+</div>
+
+<!-- ── NEXT CLASS ALERT ── -->
+<div class="next-alert hidden" id="nextAlert">
+  <div class="alert-icon-wrap">🔔</div>
+  <div class="alert-text">
+    <strong id="alertTitle">Next Class</strong>
+    <span id="alertSub">–</span>
+  </div>
+</div>
+
+<!-- ── TIMETABLE ── -->
+<div class="timetable-card">
+  <div class="tt-header">
+    <div>
+      <div class="tt-title">📅 Class Timetable</div>
+      <div class="tt-sub">Weekly schedule</div>
+    </div>
+  </div>
+
+  <div class="days-row">
+    <button class="day-btn active" onclick="loadDay('mon', this)">Mon</button>
+    <button class="day-btn"        onclick="loadDay('tue', this)">Tue</button>
+    <button class="day-btn"        onclick="loadDay('wed', this)">Wed</button>
+    <button class="day-btn"        onclick="loadDay('thu', this)">Thu</button>
+    <button class="day-btn"        onclick="loadDay('fri', this)">Fri</button>
+  </div>
+
+  <div class="class-list" id="classList"></div>
+</div>
+
+<!-- Dark toggle -->
+<div class="dark-toggle" id="darkToggle" onclick="toggleDark()" title="Toggle theme">
+  <span id="darkIcon">🌙</span>
+</div>
+
+<script>
+  /* ── POPULATE PROFILE ── */
+  const studentEmail = localStorage.getItem("student") || "";
+  const rawName      = studentEmail.split("@")[0];
+  const displayName  = rawName.charAt(0).toUpperCase() + rawName.slice(1);
+
+  document.getElementById("name").innerText         = displayName.toUpperCase();
+  document.getElementById("avatarInitial").innerText = displayName.charAt(0).toUpperCase();
+  document.getElementById("emailDisplay").innerText  = studentEmail;
+  document.getElementById("regNo").innerText         =
+    "CS2024" + Math.floor(100 + Math.random() * 900);
+
+  /* ── TIMETABLE DATA ── */
+  const timetable = {
+    mon: [
+      { time: 9,  subject: "Data Structures",    room: "A-201",       faculty: "Dr. Priya"  },
+      { time: 10, subject: "Operating Systems",  room: "A-202",       faculty: "Mr. Anand"  },
+      { time: 14, subject: "Lab – DS Practice",  room: "CS Lab 1",    faculty: "Mr. Karthik"}
+    ],
+    tue: [
+      { time: 9,  subject: "Database Management",room: "A-205",       faculty: "Dr. Suresh" },
+      { time: 11, subject: "Computer Networks",  room: "A-207",       faculty: "Ms. Divya"  }
+    ],
+    wed: [
+      { time: 9,  subject: "AI Basics",          room: "A-210",       faculty: "Dr. Ramesh" },
+      { time: 11, subject: "Lab – AI Lab",       room: "CS Lab 3",    faculty: "Dr. Ramesh" }
+    ],
+    thu: [
+      { time: 9,  subject: "Web Technology",     room: "A-203",       faculty: "Ms. Sneha"  },
+      { time: 14, subject: "Soft Skills",        room: "Seminar Hall",faculty: "Mr. Samuel" }
+    ],
+    fri: [
+      { time: 9,  subject: "Mini Project",       room: "Project Lab", faculty: "Guide"      },
+      { time: 11, subject: "Engineering Maths",  room: "A-204",       faculty: "Dr. Leena"  }
+    ]
+  };
+
+  function formatTime(h) {
+    const suffix = h >= 12 ? "PM" : "AM";
+    const hour   = h > 12 ? h - 12 : h;
+    return { hr: hour, suffix };
+  }
+
+  function loadDay(day, btn) {
+    /* Update active button */
+    document.querySelectorAll(".day-btn").forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+
+    const list  = document.getElementById("classList");
+    const alert = document.getElementById("nextAlert");
+    list.innerHTML = "";
+
+    const nowHour  = new Date().getHours();
+    const classes  = timetable[day] || [];
+    let nextClass  = null;
+
+    if (!classes.length) {
+      list.innerHTML = `<div class="no-class"><span>🎉</span>No classes today!</div>`;
+      alert.classList.add("hidden");
+      return;
+    }
+
+    classes.forEach(c => {
+      const isNow  = c.time === nowHour;
+      const t      = formatTime(c.time);
+      const div    = document.createElement("div");
+      div.className = "class-item" + (isNow ? " active-class" : "");
+
+      if (c.time > nowHour && !nextClass) nextClass = c;
+
+      div.innerHTML = `
+        <div class="class-time-col">
+          <div class="class-time">${t.hr}:00</div>
+          <div class="class-ampm">${t.suffix}</div>
+        </div>
+        <div class="class-divider"></div>
+        <div class="class-info">
+          <div class="class-subject">${c.subject}</div>
+          <div class="class-meta">
+            <span>📍 ${c.room}</span>
+            <span>👩‍🏫 ${c.faculty}</span>
+          </div>
+        </div>
+        ${isNow ? '<div class="class-now-badge">NOW</div>' : ''}
+      `;
+      list.appendChild(div);
+    });
+
+    /* Next class alert */
+    if (nextClass) {
+      const t = formatTime(nextClass.time);
+      alert.classList.remove("hidden");
+      document.getElementById("alertTitle").innerText =
+        `Next: ${nextClass.subject}`;
+      document.getElementById("alertSub").innerText =
+        `${t.hr}:00 ${t.suffix}  ·  ${nextClass.room}  ·  ${nextClass.faculty}`;
+
+      /* Voice */
+      if (localStorage.voice === "on") {
+        const msg = new SpeechSynthesisUtterance(
+          `Next class is ${nextClass.subject} at ${t.hr} ${t.suffix} in ${nextClass.room}`
+        );
+        msg.rate = 0.95;
+        speechSynthesis.speak(msg);
+      }
+    } else {
+      alert.classList.add("hidden");
+    }
+  }
+
+  /* Load Monday on start */
+  loadDay("mon", document.querySelector(".day-btn"));
+
+  /* ── DARK MODE ── */
+  function toggleDark() {
+    const isDark = document.body.classList.toggle("dark");
+    localStorage.dark = isDark ? "on" : "off";
+    document.getElementById("darkBtn").innerText  = isDark ? "☀️" : "🌙";
+    document.getElementById("darkIcon").innerText = isDark ? "☀️" : "🌙";
+  }
+
+  if (localStorage.dark === "on") {
+    document.getElementById("darkBtn").innerText  = "☀️";
+    document.getElementById("darkIcon").innerText = "☀️";
+  }
+</script>
+
+</body>
+</html>

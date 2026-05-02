@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Smart Search — Crescent Campus</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;1,9..144,300&display=swap" rel="stylesheet"/>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --navy:        #08172E;
+  --navy-2:      #0F2340;
+  --navy-3:      #162F54;
+  --gold:        #C9A84C;
+  --gold-2:      #DDB95E;
+  --gold-3:      #EDD080;
+  --gold-pale:   #FBF3DC;
+  --white:       #FFFFFF;
+  --off:         #F4F6F9;
+  --muted:       #8FA3BC;
+  --text:        #0F2340;
+  --card-bg:     #FFFFFF;
+  --border:      rgba(0,0,0,0.06);
+  --card-shadow: 0 2px 14px rgba(8,23,46,0.07);
+}
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--off);
+  color: var(--text);
+  min-height: 100vh;
+  padding-bottom: 40px;
+  overflow-x: hidden;
+}
+
+/* ── HERO ── */
+.hero {
+  background: var(--navy);
+  padding: 20px 20px 60px;
+  position: relative; overflow: hidden;
+}
+.hero-mesh {
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse 70% 80% at 100% 20%, rgba(201,168,76,0.13) 0%, transparent 70%),
+    radial-gradient(ellipse 50% 60% at 0%  90%, rgba(59,130,246,0.07) 0%, transparent 70%);
+}
+.hero-grid {
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(rgba(201,168,76,0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(201,168,76,0.06) 1px, transparent 1px);
+  background-size: 26px 26px;
+  -webkit-mask-image: linear-gradient(to bottom, transparent, black 40%, black 70%, transparent);
+  mask-image: linear-gradient(to bottom, transparent, black 40%, black 70%, transparent);
+}
+.hero-top {
+  position: relative; z-index: 2;
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 20px;
+}
+.back-btn {
+  display: flex; align-items: center; gap: 6px;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.1);
+  color: rgba(255,255,255,0.75);
+  padding: 8px 14px 8px 10px; border-radius: 10px;
+  font-size: 13px; font-weight: 500; cursor: pointer;
+  transition: background 0.2s; font-family: 'DM Sans', sans-serif;
+}
+.back-btn:hover { background: rgba(255,255,255,0.14); }
+.hero-body { position: relative; z-index: 2; }
+.hero-title {
+  font-family: 'Fraunces', serif;
+  font-size: 26px; font-weight: 600; color: var(--white);
+  line-height: 1.2; letter-spacing: -0.02em; margin-bottom: 6px;
+}
+.hero-title .accent { color: var(--gold-2); font-style: italic; }
+.hero-sub { font-size: 13px; color: rgba(255,255,255,0.45); }
+
+/* ── SEARCH BAR (floats over hero) ── */
+.search-wrap {
+  padding: 0 16px;
+  margin-top: -36px;
+  position: relative; z-index: 20;
+  animation: fadeUp 0.4s ease 0.05s both;
+}
+.search-bar {
+  display: flex; align-items: center; gap: 8px;
+  background: var(--card-bg);
+  border: 1.5px solid var(--border);
+  border-radius: 16px; padding: 10px 10px 10px 16px;
+  box-shadow: 0 10px 30px rgba(8,23,46,0.14);
+  transition: border-color 0.2s;
+}
+.search-bar:focus-within { border-color: var(--gold); box-shadow: 0 10px 30px rgba(8,23,46,0.14), 0 0 0 3px rgba(201,168,76,0.12); }
+.search-icon { font-size: 18px; flex-shrink: 0; opacity: 0.45; }
+#query {
+  flex: 1; border: none; outline: none;
+  font-size: 15px; font-family: 'DM Sans', sans-serif;
+  background: transparent; color: var(--text);
+}
+#query::placeholder { color: var(--muted); }
+
+.search-btns { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+
+.voice-btn {
+  width: 38px; height: 38px; border-radius: 11px;
+  background: var(--off); border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; cursor: pointer; transition: all 0.2s;
+}
+.voice-btn:hover { background: var(--gold-pale); border-color: var(--gold); }
+.voice-btn.recording { background: rgba(239,68,68,0.1); border-color: #EF4444; animation: voicePulse 1s ease-in-out infinite; }
+@keyframes voicePulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.1)} }
+
+.search-submit {
+  height: 38px; padding: 0 16px;
+  background: linear-gradient(135deg, var(--gold), var(--gold-2));
+  color: var(--navy); border: none; border-radius: 11px;
+  font-size: 13px; font-weight: 700; font-family: 'DM Sans', sans-serif;
+  cursor: pointer; transition: all 0.22s;
+  position: relative; overflow: hidden; white-space: nowrap;
+}
+.search-submit::after {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.25) 0%, transparent 60%);
+}
+.search-submit:hover { transform: translateY(-1px); box-shadow: 0 6px 16px rgba(201,168,76,0.4); }
+
+/* ── SUGGESTIONS DROPDOWN ── */
+#suggestions {
+  margin: 6px 16px 0;
+  background: var(--card-bg);
+  border-radius: 14px; border: 1px solid var(--border);
+  box-shadow: 0 8px 24px rgba(8,23,46,0.1);
+  overflow: hidden; display: none;
+  position: relative; z-index: 15;
+  animation: fadeUp 0.2s ease both;
+}
+#suggestions.show { display: block; }
+
+.suggestion-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 12px 16px;
+  cursor: pointer; transition: background 0.18s;
+  border-bottom: 1px solid var(--border);
+  font-size: 13.5px; color: var(--text);
+}
+.suggestion-item:last-child { border-bottom: none; }
+.suggestion-item:hover { background: var(--off); }
+.sug-icon {
+  width: 30px; height: 30px; border-radius: 8px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center; font-size: 14px;
+}
+.sug-icon.staff { background: rgba(236,72,153,0.1); }
+.sug-icon.place { background: rgba(201,168,76,0.1); }
+
+/* ── QUICK CHIPS ── */
+.chips-row {
+  display: flex; gap: 8px; padding: 14px 16px 0;
+  overflow-x: auto; scrollbar-width: none;
+  animation: fadeUp 0.4s ease 0.1s both;
+}
+.chips-row::-webkit-scrollbar { display: none; }
+.chip-btn {
+  flex-shrink: 0; padding: 6px 14px;
+  border-radius: 20px; border: 1.5px solid var(--border);
+  background: var(--card-bg); color: var(--muted);
+  font-size: 12px; font-weight: 500; cursor: pointer;
+  transition: all 0.2s; font-family: 'DM Sans', sans-serif; white-space: nowrap;
+}
+.chip-btn:hover { border-color: var(--gold); color: var(--text); background: var(--gold-pale); }
+
+/* ── RESULTS ── */
+.section { padding: 16px 16px 0; }
+.sec-title {
+  font-family: 'Fraunces', serif; font-size: 16px; font-weight: 600;
+  color: var(--text); margin-bottom: 12px;
+  display: flex; align-items: center; gap: 8px;
+}
+.results-list { display: flex; flex-direction: column; gap: 12px; }
+
+/* ── RESULT CARD ── */
+.result-card {
+  background: var(--card-bg); border-radius: 18px;
+  border: 1px solid var(--border); box-shadow: var(--card-shadow);
+  overflow: hidden; animation: fadeUp 0.35s ease both;
+  transition: all 0.22s;
+}
+.result-card:hover { transform: translateY(-2px); box-shadow: 0 10px 28px rgba(8,23,46,0.1); }
+
+.rc-strip { height: 4px; }
+.rc-strip.staff { background: linear-gradient(90deg, #EC4899, #F472B6); }
+.rc-strip.place { background: linear-gradient(90deg, var(--gold), var(--gold-3)); }
+
+.rc-inner { padding: 16px 18px 18px; }
+
+.rc-top {
+  display: flex; align-items: flex-start; gap: 12px; margin-bottom: 12px;
+}
+.rc-icon {
+  width: 46px; height: 46px; border-radius: 13px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center; font-size: 22px;
+}
+.rc-icon.staff { background: linear-gradient(135deg, rgba(236,72,153,0.10), rgba(244,114,182,0.16)); }
+.rc-icon.place { background: linear-gradient(135deg, rgba(201,168,76,0.12), rgba(237,208,128,0.18)); }
+
+.rc-info { flex: 1; min-width: 0; }
+.rc-name { font-family: 'Fraunces', serif; font-size: 17px; font-weight: 600; color: var(--text); margin-bottom: 3px; }
+.rc-sub  { font-size: 12px; color: var(--muted); margin-bottom: 7px; }
+
+.status-pill {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 3px 10px; border-radius: 20px;
+  font-size: 11px; font-weight: 600;
+}
+.status-pill.available { background: rgba(16,185,129,0.1); color: #065F46; border: 1px solid rgba(16,185,129,0.2); }
+.status-pill.inclass   { background: rgba(239,68,68,0.1);  color: #991B1B; border: 1px solid rgba(239,68,68,0.2); }
+.status-pill.onleave   { background: rgba(107,114,128,0.1);color: #374151; border: 1px solid rgba(107,114,128,0.2); }
+.status-dot { width: 5px; height: 5px; border-radius: 50%; }
+.available .status-dot { background: #10B981; animation: blink 2s ease-in-out infinite; }
+.inclass   .status-dot { background: #EF4444; }
+.onleave   .status-dot { background: #6B7280; }
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+/* AI reply */
+.ai-reply {
+  background: var(--off); border: 1px solid var(--border);
+  border-radius: 12px; padding: 10px 14px;
+  font-size: 12.5px; color: var(--text); line-height: 1.5;
+  margin-bottom: 12px;
+  display: flex; align-items: flex-start; gap: 8px;
+}
+.ai-chip {
+  flex-shrink: 0;
+  background: rgba(201,168,76,0.12); border: 1px solid rgba(201,168,76,0.2);
+  padding: 2px 7px; border-radius: 20px;
+  font-size: 10px; font-weight: 700; color: #92660A;
+  white-space: nowrap; margin-top: 1px;
+}
+
+/* Action buttons */
+.rc-btns { display: flex; gap: 8px; }
+.rc-btn {
+  flex: 1; padding: 11px; border: none; border-radius: 11px;
+  font-size: 13px; font-weight: 600; font-family: 'DM Sans', sans-serif;
+  cursor: pointer; transition: all 0.22s;
+}
+.rc-btn.primary {
+  background: linear-gradient(135deg, var(--gold), var(--gold-2));
+  color: var(--navy);
+  box-shadow: 0 4px 14px rgba(201,168,76,0.35);
+  position: relative; overflow: hidden;
+}
+.rc-btn.primary::after {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.22) 0%, transparent 60%);
+}
+.rc-btn.primary:hover { transform: translateY(-1px); box-shadow: 0 8px 20px rgba(201,168,76,0.45); }
+.rc-btn.secondary {
+  background: var(--off); color: var(--muted);
+  border: 1.5px solid var(--border);
+}
+.rc-btn.secondary:hover { background: var(--navy); color: var(--white); border-color: var(--navy); }
+
+/* ── EMPTY / PLACEHOLDER ── */
+.placeholder {
+  text-align: center; padding: 40px 20px;
+  background: var(--card-bg); border-radius: 16px;
+  border: 1px solid var(--border); box-shadow: var(--card-shadow);
+}
+.placeholder span { font-size: 36px; display: block; margin-bottom: 10px; }
+.placeholder h3 { font-family: 'Fraunces', serif; font-size: 16px; color: var(--text); margin-bottom: 5px; }
+.placeholder p  { font-size: 13px; color: var(--muted); }
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.hero    { animation: fadeUp 0.4s ease both; }
+.section { animation: fadeUp 0.4s ease 0.15s both; }
+</style>
+</head>
+<body>
+
+<!-- ── HERO ── -->
+<div class="hero">
+  <div class="hero-mesh"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-top">
+    <button class="back-btn" onclick="history.back()">← Back</button>
+  </div>
+  <div class="hero-body">
+    <h1 class="hero-title"><span class="accent">Smart</span> Search</h1>
+    <p class="hero-sub">Find faculty, labs, buildings & navigate instantly</p>
+  </div>
+</div>
+
+<!-- ── SEARCH BAR ── -->
+<div class="search-wrap">
+  <div class="search-bar">
+    <span class="search-icon">🔍</span>
+    <input id="query" placeholder="Where is the library? Or search Dr. Priya..."
+           autocomplete="off" onkeypress="if(event.key==='Enter') search()"/>
+    <div class="search-btns">
+      <div class="voice-btn" id="voiceBtn" onclick="voiceSearch()" title="Voice search">🎤</div>
+      <button class="search-submit" onclick="search()">Search</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── SUGGESTIONS ── -->
+<div id="suggestions"></div>
+
+<!-- ── QUICK CHIPS ── -->
+<div class="chips-row">
+  <button class="chip-btn" onclick="quickSearch('library')">📚 Library</button>
+  <button class="chip-btn" onclick="quickSearch('canteen')">🍽️ Canteen</button>
+  <button class="chip-btn" onclick="quickSearch('computer science')">💻 CS Block</button>
+  <button class="chip-btn" onclick="quickSearch('medical')">🏥 Medical</button>
+  <button class="chip-btn" onclick="quickSearch('main gate')">🚪 Main Gate</button>
+  <button class="chip-btn" onclick="quickSearch('lab')">🔬 Labs</button>
+</div>
+
+<!-- ── RESULTS ── -->
+<div class="section" id="resultsSection" style="display:none;">
+  <div class="sec-title" id="resultsTitle">Results</div>
+  <div class="results-list" id="results"></div>
+</div>
+
+<!-- Default placeholder -->
+<div class="section" id="placeholderSection">
+  <div class="placeholder">
+    <span>🔍</span>
+    <h3>Search anything</h3>
+    <p>Try "where is the library", "Dr. Priya", or "CS Lab"</p>
+  </div>
+</div>
+
+<script type="module">
+import { db } from "./js/firebase.js";
+import { ref, onValue }
+  from "https://www.gstatic.com/firebasejs/12.9.0/firebase-database.js";
+
+let faculty   = [];
+let locations = [];
+
+const queryEl      = document.getElementById("query");
+const suggestionsEl = document.getElementById("suggestions");
+const resultsEl    = document.getElementById("results");
+const resultsSection = document.getElementById("resultsSection");
+const resultsTitle   = document.getElementById("resultsTitle");
+const placeholderSection = document.getElementById("placeholderSection");
+
+/* ── LOAD FACULTY ── */
+onValue(ref(db, "faculty"), snapshot => {
+  faculty = [];
+  if (!snapshot.exists()) return;
+  const data = snapshot.val();
+  Object.keys(data).forEach(dept => {
+    Object.values(data[dept]).forEach(staff => {
+      faculty.push({ ...staff, dept });
+    });
+  });
+});
+
+/* ── LOAD LOCATIONS ── */
+fetch("data/locations.json")
+  .then(r => r.json())
+  .then(d => { locations = d; });
+
+/* ── STATUS ── */
+function statusClass(s) {
+  if (s === "Available") return "available";
+  if (s === "In Class")  return "inclass";
+  if (s === "On Leave")  return "onleave";
+  return "onleave";
+}
+
+function aiReply(s) {
+  if (s.status === "Available") return `${s.name} is available in cabin ${s.cabin}.`;
+  if (s.status === "In Class")  return `${s.name} is currently teaching a class.`;
+  if (s.status === "On Leave")  return `${s.name} is on leave today.`;
+  return `${s.name} is located at cabin ${s.cabin} on ${s.floor}.`;
+}
+
+/* ── LIVE SUGGESTIONS ── */
+queryEl.addEventListener("input", () => {
+  const q = queryEl.value.toLowerCase().trim();
+  suggestionsEl.innerHTML = "";
+
+  if (!q) { suggestionsEl.classList.remove("show"); return; }
+
+  let html = "";
+
+  faculty.filter(s => s.name.toLowerCase().includes(q)).slice(0, 3).forEach(s => {
+    html += `
+      <div class="suggestion-item" onclick="selectSuggestion('${s.name.replace(/'/g,"\\'")}')">
+        <div class="sug-icon staff">👨‍🏫</div>
+        ${s.name} <span style="font-size:11px;color:var(--muted);margin-left:6px">${s.designation || ""}</span>
+      </div>`;
+  });
+
+  locations.filter(l => l.name.toLowerCase().includes(q)).slice(0, 3).forEach(l => {
+    html += `
+      <div class="suggestion-item" onclick="selectSuggestion('${l.name.replace(/'/g,"\\'")}')">
+        <div class="sug-icon place">📍</div>
+        ${l.name}
+      </div>`;
+  });
+
+  if (html) {
+    suggestionsEl.innerHTML = html;
+    suggestionsEl.classList.add("show");
+  } else {
+    suggestionsEl.classList.remove("show");
+  }
+});
+
+window.selectSuggestion = function(text) {
+  queryEl.value = text;
+  suggestionsEl.classList.remove("show");
+  search();
+};
+
+/* ── QUICK CHIPS ── */
+window.quickSearch = function(text) {
+  queryEl.value = text;
+  search();
+};
+
+/* ── SMART SEARCH ── */
+window.search = function() {
+  const q = queryEl.value.toLowerCase().trim();
+  if (!q) return;
+
+  suggestionsEl.classList.remove("show");
+  resultsEl.innerHTML = "";
+
+  const clean = q
+    .replace(/where is|take me to|show|find|sir|mam|navigate to/g, "")
+    .trim();
+
+  let found = false;
+  let delay = 0;
+
+  /* ── FACULTY RESULTS ── */
+  faculty.forEach(s => {
+    if (!s.name.toLowerCase().includes(clean)) return;
+    found = true;
+    const sc = statusClass(s.status || "");
+    const card = document.createElement("div");
+    card.className = "result-card";
+    card.style.animationDelay = (delay * 0.06) + "s";
+    delay++;
+
+    card.innerHTML = `
+      <div class="rc-strip staff"></div>
+      <div class="rc-inner">
+        <div class="rc-top">
+          <div class="rc-icon staff">👨‍🏫</div>
+          <div class="rc-info">
+            <div class="rc-name">${s.name}</div>
+            <div class="rc-sub">${s.designation || "Faculty"} &nbsp;·&nbsp; ${s.cabin || "—"} · ${s.floor || "—"}</div>
+            <span class="status-pill ${sc}">
+              <span class="status-dot"></span>
+              ${s.status || "Unknown"}
+            </span>
+          </div>
+        </div>
+        <div class="ai-reply">
+          <span class="ai-chip">🤖 AI</span>
+          ${aiReply(s)}
+        </div>
+        <div class="rc-btns">
+          <button class="rc-btn primary" onclick="goToStaff('${s.dept}')">👨‍🏫 View Staff</button>
+          <button class="rc-btn secondary" onclick="goToStaff('${s.dept}')">📍 Directions</button>
+        </div>
+      </div>`;
+
+    resultsEl.appendChild(card);
+  });
+
+  /* ── LOCATION RESULTS ── */
+  locations.forEach((l, i) => {
+    if (!l.name.toLowerCase().includes(clean)) return;
+    found = true;
+    const card = document.createElement("div");
+    card.className = "result-card";
+    card.style.animationDelay = (delay * 0.06) + "s";
+    delay++;
+
+    card.innerHTML = `
+      <div class="rc-strip place"></div>
+      <div class="rc-inner">
+        <div class="rc-top">
+          <div class="rc-icon place">📍</div>
+          <div class="rc-info">
+            <div class="rc-name">${l.name}</div>
+            <div class="rc-sub">Crescent Campus &nbsp;·&nbsp; AR Navigation Available</div>
+          </div>
+        </div>
+        <div class="ai-reply">
+          <span class="ai-chip">🤖 AI</span>
+          Tap below to get AR navigation directions to ${l.name}.
+        </div>
+        <div class="rc-btns">
+          <button class="rc-btn primary" onclick="navigateIndex(${i})">🧭 Start AR Navigation</button>
+        </div>
+      </div>`;
+
+    resultsEl.appendChild(card);
+  });
+
+  /* ── EMPTY STATE ── */
+  if (!found) {
+    resultsEl.innerHTML = `
+      <div class="placeholder">
+        <span>🔍</span>
+        <h3>No results found</h3>
+        <p>Try searching for a building name or faculty member</p>
+      </div>`;
+  }
+
+  resultsTitle.innerText = found
+    ? `Results for "${queryEl.value.trim()}"`
+    : "No results";
+
+  resultsSection.style.display = "block";
+  placeholderSection.style.display = "none";
+};
+
+/* ── NAVIGATION ── */
+window.goToStaff = function(dept) {
+  location.href = `staff-list.html?dept=${dept}`;
+};
+window.navigateIndex = function(i) {
+  location.href = `confirm.html?place=${i}&role=student`;
+};
+
+/* ── VOICE SEARCH ── */
+window.voiceSearch = function() {
+  if (!('webkitSpeechRecognition' in window)) {
+    alert("Voice search not supported on this browser");
+    return;
+  }
+  const btn = document.getElementById("voiceBtn");
+  btn.classList.add("recording");
+  btn.innerText = "🔴";
+
+  const rec = new webkitSpeechRecognition();
+  rec.lang = "en-IN";
+  rec.start();
+
+  rec.onresult = e => {
+    queryEl.value = e.results[0][0].transcript;
+    btn.classList.remove("recording");
+    btn.innerText = "🎤";
+    search();
+  };
+
+  rec.onerror = () => {
+    btn.classList.remove("recording");
+    btn.innerText = "🎤";
+  };
+
+  rec.onend = () => {
+    btn.classList.remove("recording");
+    btn.innerText = "🎤";
+  };
+};
+</script>
+
+</body>
+</html>

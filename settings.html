@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Settings — Crescent Campus</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;1,9..144,300&display=swap" rel="stylesheet"/>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --navy:        #08172E;
+  --navy-2:      #0F2340;
+  --navy-3:      #162F54;
+  --gold:        #C9A84C;
+  --gold-2:      #DDB95E;
+  --gold-3:      #EDD080;
+  --gold-pale:   #FBF3DC;
+  --white:       #FFFFFF;
+  --off:         #F4F6F9;
+  --muted:       #8FA3BC;
+  --text:        #0F2340;
+  --card-bg:     #FFFFFF;
+  --border:      rgba(0,0,0,0.06);
+  --card-shadow: 0 2px 14px rgba(8,23,46,0.07);
+}
+
+body.dark {
+  --off:         #07111F;
+  --card-bg:     #0F2340;
+  --text:        #E8EEF5;
+  --muted:       #6B85A0;
+  --border:      rgba(255,255,255,0.06);
+  --card-shadow: 0 2px 14px rgba(0,0,0,0.3);
+}
+
+body.accessible {
+  font-size: 18px;
+  line-height: 1.7;
+}
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--off);
+  color: var(--text);
+  min-height: 100vh;
+  padding-bottom: 40px;
+  overflow-x: hidden;
+  transition: background 0.3s, color 0.3s;
+}
+
+/* ── HERO ── */
+.hero {
+  background: var(--navy);
+  padding: 20px 20px 52px;
+  position: relative; overflow: hidden;
+}
+.hero-mesh {
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse 70% 80% at 100% 20%, rgba(201,168,76,0.12) 0%, transparent 70%),
+    radial-gradient(ellipse 50% 60% at 0%  90%, rgba(139,92,246,0.07) 0%, transparent 70%);
+}
+.hero-grid {
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(rgba(201,168,76,0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(201,168,76,0.06) 1px, transparent 1px);
+  background-size: 26px 26px;
+  -webkit-mask-image: linear-gradient(to bottom, transparent, black 40%, black 70%, transparent);
+  mask-image: linear-gradient(to bottom, transparent, black 40%, black 70%, transparent);
+}
+.hero-top {
+  position: relative; z-index: 2;
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 20px;
+}
+.back-btn {
+  display: flex; align-items: center; gap: 6px;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.1);
+  color: rgba(255,255,255,0.75);
+  padding: 8px 14px 8px 10px; border-radius: 10px;
+  font-size: 13px; font-weight: 500; cursor: pointer;
+  transition: background 0.2s; font-family: 'DM Sans', sans-serif;
+}
+.back-btn:hover { background: rgba(255,255,255,0.14); }
+.hero-body { position: relative; z-index: 2; }
+.hero-title {
+  font-family: 'Fraunces', serif;
+  font-size: 26px; font-weight: 600; color: var(--white);
+  line-height: 1.2; letter-spacing: -0.02em; margin-bottom: 6px;
+}
+.hero-title .accent { color: var(--gold-2); font-style: italic; }
+.hero-sub { font-size: 13px; color: rgba(255,255,255,0.45); }
+
+/* ── SECTION LABEL ── */
+.section { padding: 20px 16px 0; }
+.section:first-of-type { margin-top: -28px; position: relative; z-index: 10; }
+.sec-label {
+  font-size: 10.5px; font-weight: 600; color: var(--muted);
+  letter-spacing: 0.08em; text-transform: uppercase;
+  margin-bottom: 10px; padding-left: 4px;
+}
+
+/* ── SETTINGS CARD ── */
+.settings-card {
+  background: var(--card-bg);
+  border-radius: 18px;
+  border: 1px solid var(--border);
+  box-shadow: var(--card-shadow);
+  overflow: hidden;
+  animation: fadeUp 0.4s ease both;
+}
+
+/* Each row */
+.setting-row {
+  display: flex; align-items: center;
+  padding: 16px 18px;
+  border-bottom: 1px solid var(--border);
+  transition: background 0.18s;
+  gap: 13px;
+}
+.setting-row:last-child { border-bottom: none; }
+.setting-row:hover { background: var(--off); }
+
+.setting-icon {
+  width: 38px; height: 38px; flex-shrink: 0;
+  border-radius: 11px;
+  display: flex; align-items: center; justify-content: center; font-size: 18px;
+}
+.setting-icon.gold   { background: rgba(201,168,76,0.12); }
+.setting-icon.blue   { background: rgba(59,130,246,0.10); }
+.setting-icon.purple { background: rgba(139,92,246,0.10); }
+.setting-icon.green  { background: rgba(16,185,129,0.10); }
+
+.setting-body { flex: 1; min-width: 0; }
+.setting-name  { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 2px; }
+.setting-desc  { font-size: 11.5px; color: var(--muted); transition: color 0.2s; }
+.setting-desc.active { color: var(--gold); }
+
+/* ── TOGGLE SWITCH ── */
+.switch {
+  position: relative; width: 50px; height: 27px; flex-shrink: 0;
+}
+.switch input { display: none; }
+.slider {
+  position: absolute; inset: 0;
+  background: rgba(0,0,0,0.12); border-radius: 999px;
+  cursor: pointer; transition: all 0.28s;
+}
+body.dark .slider { background: rgba(255,255,255,0.12); }
+.slider::before {
+  content: '';
+  position: absolute;
+  width: 21px; height: 21px;
+  left: 3px; top: 3px;
+  background: var(--white); border-radius: 50%;
+  transition: transform 0.28s, box-shadow 0.28s;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+}
+input:checked + .slider {
+  background: linear-gradient(135deg, var(--gold), var(--gold-2));
+  box-shadow: 0 0 10px rgba(201,168,76,0.35);
+}
+input:checked + .slider::before {
+  transform: translateX(23px);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+}
+
+/* ── DANGER ZONE CARD ── */
+.danger-card {
+  background: var(--card-bg); border-radius: 18px;
+  border: 1px solid rgba(239,68,68,0.15);
+  box-shadow: var(--card-shadow); overflow: hidden;
+  animation: fadeUp 0.4s ease 0.15s both;
+}
+.danger-card .setting-row:hover { background: #FEF2F2; }
+
+/* ── RESET BUTTON ── */
+.reset-btn {
+  width: 100%; padding: 14px; border: none; border-radius: 14px;
+  font-size: 14.5px; font-weight: 600; font-family: 'DM Sans', sans-serif;
+  cursor: pointer; transition: all 0.25s;
+  background: rgba(239,68,68,0.08); color: #991B1B;
+  border: 1.5px solid rgba(239,68,68,0.2);
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  margin-top: 4px;
+}
+.reset-btn:hover {
+  background: #EF4444; color: var(--white);
+  border-color: #EF4444;
+  box-shadow: 0 8px 20px rgba(239,68,68,0.35);
+  transform: translateY(-1px);
+}
+
+/* ── APP INFO CARD ── */
+.info-card {
+  background: var(--navy); border-radius: 16px;
+  padding: 18px 20px; position: relative; overflow: hidden;
+  animation: fadeUp 0.4s ease 0.2s both;
+}
+.info-card::before {
+  content: ''; position: absolute; right: -12px; top: -12px;
+  width: 90px; height: 90px;
+  background: radial-gradient(circle, rgba(201,168,76,0.12) 0%, transparent 70%);
+}
+.info-card-title {
+  font-family: 'Fraunces', serif; font-size: 14px; font-weight: 600;
+  color: var(--white); margin-bottom: 12px; position: relative; z-index: 1;
+}
+.info-rows { display: flex; flex-direction: column; gap: 8px; position: relative; z-index: 1; }
+.info-row {
+  display: flex; align-items: center; justify-content: space-between;
+  font-size: 12.5px;
+}
+.info-row-label { color: rgba(255,255,255,0.45); }
+.info-row-val   { color: var(--white); font-weight: 500; }
+
+/* ── TOAST ── */
+.toast {
+  position: fixed; top: 20px; left: 50%;
+  transform: translateX(-50%) translateY(-80px);
+  background: #F0FDF4; color: #065F46;
+  border: 1px solid #A7F3D0;
+  padding: 11px 18px; border-radius: 12px;
+  font-size: 13px; font-weight: 500;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+  z-index: 500; transition: transform 0.35s ease;
+  white-space: nowrap; font-family: 'DM Sans', sans-serif;
+  display: flex; align-items: center; gap: 7px;
+}
+.toast.show { transform: translateX(-50%) translateY(0); }
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.hero { animation: fadeUp 0.4s ease both; }
+.section:nth-of-type(1) { animation: fadeUp 0.4s ease 0.05s both; }
+.section:nth-of-type(2) { animation: fadeUp 0.4s ease 0.1s  both; }
+.section:nth-of-type(3) { animation: fadeUp 0.4s ease 0.15s both; }
+.section:nth-of-type(4) { animation: fadeUp 0.4s ease 0.2s  both; }
+</style>
+</head>
+<body>
+
+<!-- Toast -->
+<div class="toast" id="toast">✅ Settings saved</div>
+
+<!-- ── HERO ── */
+<div class="hero">
+  <div class="hero-mesh"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-top">
+    <button class="back-btn" onclick="history.back()">← Back</button>
+  </div>
+  <div class="hero-body">
+    <h1 class="hero-title">Settings &amp; <span class="accent">Preferences</span></h1>
+    <p class="hero-sub">Customise your campus navigation experience</p>
+  </div>
+</div>
+
+<!-- ── NAVIGATION SECTION ── -->
+<div class="section">
+  <div class="sec-label">Navigation</div>
+  <div class="settings-card">
+
+    <div class="setting-row">
+      <div class="setting-icon gold">🔊</div>
+      <div class="setting-body">
+        <div class="setting-name">Voice Navigation</div>
+        <div class="setting-desc" id="voiceDesc">Voice guidance is disabled</div>
+      </div>
+      <label class="switch">
+        <input type="checkbox" id="voice"/>
+        <span class="slider"></span>
+      </label>
+    </div>
+
+  </div>
+</div>
+
+<!-- ── APPEARANCE SECTION ── -->
+<div class="section">
+  <div class="sec-label">Appearance</div>
+  <div class="settings-card">
+
+    <div class="setting-row">
+      <div class="setting-icon blue">🌙</div>
+      <div class="setting-body">
+        <div class="setting-name">Dark Mode</div>
+        <div class="setting-desc" id="darkDesc">Light mode is active</div>
+      </div>
+      <label class="switch">
+        <input type="checkbox" id="dark"/>
+        <span class="slider"></span>
+      </label>
+    </div>
+
+    <div class="setting-row">
+      <div class="setting-icon purple">♿</div>
+      <div class="setting-body">
+        <div class="setting-name">Accessibility Mode</div>
+        <div class="setting-desc" id="accessDesc">Larger text & better contrast</div>
+      </div>
+      <label class="switch">
+        <input type="checkbox" id="access"/>
+        <span class="slider"></span>
+      </label>
+    </div>
+
+  </div>
+</div>
+
+<!-- ── DANGER ZONE ── -->
+<div class="section">
+  <div class="sec-label">Reset</div>
+  <div class="danger-card">
+    <div class="setting-row">
+      <div class="setting-icon" style="background:rgba(239,68,68,0.10)">🗑️</div>
+      <div class="setting-body">
+        <div class="setting-name">Reset All Settings</div>
+        <div class="setting-desc">Restore defaults & clear saved data</div>
+      </div>
+    </div>
+    <div style="padding: 0 16px 16px;">
+      <button class="reset-btn" onclick="resetSettings()">
+        🔄 Reset to Default
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ── APP INFO ── -->
+<div class="section" style="padding-bottom:8px;">
+  <div class="sec-label">About</div>
+  <div class="info-card">
+    <div class="info-card-title">🏛️ Crescent Smart Campus</div>
+    <div class="info-rows">
+      <div class="info-row">
+        <span class="info-row-label">Version</span>
+        <span class="info-row-val">1.0.0</span>
+      </div>
+      <div class="info-row">
+        <span class="info-row-label">Navigation</span>
+        <span class="info-row-val">AR + GPS</span>
+      </div>
+      <div class="info-row">
+        <span class="info-row-label">AI Model</span>
+        <span class="info-row-val">Landmark CNN</span>
+      </div>
+      <div class="info-row">
+        <span class="info-row-label">Database</span>
+        <span class="info-row-val">Firebase Realtime</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const voiceEl  = document.getElementById("voice");
+  const darkEl   = document.getElementById("dark");
+  const accessEl = document.getElementById("access");
+
+  /* ── LOAD SAVED SETTINGS ── */
+  voiceEl.checked  = localStorage.voice  === "on";
+  darkEl.checked   = localStorage.dark   === "on";
+  accessEl.checked = localStorage.access === "on";
+
+  applySettings();
+
+  /* ── EVENTS ── */
+  voiceEl.onchange = () => {
+    localStorage.voice = voiceEl.checked ? "on" : "off";
+    applySettings();
+    showToast(voiceEl.checked ? "🔊 Voice navigation enabled" : "🔇 Voice navigation disabled");
+  };
+
+  darkEl.onchange = () => {
+    localStorage.dark = darkEl.checked ? "on" : "off";
+    applySettings();
+    showToast(darkEl.checked ? "🌙 Dark mode enabled" : "☀️ Light mode enabled");
+  };
+
+  accessEl.onchange = () => {
+    localStorage.access = accessEl.checked ? "on" : "off";
+    applySettings();
+    showToast(accessEl.checked ? "♿ Accessibility mode enabled" : "♿ Accessibility mode disabled");
+  };
+
+  /* ── APPLY ── */
+  function applySettings() {
+    /* Voice */
+    const vDesc = document.getElementById("voiceDesc");
+    vDesc.innerText = voiceEl.checked ? "Voice guidance is enabled" : "Voice guidance is disabled";
+    vDesc.classList.toggle("active", voiceEl.checked);
+
+    /* Dark */
+    const dDesc = document.getElementById("darkDesc");
+    dDesc.innerText = darkEl.checked ? "Dark mode is active" : "Light mode is active";
+    dDesc.classList.toggle("active", darkEl.checked);
+    document.body.classList.toggle("dark", darkEl.checked);
+
+    /* Accessibility */
+    const aDesc = document.getElementById("accessDesc");
+    aDesc.innerText = accessEl.checked ? "Accessibility mode is on" : "Larger text & better contrast";
+    aDesc.classList.toggle("active", accessEl.checked);
+    document.body.classList.toggle("accessible", accessEl.checked);
+  }
+
+  /* ── RESET ── */
+  function resetSettings() {
+    if (confirm("Reset all settings to default?")) {
+      localStorage.clear();
+      showToast("🔄 Settings reset to default");
+      setTimeout(() => location.reload(), 1000);
+    }
+  }
+
+  /* ── TOAST ── */
+  function showToast(msg) {
+    const t = document.getElementById("toast");
+    t.innerHTML = msg;
+    t.classList.add("show");
+    setTimeout(() => t.classList.remove("show"), 2800);
+  }
+</script>
+
+</body>
+</html>

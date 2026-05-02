@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Campus Navigation — Crescent Campus</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;1,9..144,300&display=swap" rel="stylesheet"/>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --navy:      #08172E;
+  --navy-2:    #0F2340;
+  --navy-3:    #162F54;
+  --gold:      #C9A84C;
+  --gold-2:    #DDB95E;
+  --gold-3:    #EDD080;
+  --gold-pale: #FBF3DC;
+  --white:     #FFFFFF;
+  --off:       #F4F6F9;
+  --muted:     #8FA3BC;
+  --text:      #0F2340;
+  --card-bg:   #FFFFFF;
+  --border:    rgba(0,0,0,0.06);
+  --shadow:    0 2px 14px rgba(8,23,46,0.07);
+}
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--off);
+  color: var(--text);
+  min-height: 100vh;
+  padding-bottom: 40px;
+  overflow-x: hidden;
+}
+
+/* ── HERO ── */
+.hero {
+  background: var(--navy);
+  padding: 20px 20px 52px;
+  position: relative; overflow: hidden;
+}
+.hero-mesh {
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse 70% 90% at 100% 20%, rgba(201,168,76,0.13) 0%, transparent 70%),
+    radial-gradient(ellipse 50% 60% at 0%  100%, rgba(59,130,246,0.07) 0%, transparent 70%);
+}
+.hero-grid {
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(rgba(201,168,76,0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(201,168,76,0.06) 1px, transparent 1px);
+  background-size: 26px 26px;
+  -webkit-mask-image: linear-gradient(to bottom, transparent, black 30%, black 70%, transparent);
+  mask-image: linear-gradient(to bottom, transparent, black 30%, black 70%, transparent);
+}
+
+/* Decorative nodes */
+.hero-nodes {
+  position: absolute; right: 16px; top: 16px;
+  width: 100px; height: 100px; opacity: 0.5;
+}
+.hero-nodes svg { width: 100%; height: 100%; }
+
+.hero-top {
+  position: relative; z-index: 2;
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 22px;
+}
+.back-btn {
+  display: flex; align-items: center; gap: 6px;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.1);
+  color: rgba(255,255,255,0.75);
+  padding: 8px 14px 8px 10px; border-radius: 10px;
+  font-size: 13px; font-weight: 500; cursor: pointer;
+  transition: background 0.2s; font-family: 'DM Sans', sans-serif;
+}
+.back-btn:hover { background: rgba(255,255,255,0.14); }
+
+.visitor-chip {
+  display: flex; align-items: center; gap: 5px;
+  background: rgba(201,168,76,0.15);
+  border: 1px solid rgba(201,168,76,0.3);
+  padding: 5px 12px; border-radius: 20px;
+  font-size: 11px; font-weight: 600; color: var(--gold-2);
+  letter-spacing: 0.04em; text-transform: uppercase;
+}
+.visitor-dot {
+  width: 5px; height: 5px; border-radius: 50%;
+  background: var(--gold);
+  animation: blink 1.8s ease-in-out infinite;
+}
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+.hero-content { position: relative; z-index: 2; }
+.hero-tag {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: rgba(255,255,255,0.07);
+  border: 1px solid rgba(255,255,255,0.1);
+  padding: 4px 12px; border-radius: 20px;
+  font-size: 11px; color: rgba(255,255,255,0.5);
+  letter-spacing: 0.06em; text-transform: uppercase;
+  margin-bottom: 10px;
+}
+.hero-title {
+  font-family: 'Fraunces', serif;
+  font-size: 26px; font-weight: 600; color: var(--white);
+  line-height: 1.2; letter-spacing: -0.02em; margin-bottom: 8px;
+}
+.hero-title .accent { color: var(--gold-2); font-style: italic; }
+.hero-sub { font-size: 13px; color: rgba(255,255,255,0.45); line-height: 1.5; }
+
+/* ── NAV OPTION CARDS ── */
+.options-wrap {
+  padding: 20px 16px 0;
+  display: flex; flex-direction: column; gap: 14px;
+  margin-top: -28px;
+  position: relative; z-index: 10;
+}
+
+.nav-option {
+  background: var(--card-bg);
+  border-radius: 20px;
+  border: 1px solid var(--border);
+  box-shadow: 0 8px 32px rgba(8,23,46,0.1);
+  overflow: hidden; cursor: pointer;
+  transition: all 0.28s;
+  display: flex; align-items: stretch;
+  animation: fadeUp 0.45s ease both;
+}
+.nav-option:nth-child(1) { animation-delay: 0.05s; }
+.nav-option:nth-child(2) { animation-delay: 0.12s; }
+
+.nav-option:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 18px 44px rgba(8,23,46,0.15);
+}
+.nav-option:active { transform: scale(0.98); }
+
+.option-stripe { width: 5px; flex-shrink: 0; }
+.nav-option.ar         .option-stripe { background: linear-gradient(to bottom, var(--gold), var(--gold-3)); }
+.nav-option.landmark   .option-stripe { background: linear-gradient(to bottom, #3B82F6, #60A5FA); }
+
+.option-inner {
+  flex: 1; padding: 22px 20px 20px 18px;
+  display: flex; align-items: center; gap: 16px;
+}
+
+.option-icon {
+  width: 60px; height: 60px; flex-shrink: 0;
+  border-radius: 18px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 28px;
+}
+.nav-option.ar       .option-icon { background: linear-gradient(135deg, rgba(201,168,76,0.13), rgba(237,208,128,0.2)); }
+.nav-option.landmark .option-icon { background: linear-gradient(135deg, rgba(59,130,246,0.10), rgba(96,165,250,0.18)); }
+
+.option-body { flex: 1; min-width: 0; }
+.option-title {
+  font-family: 'Fraunces', serif;
+  font-size: 18px; font-weight: 600; color: var(--navy);
+  margin-bottom: 5px;
+}
+.option-desc { font-size: 12.5px; color: var(--muted); line-height: 1.5; margin-bottom: 10px; }
+
+.option-badge {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 3px 10px; border-radius: 20px;
+  font-size: 10.5px; font-weight: 600;
+}
+.nav-option.ar       .option-badge { background: rgba(201,168,76,0.12); color: #92660A; }
+.nav-option.landmark .option-badge { background: rgba(59,130,246,0.10); color: #1D4ED8; }
+
+.option-chevron {
+  width: 36px; height: 36px; border-radius: 11px;
+  background: var(--off); border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px; color: var(--muted); flex-shrink: 0;
+  transition: all 0.25s;
+}
+.nav-option:hover .option-chevron {
+  background: var(--navy); color: var(--white); transform: translateX(3px);
+}
+
+/* ── INFO STRIP ── */
+.info-strip {
+  margin: 20px 16px 0;
+  background: var(--navy);
+  border-radius: 16px; padding: 16px 18px;
+  display: flex; align-items: center; gap: 13px;
+  position: relative; overflow: hidden;
+  animation: fadeUp 0.45s ease 0.2s both;
+}
+.info-strip::before {
+  content: ''; position: absolute; right: -16px; top: -16px;
+  width: 90px; height: 90px;
+  background: radial-gradient(circle, rgba(201,168,76,0.12) 0%, transparent 70%);
+}
+.info-strip-icon {
+  width: 40px; height: 40px; flex-shrink: 0;
+  background: rgba(201,168,76,0.15);
+  border: 1px solid rgba(201,168,76,0.25);
+  border-radius: 12px;
+  display: flex; align-items: center; justify-content: center; font-size: 20px;
+}
+.info-strip-body { position: relative; z-index: 1; }
+.info-strip-body strong { display: block; font-size: 13px; font-weight: 600; color: var(--white); margin-bottom: 2px; }
+.info-strip-body span   { font-size: 12px; color: rgba(255,255,255,0.45); }
+
+/* ── QUICK TIPS ── */
+.tips {
+  margin: 16px 16px 0;
+  display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+  animation: fadeUp 0.45s ease 0.25s both;
+}
+.tip-card {
+  background: var(--card-bg); border-radius: 14px;
+  padding: 14px 14px 12px;
+  border: 1px solid var(--border); box-shadow: var(--shadow);
+  display: flex; flex-direction: column; gap: 7px;
+}
+.tip-icon { font-size: 20px; }
+.tip-title { font-size: 12.5px; font-weight: 600; color: var(--text); }
+.tip-desc  { font-size: 11px; color: var(--muted); line-height: 1.4; }
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.hero { animation: fadeUp 0.4s ease both; }
+
+@media (max-width: 360px) {
+  .hero-title { font-size: 22px; }
+  .option-title { font-size: 16px; }
+  .tips { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- ── HERO ── -->
+<div class="hero">
+  <div class="hero-mesh"></div>
+  <div class="hero-grid"></div>
+
+  <!-- Decorative nodes -->
+  <div class="hero-nodes">
+    <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="15"  cy="20"  r="4" fill="rgba(201,168,76,0.6)"/>
+      <circle cx="70"  cy="12"  r="5" fill="rgba(201,168,76,0.4)"/>
+      <circle cx="88"  cy="58"  r="4" fill="rgba(201,168,76,0.5)"/>
+      <circle cx="40"  cy="75"  r="3" fill="rgba(201,168,76,0.3)"/>
+      <line x1="15" y1="20" x2="70" y2="12" stroke="rgba(201,168,76,0.2)" stroke-width="1"/>
+      <line x1="70" y1="12" x2="88" y2="58" stroke="rgba(201,168,76,0.2)" stroke-width="1"/>
+      <line x1="88" y1="58" x2="40" y2="75" stroke="rgba(201,168,76,0.15)" stroke-width="1"/>
+    </svg>
+  </div>
+
+  <div class="hero-top">
+    <button class="back-btn" onclick="location.href='dashboard.html'">← Back</button>
+    <div class="visitor-chip">
+      <span class="visitor-dot"></span>
+      Visitor Mode
+    </div>
+  </div>
+
+  <div class="hero-content">
+    <div class="hero-tag">🏫 Crescent Campus</div>
+    <h1 class="hero-title">Select <span class="accent">Navigation</span><br>Method</h1>
+    <p class="hero-sub">Choose how you want to explore campus — AR navigation or AI landmark recognition</p>
+  </div>
+</div>
+
+<!-- ── OPTIONS ── -->
+<div class="options-wrap">
+
+  <!-- AR Navigation -->
+  <div class="nav-option ar" onclick="openAR()">
+    <div class="option-stripe"></div>
+    <div class="option-inner">
+      <div class="option-icon">📍</div>
+      <div class="option-body">
+        <div class="option-title">AR Navigation</div>
+        <div class="option-desc">Real-time augmented reality turn-by-turn directions to any campus location using GPS.</div>
+        <span class="option-badge">⬆ GPS Enabled</span>
+      </div>
+      <div class="option-chevron">›</div>
+    </div>
+  </div>
+
+  <!-- Landmark Recognition -->
+  <div class="nav-option landmark" onclick="openLandmark()">
+    <div class="option-stripe"></div>
+    <div class="option-inner">
+      <div class="option-icon">📷</div>
+      <div class="option-body">
+        <div class="option-title">Landmark Recognition</div>
+        <div class="option-desc">Point your camera at any campus building and let AI identify it instantly.</div>
+        <span class="option-badge">🤖 AI Powered</span>
+      </div>
+      <div class="option-chevron">›</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ── INFO STRIP ── -->
+<div class="info-strip">
+  <div class="info-strip-icon">🗺️</div>
+  <div class="info-strip-body">
+    <strong>24 Locations Mapped</strong>
+    <span>CS Block · EE Block · Mech Block · Convocation Hall · Main Gate</span>
+  </div>
+</div>
+
+<!-- ── TIPS ── -->
+<div class="tips">
+  <div class="tip-card">
+    <span class="tip-icon">📶</span>
+    <div class="tip-title">Enable GPS</div>
+    <div class="tip-desc">Allow location access for accurate AR navigation.</div>
+  </div>
+  <div class="tip-card">
+    <span class="tip-icon">☀️</span>
+    <div class="tip-title">Good Lighting</div>
+    <div class="tip-desc">Use landmark recognition in well-lit outdoor areas.</div>
+  </div>
+  <div class="tip-card">
+    <span class="tip-icon">📸</span>
+    <div class="tip-title">Point & Scan</div>
+    <div class="tip-desc">Hold camera steady at building entrance for best AI detection.</div>
+  </div>
+  <div class="tip-card">
+    <span class="tip-icon">🔋</span>
+    <div class="tip-title">Battery Note</div>
+    <div class="tip-desc">AR mode uses more battery. Keep device charged.</div>
+  </div>
+</div>
+
+<script>
+  function openAR() {
+    localStorage.setItem("role", "visitor");
+    location.href = "destinations.html?role=visitor";
+  }
+
+  function openLandmark() {
+    localStorage.setItem("role", "visitor");
+    location.href = "landmark.html";
+  }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Workshop Detail — Crescent Campus</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;1,9..144,300&display=swap" rel="stylesheet"/>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --navy:        #08172E;
+  --navy-2:      #0F2340;
+  --navy-3:      #162F54;
+  --gold:        #C9A84C;
+  --gold-2:      #DDB95E;
+  --gold-3:      #EDD080;
+  --gold-pale:   #FBF3DC;
+  --white:       #FFFFFF;
+  --off:         #F4F6F9;
+  --muted:       #8FA3BC;
+  --text:        #0F2340;
+  --card-bg:     #FFFFFF;
+  --border:      rgba(0,0,0,0.06);
+  --card-shadow: 0 2px 14px rgba(8,23,46,0.07);
+}
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--off);
+  color: var(--text);
+  min-height: 100vh;
+  padding-bottom: 40px;
+  overflow-x: hidden;
+}
+
+/* ── HERO ── */
+.hero {
+  background: var(--navy);
+  padding: 20px 20px 60px;
+  position: relative; overflow: hidden;
+}
+.hero-mesh {
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse 70% 80% at 100% 20%, rgba(249,115,22,0.12) 0%, transparent 70%),
+    radial-gradient(ellipse 50% 60% at 0%  100%, rgba(59,130,246,0.07) 0%, transparent 70%);
+}
+.hero-grid {
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(rgba(201,168,76,0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(201,168,76,0.06) 1px, transparent 1px);
+  background-size: 26px 26px;
+  -webkit-mask-image: linear-gradient(to bottom, transparent, black 40%, black 70%, transparent);
+  mask-image: linear-gradient(to bottom, transparent, black 40%, black 70%, transparent);
+}
+
+.hero-top {
+  position: relative; z-index: 2;
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 20px;
+}
+.back-btn {
+  display: flex; align-items: center; gap: 6px;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.1);
+  color: rgba(255,255,255,0.75);
+  padding: 8px 14px 8px 10px; border-radius: 10px;
+  font-size: 13px; font-weight: 500; cursor: pointer;
+  transition: background 0.2s; font-family: 'DM Sans', sans-serif;
+}
+.back-btn:hover { background: rgba(255,255,255,0.14); }
+
+.hero-body { position: relative; z-index: 2; }
+.hero-eyebrow {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: rgba(249,115,22,0.15);
+  border: 1px solid rgba(249,115,22,0.3);
+  padding: 4px 12px; border-radius: 20px;
+  font-size: 11px; font-weight: 600; color: #FB923C;
+  letter-spacing: 0.04em; text-transform: uppercase;
+  margin-bottom: 10px;
+}
+.eyebrow-dot { width: 5px; height: 5px; border-radius: 50%; background: #F97316; animation: blink 1.8s ease-in-out infinite; }
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+.hero-title {
+  font-family: 'Fraunces', serif;
+  font-size: 24px; font-weight: 600; color: var(--white);
+  line-height: 1.2; letter-spacing: -0.02em; margin-bottom: 8px;
+  min-height: 30px;
+}
+.sk-line {
+  border-radius: 8px;
+  background: linear-gradient(90deg, rgba(255,255,255,0.06) 25%, rgba(255,255,255,0.12) 50%, rgba(255,255,255,0.06) 75%);
+  background-size: 200% 100%; animation: sk 1.5s ease infinite;
+}
+@keyframes sk { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+.sk-title { height: 26px; width: 70%; }
+
+/* ── IMAGE CARD ── */
+.img-card {
+  background: var(--card-bg); border-radius: 20px;
+  margin: -42px 16px 0;
+  border: 1px solid var(--border);
+  box-shadow: 0 16px 40px rgba(8,23,46,0.13);
+  overflow: hidden; position: relative; z-index: 10;
+  animation: fadeUp 0.45s ease both;
+}
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.card-strip {
+  height: 4px;
+  background: linear-gradient(90deg, #F97316, #FB923C, #F97316);
+  background-size: 200% 100%;
+  animation: shimmer 3s ease-in-out infinite;
+}
+@keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+
+.workshop-image {
+  width: 100%; max-height: 220px;
+  object-fit: cover; display: block;
+  transition: transform 0.4s ease;
+}
+.workshop-image:hover { transform: scale(1.02); }
+
+.workshop-img-placeholder {
+  width: 100%; height: 180px;
+  background: linear-gradient(135deg, var(--navy-2), var(--navy-3));
+  display: flex; align-items: center; justify-content: center;
+  flex-direction: column; gap: 10px;
+}
+.workshop-img-placeholder span { font-size: 48px; opacity: 0.6; }
+.workshop-img-placeholder p { font-size: 13px; color: rgba(255,255,255,0.4); }
+
+/* Meta row */
+.event-meta-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 18px; border-bottom: 1px solid var(--border);
+}
+.status-pill {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 4px 12px; border-radius: 20px; font-size: 11.5px; font-weight: 600;
+}
+.status-pill.upcoming  { background: rgba(16,185,129,0.1); color: #065F46; border: 1px solid rgba(16,185,129,0.2); }
+.status-pill.completed { background: rgba(239,68,68,0.1);  color: #991B1B; border: 1px solid rgba(239,68,68,0.2); }
+.status-dot { width: 5px; height: 5px; border-radius: 50%; }
+.upcoming  .status-dot { background: #10B981; animation: blink 2s ease-in-out infinite; }
+.completed .status-dot { background: #EF4444; }
+
+.cat-chip {
+  padding: 4px 12px; border-radius: 20px;
+  font-size: 11px; font-weight: 600;
+  background: rgba(249,115,22,0.1); color: #9A3412;
+  border: 1px solid rgba(249,115,22,0.2);
+}
+
+/* Info grid */
+.info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--border); }
+.info-cell { background: var(--card-bg); padding: 15px 18px; transition: background 0.18s; }
+.info-cell:hover { background: var(--off); }
+.info-cell.full { grid-column: 1 / -1; }
+.cell-icon {
+  width: 30px; height: 30px; border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; margin-bottom: 7px;
+}
+.cell-icon.orange { background: rgba(249,115,22,0.10); }
+.cell-icon.gold   { background: rgba(201,168,76,0.12); }
+.cell-icon.green  { background: rgba(16,185,129,0.10); }
+.cell-icon.blue   { background: rgba(59,130,246,0.10); }
+.cell-icon.purple { background: rgba(139,92,246,0.10); }
+.cell-label { font-size: 10.5px; font-weight: 600; color: var(--muted); letter-spacing: 0.04em; text-transform: uppercase; margin-bottom: 4px; }
+.cell-value { font-size: 13.5px; font-weight: 600; color: var(--text); }
+
+/* ── COUNTDOWN CARD ── */
+.countdown-card {
+  margin: 14px 16px 0;
+  background: var(--navy); border-radius: 16px;
+  padding: 16px 18px; border: 1px solid rgba(255,255,255,0.05);
+  box-shadow: 0 8px 24px rgba(8,23,46,0.18);
+  display: flex; align-items: center; gap: 14px;
+  position: relative; overflow: hidden;
+  animation: fadeUp 0.45s ease 0.1s both;
+}
+.countdown-card::before {
+  content: ''; position: absolute; right: -10px; top: -10px;
+  width: 80px; height: 80px;
+  background: radial-gradient(circle, rgba(249,115,22,0.15) 0%, transparent 70%);
+}
+.cd-icon {
+  width: 44px; height: 44px; flex-shrink: 0;
+  background: rgba(249,115,22,0.15); border: 1px solid rgba(249,115,22,0.25);
+  border-radius: 12px;
+  display: flex; align-items: center; justify-content: center; font-size: 22px;
+  position: relative; z-index: 1;
+}
+.cd-body { position: relative; z-index: 1; flex: 1; min-width: 0; }
+.cd-label { font-size: 11px; color: rgba(255,255,255,0.45); margin-bottom: 4px; letter-spacing: 0.04em; }
+.cd-value {
+  font-family: 'Fraunces', serif;
+  font-size: 17px; font-weight: 600; color: #FB923C; line-height: 1.2;
+}
+.cd-seats { font-size: 12px; color: rgba(255,255,255,0.45); margin-top: 4px; }
+
+/* ── POSTER ── */
+.poster-card {
+  margin: 14px 16px 0; background: var(--card-bg); border-radius: 14px;
+  border: 1px solid var(--border); box-shadow: var(--card-shadow);
+  padding: 14px 18px; animation: fadeUp 0.45s ease 0.15s both;
+}
+.poster-title { font-size: 12px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 10px; }
+.poster-links { display: flex; gap: 10px; }
+.poster-link {
+  flex: 1; display: flex; align-items: center; justify-content: center; gap: 7px;
+  padding: 10px 14px; border-radius: 11px;
+  font-size: 13px; font-weight: 500; text-decoration: none; transition: all 0.22s;
+}
+.poster-link.view { background: rgba(59,130,246,0.1); color: #1D4ED8; border: 1px solid rgba(59,130,246,0.2); }
+.poster-link.view:hover { background: #3B82F6; color: var(--white); }
+.poster-link.dl   { background: rgba(16,185,129,0.1); color: #065F46; border: 1px solid rgba(16,185,129,0.2); }
+.poster-link.dl:hover { background: #10B981; color: var(--white); }
+
+/* ── ACTIONS ── */
+.actions {
+  padding: 16px 16px 0; display: flex; flex-direction: column; gap: 10px;
+  animation: fadeUp 0.45s ease 0.2s both;
+}
+.register-btn {
+  width: 100%; padding: 15px; border: none; border-radius: 14px;
+  font-size: 15px; font-weight: 600; font-family: 'DM Sans', sans-serif;
+  cursor: pointer; transition: all 0.25s;
+  background: linear-gradient(135deg, var(--gold), var(--gold-2));
+  color: var(--navy); box-shadow: 0 8px 24px rgba(201,168,76,0.4);
+  position: relative; overflow: hidden;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+}
+.register-btn::after {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.25) 0%, transparent 60%);
+}
+.register-btn:hover  { transform: translateY(-2px); box-shadow: 0 12px 32px rgba(201,168,76,0.5); }
+.register-btn:active { transform: scale(0.98); }
+.register-btn:disabled {
+  background: var(--off); color: var(--muted);
+  border: 1.5px solid var(--border); box-shadow: none;
+  cursor: not-allowed; transform: none;
+}
+.register-btn:disabled::after { display: none; }
+.register-btn.full {
+  background: linear-gradient(135deg, #EF4444, #F87171);
+  color: var(--white); box-shadow: 0 8px 24px rgba(239,68,68,0.35);
+}
+.nav-btn {
+  width: 100%; padding: 13px; border: none; border-radius: 14px;
+  font-size: 14px; font-weight: 600; font-family: 'DM Sans', sans-serif;
+  cursor: pointer; transition: all 0.25s;
+  background: var(--navy); color: var(--white);
+  box-shadow: 0 6px 20px rgba(8,23,46,0.25);
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+}
+.nav-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 28px rgba(8,23,46,0.35); }
+</style>
+</head>
+<body>
+
+<!-- ── HERO ── -->
+<div class="hero">
+  <div class="hero-mesh"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-top">
+    <button class="back-btn" onclick="history.back()">← Back</button>
+  </div>
+  <div class="hero-body">
+    <div class="hero-eyebrow"><span class="eyebrow-dot"></span>Campus Workshop</div>
+    <h1 class="hero-title" id="title">
+      <span class="sk-line sk-title"></span>
+    </h1>
+  </div>
+</div>
+
+<!-- ── IMAGE CARD ── -->
+<div class="img-card" id="mainCard">
+  <div class="card-strip"></div>
+  <div class="workshop-img-placeholder">
+    <span>🛠️</span>
+    <p>Loading workshop...</p>
+  </div>
+</div>
+
+<script type="module">
+import { initializeApp } from
+  "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
+import { getDatabase, ref, get, push }
+  from "https://www.gstatic.com/firebasejs/12.9.0/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey:        "AIzaSyBPykUmk_KgytoMbDjhOLR8AwwoSmt4EL4",
+  authDomain:    "crescent-navigation-system.firebaseapp.com",
+  databaseURL:   "https://crescent-navigation-system-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId:     "crescent-navigation-system",
+  appId:         "1:418104083143:web:279d0dfa88f2b700fd74e2"
+};
+
+const app        = initializeApp(firebaseConfig);
+const db         = getDatabase(app);
+const params     = new URLSearchParams(location.search);
+const workshopId = params.get("id");
+const mainCard   = document.getElementById("mainCard");
+
+/* ── PARSE DATE ── */
+function parseDate(str) {
+  if (!str) return null;
+  if (str.includes("/")) {
+    const [d, m, y] = str.split("/");
+    return new Date(y, m - 1, d);
+  }
+  return new Date(str);
+}
+
+(async () => {
+
+  if (!workshopId) {
+    mainCard.innerHTML = `<div style="padding:24px;text-align:center;color:var(--muted)">Workshop not found</div>`;
+    return;
+  }
+
+  const snapshot = await get(ref(db, "workshops/" + workshopId));
+
+  if (!snapshot.exists()) {
+    mainCard.innerHTML = `<div style="padding:24px;text-align:center;color:var(--muted)">Workshop not found</div>`;
+    return;
+  }
+
+  const w            = snapshot.val();
+  const workshopDate = parseDate(w.date);
+  const now          = new Date();
+  const isUpcoming   = workshopDate && workshopDate >= now;
+  const status       = isUpcoming ? "Upcoming" : "Completed";
+  const posterUrl    = w.poster || w.pdf || "";
+  const isTech       = (w.category || "").toLowerCase() === "technical";
+
+  /* Hero title */
+  document.getElementById("title").innerText = w.title || "Workshop";
+
+  /* Image card */
+  const imgHtml = w.image
+    ? `<img src="${w.image}" class="workshop-image" alt="${w.title}"/>`
+    : `<div class="workshop-img-placeholder"><span>${isTech ? "🔧" : "🎨"}</span><p>${w.title || "Workshop"}</p></div>`;
+
+  mainCard.innerHTML = `
+    <div class="card-strip"></div>
+    ${imgHtml}
+    <div class="event-meta-row">
+      <div class="status-pill ${status.toLowerCase()}">
+        <span class="status-dot"></span>
+        ${status}
+      </div>
+      <span class="cat-chip">${w.category || "General"}</span>
+    </div>
+    <div class="info-grid">
+      <div class="info-cell">
+        <div class="cell-icon gold">📅</div>
+        <div class="cell-label">Date</div>
+        <div class="cell-value">${w.date || "—"}</div>
+      </div>
+      <div class="info-cell">
+        <div class="cell-icon green">👥</div>
+        <div class="cell-label">Capacity</div>
+        <div class="cell-value">${w.capacity ? w.capacity + " seats" : "Unlimited"}</div>
+      </div>
+      <div class="info-cell full">
+        <div class="cell-icon orange">📍</div>
+        <div class="cell-label">Location</div>
+        <div class="cell-value" id="venueText">${w.location || "—"}</div>
+      </div>
+      <div class="info-cell full">
+        <div class="cell-icon purple">🧭</div>
+        <div class="cell-label">How to Reach</div>
+        <div class="cell-value">${w.guide || "Navigation details not provided"}</div>
+      </div>
+    </div>`;
+
+  /* Countdown */
+  if (isUpcoming && workshopDate) {
+    const cdDiv = document.createElement("div");
+    cdDiv.className = "countdown-card";
+    cdDiv.innerHTML = `
+      <div class="cd-icon">⏳</div>
+      <div class="cd-body">
+        <div class="cd-label">Time until workshop</div>
+        <div class="cd-value" id="cdValue">Calculating...</div>
+        <div class="cd-seats" id="cdSeats"></div>
+      </div>`;
+    mainCard.after(cdDiv);
+
+    function tick() {
+      const diff = workshopDate - new Date();
+      if (diff <= 0) { document.getElementById("cdValue").innerText = "Workshop has started!"; return; }
+      const days  = Math.floor(diff / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+      const mins  = Math.floor((diff / (1000 * 60)) % 60);
+      document.getElementById("cdValue").innerText =
+        days > 0 ? `${days}d ${hours}h ${mins}m` : `${hours}h ${mins}m`;
+    }
+    tick();
+    setInterval(tick, 60000);
+  }
+
+  /* Poster */
+  if (posterUrl) {
+    const pDiv = document.createElement("div");
+    pDiv.className = "poster-card";
+    pDiv.innerHTML = `
+      <div class="poster-title">📄 Workshop Poster</div>
+      <div class="poster-links">
+        <a class="poster-link view" href="${posterUrl}" target="_blank">👁️ View PDF</a>
+        <a class="poster-link dl"   href="${posterUrl}" download>⬇️ Download</a>
+      </div>`;
+    const cdCard = document.querySelector(".countdown-card");
+    (cdCard || mainCard).after(pDiv);
+  }
+
+  /* Actions */
+  const actDiv = document.createElement("div");
+  actDiv.className = "actions";
+
+  const registerBtn = document.createElement("button");
+  registerBtn.className = "register-btn";
+
+  if (w.formLink) {
+    registerBtn.innerHTML = "🎟 Register Now";
+    registerBtn.onclick = () => {
+      push(ref(db, "workshopRegistrations/" + workshopId), { time: Date.now() });
+      window.open(w.formLink, "_blank");
+    };
+  } else {
+    registerBtn.innerHTML = "Registration Closed";
+    registerBtn.disabled = true;
+  }
+
+  const navBtn = document.createElement("button");
+  navBtn.className = "nav-btn";
+  navBtn.innerHTML = "🧭 Navigate to Workshop";
+  navBtn.onclick = () => navigate();
+
+  actDiv.appendChild(registerBtn);
+  actDiv.appendChild(navBtn);
+  document.body.appendChild(actDiv);
+
+  /* AR Navigation */
+  window.navigate = function() {
+    const venue = (document.getElementById("venueText")?.innerText || "").trim().toLowerCase();
+    fetch("data/locations.json")
+      .then(r => r.json())
+      .then(locations => {
+        const index = locations.findIndex(l => l.name.trim().toLowerCase() === venue);
+        if (index === -1) { alert("AR navigation not available for this location"); return; }
+        location.href = `confirm.html?place=${index}&role=student`;
+      })
+      .catch(() => alert("Unable to load navigation data"));
+  };
+
+})();
+</script>
+
+</body>
+</html>

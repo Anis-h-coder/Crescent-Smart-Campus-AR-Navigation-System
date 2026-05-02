@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Quick Navigation — Crescent Campus</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;1,9..144,300&display=swap" rel="stylesheet"/>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --navy:        #08172E;
+  --navy-2:      #0F2340;
+  --navy-3:      #162F54;
+  --gold:        #C9A84C;
+  --gold-2:      #DDB95E;
+  --gold-3:      #EDD080;
+  --gold-pale:   #FBF3DC;
+  --white:       #FFFFFF;
+  --off:         #F4F6F9;
+  --muted:       #8FA3BC;
+  --text:        #0F2340;
+  --card-bg:     #FFFFFF;
+  --border:      rgba(0,0,0,0.06);
+  --card-shadow: 0 2px 14px rgba(8,23,46,0.07);
+}
+
+body.dark {
+  --off:      #07111F;
+  --card-bg:  #0F2340;
+  --text:     #E8EEF5;
+  --muted:    #6B85A0;
+  --border:   rgba(255,255,255,0.06);
+  --card-shadow: 0 2px 14px rgba(0,0,0,0.3);
+}
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--off);
+  color: var(--text);
+  min-height: 100vh;
+  padding-bottom: 40px;
+  overflow-x: hidden;
+  transition: background 0.3s, color 0.3s;
+}
+
+/* ── HERO ── */
+.hero {
+  background: var(--navy);
+  padding: 20px 20px 52px;
+  position: relative; overflow: hidden;
+}
+.hero-mesh {
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse 70% 80% at 100% 20%, rgba(201,168,76,0.13) 0%, transparent 70%),
+    radial-gradient(ellipse 50% 60% at 0%  90%, rgba(59,130,246,0.07) 0%, transparent 70%);
+}
+.hero-grid {
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(rgba(201,168,76,0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(201,168,76,0.06) 1px, transparent 1px);
+  background-size: 26px 26px;
+  -webkit-mask-image: linear-gradient(to bottom, transparent, black 40%, black 70%, transparent);
+  mask-image: linear-gradient(to bottom, transparent, black 40%, black 70%, transparent);
+}
+.hero-top {
+  position: relative; z-index: 2;
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 20px;
+}
+.back-btn {
+  display: flex; align-items: center; gap: 6px;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.1);
+  color: rgba(255,255,255,0.75);
+  padding: 8px 14px 8px 10px; border-radius: 10px;
+  font-size: 13px; font-weight: 500; cursor: pointer;
+  transition: background 0.2s; font-family: 'DM Sans', sans-serif;
+}
+.back-btn:hover { background: rgba(255,255,255,0.14); }
+.h-btn {
+  width: 36px; height: 36px;
+  background: rgba(255,255,255,0.07);
+  border: 1px solid rgba(255,255,255,0.09);
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 17px; cursor: pointer; transition: background 0.2s;
+}
+.h-btn:hover { background: rgba(255,255,255,0.13); }
+
+.hero-body { position: relative; z-index: 2; }
+.hero-tag {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: rgba(201,168,76,0.15);
+  border: 1px solid rgba(201,168,76,0.3);
+  padding: 4px 12px; border-radius: 20px;
+  font-size: 11px; font-weight: 600; color: var(--gold-2);
+  letter-spacing: 0.04em; text-transform: uppercase; margin-bottom: 10px;
+}
+.tag-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--gold); animation: blink 1.8s ease-in-out infinite; }
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+.hero-title {
+  font-family: 'Fraunces', serif;
+  font-size: 26px; font-weight: 600; color: var(--white);
+  line-height: 1.2; letter-spacing: -0.02em; margin-bottom: 6px;
+}
+.hero-title .accent { color: var(--gold-2); font-style: italic; }
+.hero-sub { font-size: 13px; color: rgba(255,255,255,0.45); }
+
+/* ── SECTION ── */
+.section { padding: 20px 16px 0; }
+.sec-title {
+  font-family: 'Fraunces', serif;
+  font-size: 16px; font-weight: 600; color: var(--text);
+  margin-bottom: 14px;
+}
+
+/* ── NAV CARDS (main) ── */
+.nav-list {
+  display: flex; flex-direction: column; gap: 11px;
+  margin-top: -28px; position: relative; z-index: 10;
+  padding: 0 16px;
+}
+
+.nav-card {
+  background: var(--card-bg);
+  border-radius: 17px;
+  border: 1px solid var(--border);
+  box-shadow: var(--card-shadow);
+  display: flex; align-items: stretch;
+  overflow: hidden; cursor: pointer;
+  transition: all 0.25s;
+  animation: fadeUp 0.4s ease both;
+}
+.nav-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 14px 34px rgba(8,23,46,0.12);
+}
+.nav-card:active { transform: scale(0.98); }
+
+.nav-stripe { width: 5px; flex-shrink: 0; }
+.nav-card.c0 .nav-stripe { background: linear-gradient(to bottom, #EF4444, #F87171); }
+.nav-card.c1 .nav-stripe { background: linear-gradient(to bottom, #3B82F6, #60A5FA); }
+.nav-card.c2 .nav-stripe { background: linear-gradient(to bottom, #F97316, #FB923C); }
+.nav-card.c3 .nav-stripe { background: linear-gradient(to bottom, #10B981, #34D399); }
+.nav-card.c4 .nav-stripe { background: linear-gradient(to bottom, var(--gold), var(--gold-3)); }
+.nav-card.c5 .nav-stripe { background: linear-gradient(to bottom, #8B5CF6, #A78BFA); }
+.nav-card.c6 .nav-stripe { background: linear-gradient(to bottom, #EC4899, #F472B6); }
+.nav-card.c7 .nav-stripe { background: linear-gradient(to bottom, #06B6D4, #67E8F9); }
+
+.nav-inner {
+  flex: 1; display: flex; align-items: center;
+  gap: 14px; padding: 16px 14px 15px 13px;
+}
+
+.nav-icon {
+  width: 50px; height: 50px; flex-shrink: 0;
+  border-radius: 14px;
+  display: flex; align-items: center; justify-content: center; font-size: 24px;
+}
+.nav-card.c0 .nav-icon { background: linear-gradient(135deg, rgba(239,68,68,0.10), rgba(248,113,113,0.16)); }
+.nav-card.c1 .nav-icon { background: linear-gradient(135deg, rgba(59,130,246,0.10), rgba(96,165,250,0.16)); }
+.nav-card.c2 .nav-icon { background: linear-gradient(135deg, rgba(249,115,22,0.10), rgba(251,146,60,0.16)); }
+.nav-card.c3 .nav-icon { background: linear-gradient(135deg, rgba(16,185,129,0.10), rgba(52,211,153,0.16)); }
+.nav-card.c4 .nav-icon { background: linear-gradient(135deg, rgba(201,168,76,0.12), rgba(237,208,128,0.18)); }
+.nav-card.c5 .nav-icon { background: linear-gradient(135deg, rgba(139,92,246,0.10), rgba(167,139,250,0.16)); }
+.nav-card.c6 .nav-icon { background: linear-gradient(135deg, rgba(236,72,153,0.10), rgba(244,114,182,0.16)); }
+.nav-card.c7 .nav-icon { background: linear-gradient(135deg, rgba(6,182,212,0.10),  rgba(103,232,249,0.16)); }
+
+.nav-body { flex: 1; min-width: 0; }
+.nav-name { font-size: 15px; font-weight: 600; color: var(--text); margin-bottom: 3px; }
+.nav-hint { font-size: 11.5px; color: var(--muted); }
+
+.nav-arrow {
+  width: 34px; height: 34px; border-radius: 10px;
+  background: var(--off); border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px; color: var(--muted); flex-shrink: 0;
+  transition: all 0.22s;
+}
+.nav-card:hover .nav-arrow { background: var(--navy); color: var(--white); transform: translateX(3px); }
+
+/* ── INFO STRIP ── */
+.info-strip {
+  margin: 20px 16px 0;
+  background: var(--navy); border-radius: 16px;
+  padding: 14px 18px;
+  display: flex; align-items: center; gap: 12px;
+  position: relative; overflow: hidden;
+  animation: fadeUp 0.4s ease 0.3s both;
+}
+.info-strip::before {
+  content: ''; position: absolute; right: -12px; top: -12px;
+  width: 80px; height: 80px;
+  background: radial-gradient(circle, rgba(201,168,76,0.12) 0%, transparent 70%);
+}
+.info-strip-icon {
+  width: 36px; height: 36px; flex-shrink: 0;
+  background: rgba(201,168,76,0.15); border: 1px solid rgba(201,168,76,0.25);
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center; font-size: 17px;
+}
+.info-strip-body { position: relative; z-index: 1; }
+.info-strip-body strong { display: block; font-size: 13px; font-weight: 600; color: var(--white); margin-bottom: 1px; }
+.info-strip-body span   { font-size: 11.5px; color: rgba(255,255,255,0.45); }
+
+/* ── DARK TOGGLE ── */
+.dark-toggle {
+  position: fixed; bottom: 24px; right: 16px;
+  width: 46px; height: 46px;
+  background: var(--card-bg); border: 1px solid var(--border);
+  border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  font-size: 20px; cursor: pointer; box-shadow: var(--card-shadow);
+  z-index: 200; transition: all 0.22s;
+}
+.dark-toggle:hover { transform: scale(1.08); }
+
+/* ── TOAST ── */
+.toast {
+  position: fixed; top: 20px; left: 50%;
+  transform: translateX(-50%) translateY(-80px);
+  background: #FEF2F2; color: #991B1B;
+  border: 1px solid #FECACA;
+  padding: 11px 18px; border-radius: 12px;
+  font-size: 13px; font-weight: 500;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+  z-index: 500; transition: transform 0.35s ease;
+  white-space: nowrap; font-family: 'DM Sans', sans-serif;
+}
+.toast.show { transform: translateX(-50%) translateY(0); }
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.hero { animation: fadeUp 0.4s ease both; }
+.nav-card:nth-child(1) { animation-delay: 0.05s; }
+.nav-card:nth-child(2) { animation-delay: 0.09s; }
+.nav-card:nth-child(3) { animation-delay: 0.13s; }
+.nav-card:nth-child(4) { animation-delay: 0.17s; }
+.nav-card:nth-child(5) { animation-delay: 0.21s; }
+.nav-card:nth-child(6) { animation-delay: 0.25s; }
+.nav-card:nth-child(7) { animation-delay: 0.29s; }
+.nav-card:nth-child(8) { animation-delay: 0.33s; }
+
+@media (max-width: 360px) {
+  .hero-title { font-size: 22px; }
+  .nav-icon   { width: 44px; height: 44px; font-size: 20px; }
+}
+</style>
+</head>
+<body>
+
+<script>
+  if (localStorage.dark === "on") document.body.classList.add("dark");
+</script>
+
+<!-- Toast -->
+<div class="toast" id="toast">⚠️ Navigation data not available</div>
+
+<!-- ── HERO ── -->
+<div class="hero">
+  <div class="hero-mesh"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-top">
+    <button class="back-btn" onclick="history.back()">← Back</button>
+    <div class="h-btn" id="darkBtn" onclick="toggleDark()">🌙</div>
+  </div>
+  <div class="hero-body">
+    <div class="hero-tag"><span class="tag-dot"></span>One Tap</div>
+    <h1 class="hero-title">Quick <span class="accent">Navigation</span></h1>
+    <p class="hero-sub">One-tap navigation to common campus locations</p>
+  </div>
+</div>
+
+<!-- ── NAV CARDS ── -->
+<div class="nav-list">
+
+  <div class="nav-card c0" onclick="go('medical')">
+    <div class="nav-stripe"></div>
+    <div class="nav-inner">
+      <div class="nav-icon">🏥</div>
+      <div class="nav-body">
+        <div class="nav-name">Medical Centre</div>
+        <div class="nav-hint">First aid & medical assistance</div>
+      </div>
+      <div class="nav-arrow">›</div>
+    </div>
+  </div>
+
+  <div class="nav-card c1" onclick="go('library')">
+    <div class="nav-stripe"></div>
+    <div class="nav-inner">
+      <div class="nav-icon">📚</div>
+      <div class="nav-body">
+        <div class="nav-name">Library</div>
+        <div class="nav-hint">Books, study halls & resources</div>
+      </div>
+      <div class="nav-arrow">›</div>
+    </div>
+  </div>
+
+  <div class="nav-card c2" onclick="go('canteen')">
+    <div class="nav-stripe"></div>
+    <div class="nav-inner">
+      <div class="nav-icon">🍽️</div>
+      <div class="nav-body">
+        <div class="nav-name">Main Canteen</div>
+        <div class="nav-hint">Food, snacks & beverages</div>
+      </div>
+      <div class="nav-arrow">›</div>
+    </div>
+  </div>
+
+  <div class="nav-card c3" onclick="go('atm')">
+    <div class="nav-stripe"></div>
+    <div class="nav-inner">
+      <div class="nav-icon">🏦</div>
+      <div class="nav-body">
+        <div class="nav-name">ATM</div>
+        <div class="nav-hint">Cash withdrawal & banking</div>
+      </div>
+      <div class="nav-arrow">›</div>
+    </div>
+  </div>
+
+  <div class="nav-card c4" onclick="go('main gate')">
+    <div class="nav-stripe"></div>
+    <div class="nav-inner">
+      <div class="nav-icon">🚪</div>
+      <div class="nav-body">
+        <div class="nav-name">Main Gate</div>
+        <div class="nav-hint">Campus entry & exit point</div>
+      </div>
+      <div class="nav-arrow">›</div>
+    </div>
+  </div>
+
+  <div class="nav-card c5" onclick="go('admin')">
+    <div class="nav-stripe"></div>
+    <div class="nav-inner">
+      <div class="nav-icon">🏛️</div>
+      <div class="nav-body">
+        <div class="nav-name">Admin Block</div>
+        <div class="nav-hint">Administration & management</div>
+      </div>
+      <div class="nav-arrow">›</div>
+    </div>
+  </div>
+
+  <div class="nav-card c6" onclick="go('sports')">
+    <div class="nav-stripe"></div>
+    <div class="nav-inner">
+      <div class="nav-icon">🏆</div>
+      <div class="nav-body">
+        <div class="nav-name">Sports Ground</div>
+        <div class="nav-hint">Athletics, courts & recreation</div>
+      </div>
+      <div class="nav-arrow">›</div>
+    </div>
+  </div>
+
+  <div class="nav-card c7" onclick="go('parking')">
+    <div class="nav-stripe"></div>
+    <div class="nav-inner">
+      <div class="nav-icon">🅿️</div>
+      <div class="nav-body">
+        <div class="nav-name">Parking Area</div>
+        <div class="nav-hint">Vehicle parking zone</div>
+      </div>
+      <div class="nav-arrow">›</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ── INFO STRIP ── -->
+<div class="info-strip">
+  <div class="info-strip-icon">⚡</div>
+  <div class="info-strip-body">
+    <strong>One-tap AR Navigation</strong>
+    <span>Tap any location to launch AR route guidance instantly</span>
+  </div>
+</div>
+
+<!-- Dark toggle -->
+<div class="dark-toggle" onclick="toggleDark()">
+  <span id="darkIcon">🌙</span>
+</div>
+
+<script>
+  let locations = [];
+
+  /* Load locations */
+  fetch("data/locations.json")
+    .then(r => r.json())
+    .then(d => { locations = d; })
+    .catch(() => showToast("Unable to load campus locations"));
+
+  /* Smart match + navigate */
+  function go(keyword) {
+    if (!locations.length) {
+      showToast("Location data not loaded yet — please wait");
+      return;
+    }
+    const match = locations.find(l =>
+      l.name.toLowerCase().includes(keyword.toLowerCase())
+    );
+    if (!match) {
+      showToast(`"${keyword}" not found in navigation data`);
+      return;
+    }
+    const index = locations.indexOf(match);
+    location.href = `confirm.html?place=${index}&role=student`;
+  }
+
+  /* Toast */
+  function showToast(msg) {
+    const t = document.getElementById("toast");
+    t.innerText = "⚠️ " + msg;
+    t.classList.add("show");
+    setTimeout(() => t.classList.remove("show"), 3200);
+  }
+
+  /* Dark mode */
+  function toggleDark() {
+    const isDark = document.body.classList.toggle("dark");
+    localStorage.dark = isDark ? "on" : "off";
+    document.getElementById("darkBtn").innerText  = isDark ? "☀️" : "🌙";
+    document.getElementById("darkIcon").innerText = isDark ? "☀️" : "🌙";
+  }
+  if (localStorage.dark === "on") {
+    document.getElementById("darkBtn").innerText  = "☀️";
+    document.getElementById("darkIcon").innerText = "☀️";
+  }
+</script>
+
+</body>
+</html>

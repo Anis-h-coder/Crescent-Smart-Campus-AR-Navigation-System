@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Landmark Recognition — Crescent Campus</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;1,9..144,300&display=swap" rel="stylesheet"/>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --navy:   #08172E;
+  --navy-2: #0F2340;
+  --gold:   #C9A84C;
+  --gold-2: #DDB95E;
+  --gold-3: #EDD080;
+  --white:  #FFFFFF;
+  --muted:  rgba(255,255,255,0.5);
+  --glass:  rgba(8,23,46,0.6);
+  --glass-2:rgba(8,23,46,0.8);
+  --blur:   blur(16px);
+}
+
+body {
+  margin: 0;
+  font-family: 'DM Sans', sans-serif;
+  background: #000;
+  color: var(--white);
+  overflow: hidden;
+  height: 100dvh;
+}
+
+/* ── CAMERA ── */
+#camera {
+  position: fixed; inset: 0;
+  width: 100vw; height: 100vh;
+  object-fit: cover; z-index: 0;
+}
+
+/* ── OVERLAYS ── */
+.scan-lines {
+  position: fixed; inset: 0; z-index: 1; pointer-events: none;
+  background: repeating-linear-gradient(
+    0deg, transparent, transparent 3px,
+    rgba(0,0,0,0.04) 3px, rgba(0,0,0,0.04) 4px
+  );
+}
+.vignette {
+  position: fixed; inset: 0; z-index: 2; pointer-events: none;
+  background: radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.6) 100%);
+}
+.top-fade {
+  position: fixed; top: 0; left: 0; right: 0; height: 140px; z-index: 3;
+  background: linear-gradient(to bottom, rgba(8,23,46,0.65) 0%, transparent 100%);
+  pointer-events: none;
+}
+.bot-fade {
+  position: fixed; bottom: 0; left: 0; right: 0; height: 200px; z-index: 3;
+  background: linear-gradient(to top, rgba(8,23,46,0.7) 0%, transparent 100%);
+  pointer-events: none;
+}
+
+/* ── TOP BAR ── */
+.top-bar {
+  position: fixed; top: 0; left: 0; right: 0;
+  z-index: 100;
+  padding: 14px 16px 10px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+
+.back-btn {
+  display: flex; align-items: center; gap: 6px;
+  background: var(--glass);
+  backdrop-filter: var(--blur);
+  -webkit-backdrop-filter: var(--blur);
+  border: 1px solid rgba(255,255,255,0.12);
+  color: rgba(255,255,255,0.8);
+  padding: 8px 14px 8px 10px; border-radius: 40px;
+  font-size: 13px; font-weight: 500; cursor: pointer;
+  font-family: 'DM Sans', sans-serif; transition: background 0.2s;
+}
+.back-btn:hover { background: rgba(8,23,46,0.75); }
+
+.top-title {
+  display: flex; align-items: center; gap: 7px;
+  background: var(--glass);
+  backdrop-filter: var(--blur);
+  -webkit-backdrop-filter: var(--blur);
+  border: 1px solid rgba(201,168,76,0.25);
+  padding: 8px 16px; border-radius: 40px;
+  font-size: 13px; font-weight: 600; color: var(--white);
+}
+.ai-dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--gold);
+  box-shadow: 0 0 8px var(--gold);
+  animation: aiPulse 1.5s ease-in-out infinite;
+}
+@keyframes aiPulse {
+  0%,100% { box-shadow: 0 0 6px var(--gold); transform: scale(1); }
+  50%      { box-shadow: 0 0 14px var(--gold); transform: scale(1.3); }
+}
+
+.top-right { display: flex; align-items: center; gap: 8px; }
+.icon-pill {
+  width: 38px; height: 38px; border-radius: 50%;
+  background: var(--glass);
+  backdrop-filter: var(--blur);
+  -webkit-backdrop-filter: var(--blur);
+  border: 1px solid rgba(255,255,255,0.1);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 17px; cursor: pointer; transition: background 0.2s;
+}
+.icon-pill:hover { background: rgba(8,23,46,0.8); }
+
+/* ── SCAN FRAME ── */
+.scan-frame {
+  position: fixed;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -52%);
+  z-index: 20; pointer-events: none;
+  width: min(280px, 75vw); height: min(280px, 75vw);
+}
+
+/* Corner brackets */
+.corner {
+  position: absolute; width: 28px; height: 28px;
+}
+.corner.tl { top: 0; left: 0;   border-top: 2.5px solid rgba(201,168,76,0.7); border-left: 2.5px solid rgba(201,168,76,0.7); }
+.corner.tr { top: 0; right: 0;  border-top: 2.5px solid rgba(201,168,76,0.7); border-right: 2.5px solid rgba(201,168,76,0.7); }
+.corner.bl { bottom: 0; left: 0; border-bottom: 2.5px solid rgba(201,168,76,0.7); border-left: 2.5px solid rgba(201,168,76,0.7); }
+.corner.br { bottom: 0; right: 0; border-bottom: 2.5px solid rgba(201,168,76,0.7); border-right: 2.5px solid rgba(201,168,76,0.7); }
+
+/* Crosshair */
+.crosshair-h { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); width: 36px; height: 1px; background: rgba(201,168,76,0.4); }
+.crosshair-v { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); width: 1px; height: 36px; background: rgba(201,168,76,0.4); }
+.crosshair-c { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); width: 7px; height: 7px; border-radius: 50%; background: rgba(201,168,76,0.6); }
+
+/* Scanning line */
+.scan-line {
+  position: absolute; left: 4px; right: 4px; height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(201,168,76,0.8), transparent);
+  top: 4px;
+  animation: scanDown 2.5s ease-in-out infinite;
+  opacity: 0;
+}
+.scan-line.active { opacity: 1; }
+@keyframes scanDown {
+  0%   { top: 4px; opacity: 0; }
+  10%  { opacity: 1; }
+  90%  { opacity: 1; }
+  100% { top: calc(100% - 6px); opacity: 0; }
+}
+
+/* Frame label */
+.scan-label {
+  position: absolute; bottom: -28px; left: 50%;
+  transform: translateX(-50%);
+  font-size: 11px; color: rgba(255,255,255,0.45);
+  letter-spacing: 0.08em; text-transform: uppercase;
+  white-space: nowrap;
+  display: flex; align-items: center; gap: 5px;
+}
+.scan-label-dot {
+  width: 5px; height: 5px; border-radius: 50%;
+  background: var(--gold); opacity: 0.7;
+  animation: aiPulse 1.5s ease-in-out infinite;
+}
+
+/* ── DETECT BUTTON ── */
+.detect-btn {
+  position: fixed; bottom: 40px; left: 50%;
+  transform: translateX(-50%);
+  z-index: 100;
+  display: flex; align-items: center; justify-content: center; gap: 9px;
+  padding: 16px 36px;
+  background: linear-gradient(135deg, var(--gold), var(--gold-2));
+  color: var(--navy);
+  border: none; border-radius: 40px;
+  font-size: 15px; font-weight: 700;
+  font-family: 'DM Sans', sans-serif;
+  cursor: pointer;
+  box-shadow: 0 8px 28px rgba(201,168,76,0.5);
+  transition: all 0.25s;
+  position: fixed; bottom: 40px; left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+}
+.detect-btn::after {
+  content: ''; position: absolute; inset: 0; border-radius: 40px;
+  background: linear-gradient(135deg, rgba(255,255,255,0.25) 0%, transparent 60%);
+}
+.detect-btn:hover { transform: translateX(-50%) translateY(-3px); box-shadow: 0 14px 36px rgba(201,168,76,0.6); }
+.detect-btn:active { transform: translateX(-50%) scale(0.97); }
+.detect-btn.scanning {
+  background: rgba(8,23,46,0.7);
+  color: var(--white);
+  border: 1px solid rgba(201,168,76,0.3);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+  pointer-events: none;
+}
+.detect-btn.scanning::after { display: none; }
+
+/* Spinner */
+.spinner {
+  width: 18px; height: 18px; border-radius: 50%;
+  border: 2px solid rgba(255,255,255,0.2);
+  border-top-color: var(--gold);
+  animation: spin 0.8s linear infinite;
+  display: none;
+}
+.detect-btn.scanning .spinner { display: block; }
+.detect-btn.scanning .btn-icon { display: none; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── RESULT CARD ── */
+#resultBox {
+  position: fixed; bottom: 110px; left: 16px; right: 16px;
+  z-index: 100;
+  background: var(--glass-2);
+  backdrop-filter: var(--blur);
+  -webkit-backdrop-filter: var(--blur);
+  border: 1px solid rgba(201,168,76,0.25);
+  border-radius: 22px; padding: 18px 18px 16px;
+  box-shadow: 0 16px 50px rgba(0,0,0,0.5);
+  display: none;
+  animation: slideUp 0.35s ease both;
+}
+#resultBox.show { display: block; }
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.result-top {
+  display: flex; align-items: center; gap: 12px; margin-bottom: 14px;
+}
+.result-icon {
+  width: 46px; height: 46px; flex-shrink: 0;
+  border-radius: 13px;
+  background: rgba(201,168,76,0.15);
+  border: 1px solid rgba(201,168,76,0.25);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px;
+}
+.result-info { flex: 1; min-width: 0; }
+#buildingName {
+  font-family: 'Fraunces', serif;
+  font-size: 17px; font-weight: 600; color: var(--white);
+  margin-bottom: 3px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+#confidence { font-size: 12px; color: var(--muted); }
+
+/* Confidence bar */
+.conf-bar-wrap {
+  display: flex; align-items: center; gap: 8px;
+  margin-bottom: 14px;
+}
+.conf-label { font-size: 11px; color: var(--muted); white-space: nowrap; }
+.conf-track {
+  flex: 1; height: 5px; border-radius: 3px;
+  background: rgba(255,255,255,0.1); overflow: hidden;
+}
+.conf-fill {
+  height: 100%; border-radius: 3px;
+  background: linear-gradient(90deg, var(--gold), var(--gold-3));
+  transition: width 0.6s ease;
+}
+.conf-pct { font-size: 11px; color: var(--gold-2); font-weight: 600; white-space: nowrap; }
+
+/* Action buttons */
+.result-btns { display: flex; gap: 10px; }
+.details-btn {
+  flex: 1; padding: 11px;
+  background: linear-gradient(135deg, var(--gold), var(--gold-2));
+  color: var(--navy); border: none; border-radius: 12px;
+  font-size: 13px; font-weight: 700;
+  font-family: 'DM Sans', sans-serif; cursor: pointer;
+  transition: all 0.22s; position: relative; overflow: hidden;
+}
+.details-btn::after {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.25) 0%, transparent 60%);
+}
+.details-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(201,168,76,0.4); }
+
+.dismiss-btn {
+  padding: 11px 14px;
+  background: rgba(255,255,255,0.08);
+  color: rgba(255,255,255,0.6);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 12px;
+  font-size: 13px; font-weight: 500;
+  font-family: 'DM Sans', sans-serif; cursor: pointer;
+  transition: background 0.2s;
+}
+.dismiss-btn:hover { background: rgba(255,255,255,0.14); }
+
+/* ── STATUS CHIP ── */
+#statusChip {
+  position: fixed; top: 74px; left: 50%;
+  transform: translateX(-50%);
+  z-index: 100;
+  display: flex; align-items: center; gap: 7px;
+  background: var(--glass);
+  backdrop-filter: var(--blur);
+  -webkit-backdrop-filter: var(--blur);
+  border: 1px solid rgba(255,255,255,0.1);
+  padding: 7px 16px; border-radius: 40px;
+  font-size: 12px; color: var(--muted);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+  white-space: nowrap;
+  transition: all 0.3s;
+}
+.status-glow {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: #10B981; animation: aiPulse 1.8s ease-in-out infinite;
+}
+</style>
+</head>
+<body>
+
+<!-- Camera feed -->
+<video id="camera" autoplay playsinline></video>
+
+<!-- Overlays -->
+<div class="scan-lines"></div>
+<div class="vignette"></div>
+<div class="top-fade"></div>
+<div class="bot-fade"></div>
+
+<!-- ── TOP BAR ── -->
+<div class="top-bar">
+  <button class="back-btn" onclick="history.back()">← Back</button>
+  <div class="top-title">
+    <span class="ai-dot"></span>
+    AI Landmark Recognition
+  </div>
+  <div class="top-right">
+    <div class="icon-pill" title="Flash">🔦</div>
+  </div>
+</div>
+
+<!-- ── STATUS CHIP ── -->
+<div id="statusChip">
+  <span class="status-glow"></span>
+  <span id="statusText">Point camera at a building</span>
+</div>
+
+<!-- ── SCAN FRAME ── -->
+<div class="scan-frame">
+  <div class="corner tl"></div>
+  <div class="corner tr"></div>
+  <div class="corner bl"></div>
+  <div class="corner br"></div>
+  <div class="crosshair-h"></div>
+  <div class="crosshair-v"></div>
+  <div class="crosshair-c"></div>
+  <div class="scan-line" id="scanLine"></div>
+  <div class="scan-label">
+    <span class="scan-label-dot"></span>
+    Align building in frame
+  </div>
+</div>
+
+<!-- ── DETECT BUTTON ── -->
+<button class="detect-btn" id="detectBtn" onclick="captureImage()">
+  <span class="btn-icon">📷</span>
+  <div class="spinner"></div>
+  <span id="btnText">Detect Building</span>
+</button>
+
+<!-- ── RESULT BOX ── -->
+<div id="resultBox">
+  <div class="result-top">
+    <div class="result-icon">🏛️</div>
+    <div class="result-info">
+      <div id="buildingName">—</div>
+      <div id="confidence">AI Detection Result</div>
+    </div>
+  </div>
+  <div class="conf-bar-wrap">
+    <span class="conf-label">Confidence</span>
+    <div class="conf-track"><div class="conf-fill" id="confFill" style="width:0%"></div></div>
+    <span class="conf-pct" id="confPct">0%</span>
+  </div>
+  <div class="result-btns">
+    <button class="details-btn" onclick="openDetails()">🏢 View Details</button>
+    <button class="dismiss-btn" onclick="dismissResult()">Dismiss</button>
+  </div>
+</div>
+
+<!-- landmark.js handles captureImage() and openDetails() -->
+<script src="js/landmark.js"></script>
+
+<script>
+  /* ── UI HELPERS exposed for landmark.js to call ── */
+
+  /* Show scanning state */
+  window.setScanning = function(active) {
+    const btn      = document.getElementById("detectBtn");
+    const scanLine = document.getElementById("scanLine");
+    const statusEl = document.getElementById("statusText");
+    if (active) {
+      btn.classList.add("scanning");
+      document.getElementById("btnText").innerText = "Analysing...";
+      scanLine.classList.add("active");
+      statusEl.innerText = "Detecting building...";
+    } else {
+      btn.classList.remove("scanning");
+      document.getElementById("btnText").innerText = "Detect Building";
+      scanLine.classList.remove("active");
+    }
+  };
+
+  /* Show result */
+  window.showResult = function(name, confidence) {
+    document.getElementById("buildingName").innerText = name || "Unknown";
+    const pct = Math.min(100, Math.round((confidence || 0) * 100));
+    document.getElementById("confidence").innerText =
+      "Detected with " + pct + "% confidence";
+    document.getElementById("confFill").style.width = pct + "%";
+    document.getElementById("confPct").innerText = pct + "%";
+    document.getElementById("statusText").innerText = "Building identified!";
+
+    const box = document.getElementById("resultBox");
+    box.classList.add("show");
+    box.style.display = "block";
+
+    window.setScanning(false);
+  };
+
+  /* Dismiss result */
+  window.dismissResult = function() {
+    const box = document.getElementById("resultBox");
+    box.classList.remove("show");
+    box.style.display = "none";
+    document.getElementById("statusText").innerText = "Point camera at a building";
+  };
+
+  /* Status update */
+  window.setStatus = function(msg) {
+    document.getElementById("statusText").innerText = msg || "";
+  };
+</script>
+
+</body>
+</html>

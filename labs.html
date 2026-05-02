@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Laboratories — Crescent Campus</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;1,9..144,300&display=swap" rel="stylesheet"/>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --navy:        #08172E;
+  --navy-2:      #0F2340;
+  --navy-3:      #162F54;
+  --gold:        #C9A84C;
+  --gold-2:      #DDB95E;
+  --gold-3:      #EDD080;
+  --gold-pale:   #FBF3DC;
+  --white:       #FFFFFF;
+  --off:         #F4F6F9;
+  --muted:       #8FA3BC;
+  --text:        #0F2340;
+  --card-bg:     #FFFFFF;
+  --border:      rgba(0,0,0,0.06);
+  --card-shadow: 0 2px 14px rgba(8,23,46,0.07);
+}
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--off);
+  color: var(--text);
+  min-height: 100vh;
+  padding-bottom: 40px;
+  overflow-x: hidden;
+}
+
+/* ── HERO ── */
+.hero {
+  background: var(--navy);
+  padding: 20px 20px 52px;
+  position: relative; overflow: hidden;
+  animation: fadeUp 0.4s ease both;
+}
+.hero-mesh {
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse 70% 80% at 100% 20%, rgba(139,92,246,0.12) 0%, transparent 70%),
+    radial-gradient(ellipse 50% 60% at 0%  90%, rgba(59,130,246,0.07) 0%, transparent 70%);
+}
+.hero-grid {
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(rgba(201,168,76,0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(201,168,76,0.06) 1px, transparent 1px);
+  background-size: 26px 26px;
+  -webkit-mask-image: linear-gradient(to bottom, transparent, black 40%, black 70%, transparent);
+  mask-image: linear-gradient(to bottom, transparent, black 40%, black 70%, transparent);
+}
+.hero-top {
+  position: relative; z-index: 2;
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 20px;
+}
+.back-btn {
+  display: flex; align-items: center; gap: 6px;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.1);
+  color: rgba(255,255,255,0.75);
+  padding: 8px 14px 8px 10px; border-radius: 10px;
+  font-size: 13px; font-weight: 500; cursor: pointer;
+  transition: background 0.2s; font-family: 'DM Sans', sans-serif;
+}
+.back-btn:hover { background: rgba(255,255,255,0.14); }
+.hero-body { position: relative; z-index: 2; }
+.hero-title {
+  font-family: 'Fraunces', serif;
+  font-size: 26px; font-weight: 600; color: var(--white);
+  line-height: 1.2; letter-spacing: -0.02em; margin-bottom: 6px;
+}
+.hero-title .accent { color: var(--gold-2); font-style: italic; }
+.hero-sub { font-size: 13px; color: rgba(255,255,255,0.45); }
+
+/* live clock */
+.hero-clock {
+  text-align: right;
+}
+.hero-clock-time {
+  font-family: 'Fraunces', serif; font-size: 20px; font-weight: 600;
+  color: var(--gold-2); letter-spacing: -0.02em; line-height: 1;
+}
+.hero-clock-day {
+  font-size: 11px; color: rgba(255,255,255,0.4); margin-top: 3px;
+}
+
+/* ── SEARCH ── */
+.search-wrap {
+  padding: 0 16px; margin-top: -28px;
+  position: relative; z-index: 10;
+  animation: fadeUp 0.4s ease 0.05s both;
+}
+.search-bar {
+  display: flex; align-items: center; gap: 10px;
+  background: var(--card-bg);
+  border: 1.5px solid var(--border);
+  border-radius: 14px; padding: 12px 16px;
+  box-shadow: 0 8px 24px rgba(8,23,46,0.1);
+  transition: border-color 0.2s;
+}
+.search-bar:focus-within { border-color: var(--gold); }
+.search-icon { font-size: 17px; flex-shrink: 0; opacity: 0.5; }
+.search-bar input {
+  flex: 1; border: none; outline: none;
+  font-size: 14px; font-family: 'DM Sans', sans-serif;
+  background: transparent; color: var(--text);
+}
+.search-bar input::placeholder { color: var(--muted); }
+.search-clear { font-size: 14px; cursor: pointer; color: var(--muted); display: none; padding: 2px; transition: color 0.2s; }
+.search-clear.show { display: block; }
+.search-clear:hover { color: var(--text); }
+
+/* ── STATS ── */
+.stats-row {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 10px; padding: 14px 16px 0;
+  animation: fadeUp 0.4s ease 0.1s both;
+}
+.sf {
+  background: var(--card-bg); border-radius: 13px;
+  padding: 12px 8px 10px; text-align: center;
+  border: 1px solid var(--border); box-shadow: var(--card-shadow);
+  transition: all 0.22s; position: relative; overflow: hidden;
+}
+.sf::before {
+  content: ''; position: absolute; bottom: 0; left: 0; right: 0;
+  height: 3px; border-radius: 0 0 13px 13px; opacity: 0; transition: opacity 0.22s;
+}
+.sf.purple::before { background: linear-gradient(90deg, #8B5CF6, #A78BFA); }
+.sf.green::before  { background: linear-gradient(90deg, #10B981, #34D399); }
+.sf.red::before    { background: linear-gradient(90deg, #EF4444, #F87171); }
+.sf:hover { transform: translateY(-2px); }
+.sf:hover::before { opacity: 1; }
+.sf-emoji { font-size: 17px; margin-bottom: 5px; display: block; }
+.sf-num { font-family: 'Fraunces', serif; font-size: 20px; font-weight: 600; color: var(--navy); line-height: 1; margin-bottom: 3px; }
+.sf-label { font-size: 9.5px; color: var(--muted); font-weight: 500; letter-spacing: 0.04em; }
+
+/* ── FILTERS ── */
+.filter-row {
+  display: flex; gap: 8px; padding: 14px 16px 0;
+  overflow-x: auto; scrollbar-width: none;
+  animation: fadeUp 0.4s ease 0.15s both;
+}
+.filter-row::-webkit-scrollbar { display: none; }
+.filter-btn {
+  flex-shrink: 0; padding: 7px 16px;
+  border-radius: 20px; border: 1.5px solid var(--border);
+  background: var(--card-bg); color: var(--muted);
+  font-size: 12px; font-weight: 600; cursor: pointer;
+  transition: all 0.2s; font-family: 'DM Sans', sans-serif; white-space: nowrap;
+}
+.filter-btn:hover { border-color: #8B5CF6; color: #8B5CF6; }
+.filter-btn.active {
+  background: linear-gradient(135deg, #8B5CF6, #A78BFA);
+  border-color: #8B5CF6; color: var(--white);
+  box-shadow: 0 4px 12px rgba(139,92,246,0.3);
+}
+
+/* avail-only toggle */
+.avail-toggle {
+  flex-shrink: 0; padding: 7px 16px;
+  border-radius: 20px; border: 1.5px solid rgba(16,185,129,0.25);
+  background: rgba(16,185,129,0.07); color: #065F46;
+  font-size: 12px; font-weight: 600; cursor: pointer;
+  transition: all 0.2s; font-family: 'DM Sans', sans-serif; white-space: nowrap;
+}
+.avail-toggle.active {
+  background: #10B981; border-color: #10B981; color: var(--white);
+  box-shadow: 0 4px 12px rgba(16,185,129,0.3);
+}
+
+/* ── SECTION ── */
+.section { padding: 18px 16px 0; }
+.sec-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+.sec-title { font-family: 'Fraunces', serif; font-size: 16px; font-weight: 600; color: var(--text); }
+.sec-count {
+  font-size: 11px; color: var(--muted); font-weight: 500;
+  background: var(--off); border: 1px solid var(--border);
+  padding: 3px 10px; border-radius: 20px;
+}
+
+/* ── LAB CARDS ── */
+.lab-list { display: flex; flex-direction: column; gap: 10px; }
+.lab-card {
+  background: var(--card-bg); border-radius: 16px;
+  border: 1px solid var(--border); box-shadow: var(--card-shadow);
+  display: flex; align-items: stretch; overflow: hidden;
+  cursor: pointer; transition: all 0.25s;
+  animation: fadeUp 0.35s ease both;
+}
+.lab-card:hover { transform: translateY(-3px); box-shadow: 0 12px 30px rgba(8,23,46,0.1); }
+.lab-card:active { transform: scale(0.98); }
+
+.lab-stripe { width: 4px; flex-shrink: 0; }
+.lab-stripe.available { background: linear-gradient(to bottom, #10B981, #34D399); }
+.lab-stripe.occupied  { background: linear-gradient(to bottom, #EF4444, #F87171); }
+.lab-stripe.notset    { background: linear-gradient(to bottom, #8B5CF6, #A78BFA); }
+
+.lab-inner { flex: 1; display: flex; align-items: center; gap: 13px; padding: 14px 14px 13px 13px; }
+.lab-icon {
+  width: 48px; height: 48px; flex-shrink: 0; border-radius: 13px;
+  display: flex; align-items: center; justify-content: center; font-size: 23px;
+  background: linear-gradient(135deg, rgba(139,92,246,0.10), rgba(167,139,250,0.16));
+}
+.lab-body { flex: 1; min-width: 0; }
+.lab-name { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.lab-meta { font-size: 11.5px; color: var(--muted); margin-bottom: 6px; }
+.lab-tags { display: flex; align-items: center; gap: 7px; flex-wrap: wrap; }
+
+/* next period info */
+.next-period {
+  font-size: 10px; color: var(--muted); margin-top: 4px;
+  display: flex; align-items: center; gap: 4px;
+}
+
+.status-pill {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 2px 9px; border-radius: 20px; font-size: 10.5px; font-weight: 600;
+}
+.status-pill.available { background: rgba(16,185,129,0.1);  color: #065F46; border: 1px solid rgba(16,185,129,0.2); }
+.status-pill.occupied  { background: rgba(239,68,68,0.1);   color: #991B1B; border: 1px solid rgba(239,68,68,0.2); }
+.status-pill.notset    { background: rgba(139,92,246,0.1);  color: #5B21B6; border: 1px solid rgba(139,92,246,0.2); }
+.status-dot { width: 4px; height: 4px; border-radius: 50%; }
+.status-pill.available .status-dot { background: #10B981; animation: blink 2s ease-in-out infinite; }
+.status-pill.occupied  .status-dot { background: #EF4444; }
+.status-pill.notset    .status-dot { background: #8B5CF6; }
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+.equip-tag {
+  background: var(--off); border: 1px solid var(--border);
+  padding: 2px 8px; border-radius: 20px; font-size: 10px; font-weight: 500; color: var(--muted);
+  white-space: nowrap;
+}
+.lab-chevron {
+  width: 30px; height: 30px; border-radius: 8px;
+  background: var(--off); border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; color: var(--muted); flex-shrink: 0; transition: all 0.22s;
+}
+.lab-card:hover .lab-chevron { background: var(--navy); color: var(--white); transform: translateX(2px); }
+
+/* ── SKELETON ── */
+.sk-card {
+  background: var(--card-bg); border-radius: 16px;
+  border: 1px solid var(--border); padding: 14px 13px;
+  display: flex; align-items: center; gap: 12px; margin-bottom: 10px;
+}
+.skeleton {
+  background: linear-gradient(90deg, #e8edf2 25%, #f4f6f9 50%, #e8edf2 75%);
+  background-size: 200% 100%; animation: sk 1.5s ease infinite; border-radius: 8px;
+}
+@keyframes sk { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+.sk-ic { width: 48px; height: 48px; border-radius: 13px; flex-shrink: 0; }
+.sk-bd { flex: 1; display: flex; flex-direction: column; gap: 7px; }
+.sk-l1 { height: 13px; width: 60%; }
+.sk-l2 { height: 11px; width: 40%; }
+.sk-l3 { height: 10px; width: 30%; }
+
+/* ── EMPTY ── */
+.empty-state {
+  text-align: center; padding: 38px 20px;
+  background: var(--card-bg); border-radius: 16px;
+  border: 1px solid var(--border); box-shadow: var(--card-shadow);
+}
+.empty-state span { font-size: 36px; display: block; margin-bottom: 10px; }
+.empty-state h3 { font-family: 'Fraunces', serif; font-size: 16px; color: var(--text); margin-bottom: 5px; }
+.empty-state p  { font-size: 13px; color: var(--muted); }
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.section { animation: fadeUp 0.4s ease 0.2s both; }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+
+<div class="hero">
+  <div class="hero-mesh"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-top">
+    <button class="back-btn" onclick="history.back()">← Back</button>
+    <div class="hero-clock">
+      <div class="hero-clock-time" id="clockTime">--:--</div>
+      <div class="hero-clock-day"  id="clockDay">---</div>
+    </div>
+  </div>
+  <div class="hero-body">
+    <h1 class="hero-title">Campus <span class="accent">Laboratories</span></h1>
+    <p class="hero-sub">Availability updates automatically from class timetable</p>
+  </div>
+</div>
+
+<!-- SEARCH -->
+<div class="search-wrap">
+  <div class="search-bar">
+    <span class="search-icon">🔍</span>
+    <input id="searchInput" type="text"
+           placeholder="Search by lab name, block or floor..."
+           oninput="applyFilters()"/>
+    <span class="search-clear" id="searchClear" onclick="clearSearch()">✕</span>
+  </div>
+</div>
+
+<!-- STATS -->
+<div class="stats-row">
+  <div class="sf purple">
+    <span class="sf-emoji">🧪</span>
+    <div class="sf-num" id="totalStat">—</div>
+    <div class="sf-label">Total Labs</div>
+  </div>
+  <div class="sf green">
+    <span class="sf-emoji">🟢</span>
+    <div class="sf-num" id="freeStat">—</div>
+    <div class="sf-label">Available</div>
+  </div>
+  <div class="sf red">
+    <span class="sf-emoji">🔴</span>
+    <div class="sf-num" id="occupiedStat">—</div>
+    <div class="sf-label">Occupied</div>
+  </div>
+</div>
+
+<!-- FILTERS -->
+<div class="filter-row">
+  <button class="filter-btn active" onclick="setDept('all',   this)">All</button>
+  <button class="filter-btn"        onclick="setDept('cse',   this)">💻 CSE</button>
+  <button class="filter-btn"        onclick="setDept('ece',   this)">📡 ECE</button>
+  <button class="filter-btn"        onclick="setDept('eee',   this)">⚡ EEE</button>
+  <button class="filter-btn"        onclick="setDept('civil', this)">🏗️ Civil</button>
+  <button class="filter-btn"        onclick="setDept('mech',  this)">⚙️ Mech</button>
+  <button class="avail-toggle" id="availToggle" onclick="toggleAvailOnly()">🟢 Available only</button>
+</div>
+
+<!-- LAB LIST -->
+<div class="section">
+  <div class="sec-head">
+    <div class="sec-title">All Laboratories</div>
+    <div class="sec-count" id="visibleCount">Loading...</div>
+  </div>
+  <div class="lab-list" id="labContainer">
+    <div class="sk-card" id="sk1"><div class="sk-ic skeleton"></div><div class="sk-bd"><div class="sk-l1 skeleton"></div><div class="sk-l2 skeleton"></div><div class="sk-l3 skeleton"></div></div></div>
+    <div class="sk-card" id="sk2"><div class="sk-ic skeleton"></div><div class="sk-bd"><div class="sk-l1 skeleton"></div><div class="sk-l2 skeleton"></div><div class="sk-l3 skeleton"></div></div></div>
+    <div class="sk-card" id="sk3"><div class="sk-ic skeleton"></div><div class="sk-bd"><div class="sk-l1 skeleton"></div><div class="sk-l2 skeleton"></div><div class="sk-l3 skeleton"></div></div></div>
+  </div>
+</div>
+
+<script type="module">
+import { db } from "./js/firebase.js";
+import { ref, onValue }
+  from "https://www.gstatic.com/firebasejs/12.9.0/firebase-database.js";
+
+/* ─── AVAILABILITY ENGINE (mirrors admin panel) ─── */
+const DAYS    = [null,"Mon","Tue","Wed","Thu","Fri","Sat"];
+
+function computeAvailability(timetable, periods) {
+  if (!timetable || !periods || !periods.length) return "notset";
+  const now      = new Date();
+  const dayIdx   = now.getDay();
+  const todayKey = (dayIdx >= 1 && dayIdx <= 6) ? DAYS[dayIdx] : null;
+  if (!todayKey) return "available"; // weekend
+  const hhmm = now.getHours() * 60 + now.getMinutes();
+  for (const p of periods) {
+    if (timetable[p.label + "_" + todayKey]) {
+      const [sh, sm] = p.start.split(":").map(Number);
+      const [eh, em] = p.end.split(":").map(Number);
+      if (hhmm >= sh * 60 + sm && hhmm < eh * 60 + em) return "occupied";
+    }
+  }
+  return "available";
+}
+
+/* Next occupied period for today (to show "Occupied from X") */
+function nextPeriodInfo(timetable, periods) {
+  if (!timetable || !periods || !periods.length) return null;
+  const now      = new Date();
+  const dayIdx   = now.getDay();
+  const todayKey = (dayIdx >= 1 && dayIdx <= 6) ? DAYS[dayIdx] : null;
+  if (!todayKey) return null;
+  const hhmm = now.getHours() * 60 + now.getMinutes();
+
+  // Find soonest occupied period that hasn't started yet
+  let next = null;
+  for (const p of periods) {
+    if (timetable[p.label + "_" + todayKey]) {
+      const [sh, sm] = p.start.split(":").map(Number);
+      const mins = sh * 60 + sm;
+      if (mins > hhmm) {
+        if (!next || mins < (next.mins)) next = { label: p.label, start: p.start, mins };
+      }
+    }
+  }
+  return next;
+}
+
+/* ─── LIVE CLOCK ─── */
+const DAY_NAMES = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+function updateClock() {
+  const now = new Date();
+  document.getElementById("clockTime").innerText =
+    now.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+  document.getElementById("clockDay").innerText =
+    DAY_NAMES[now.getDay()] + " · " +
+    now.toLocaleDateString([], { day: "numeric", month: "short" });
+}
+updateClock();
+setInterval(updateClock, 10000);
+
+/* ─── ICON MAP ─── */
+function getIcon(name) {
+  const n = (name || "").toLowerCase();
+  if (n.includes("web"))         return "🌐";
+  if (n.includes("programming")) return "💻";
+  if (n.includes("network"))     return "📡";
+  if (n.includes("database"))    return "🗄️";
+  if (n.includes("circuit"))     return "⚡";
+  if (n.includes("mechanic"))    return "⚙️";
+  if (n.includes("civil"))       return "🏗️";
+  if (n.includes("physics"))     return "🔭";
+  if (n.includes("chemistry"))   return "⚗️";
+  return "🧪";
+}
+
+/* ─── STATE ─── */
+let allLabs       = [];
+let selectedDept  = "all";
+let availOnly     = false;
+
+const labContainer = document.getElementById("labContainer");
+const searchInput  = document.getElementById("searchInput");
+
+function clearSkeletons() {
+  ["sk1","sk2","sk3"].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.remove();
+  });
+}
+
+/* ─── FIREBASE LOAD ─── */
+onValue(ref(db, "labs"), snapshot => {
+  clearSkeletons();
+
+  if (!snapshot.exists()) {
+    labContainer.innerHTML = `
+      <div class="empty-state">
+        <span>🧪</span><h3>No labs available</h3>
+        <p>No laboratories have been added yet</p>
+      </div>`;
+    ["totalStat","freeStat","occupiedStat"].forEach(id =>
+      document.getElementById(id).innerText = "0");
+    return;
+  }
+
+  const data = snapshot.val();
+  allLabs = Object.keys(data).map(id => ({ id, ...data[id] }));
+  refreshAll();
+});
+
+/* Recompute availability + re-render every 60 seconds */
+setInterval(() => {
+  if (allLabs.length) refreshAll();
+}, 60000);
+
+function refreshAll() {
+  /* Attach computed status to each lab */
+  allLabs.forEach(lab => {
+    lab._status = computeAvailability(lab.timetable || {}, lab.periods || []);
+  });
+
+  const available = allLabs.filter(l => l._status === "available").length;
+  const occupied  = allLabs.filter(l => l._status === "occupied").length;
+  document.getElementById("totalStat").innerText    = allLabs.length;
+  document.getElementById("freeStat").innerText     = available;
+  document.getElementById("occupiedStat").innerText = occupied;
+
+  applyFilters();
+}
+
+/* ─── FILTERS ─── */
+window.applyFilters = function() {
+  const q = searchInput.value.toLowerCase().trim();
+  document.getElementById("searchClear").classList.toggle("show", q.length > 0);
+
+  const filtered = allLabs.filter(lab => {
+    const name  = (lab.name  || "").toLowerCase();
+    const block = (lab.block || "").toLowerCase();
+    const floor = (lab.floor || "").toLowerCase();
+
+    const matchesDept = selectedDept === "all" || block.includes(selectedDept);
+    const matchesSearch = !q || name.includes(q) || block.includes(q) || floor.includes(q);
+    const matchesAvail  = !availOnly || lab._status === "available";
+    return matchesDept && matchesSearch && matchesAvail;
+  });
+
+  renderLabs(filtered);
+};
+
+window.setDept = function(dept, btn) {
+  selectedDept = dept;
+  document.querySelectorAll(".filter-btn").forEach(b => b.classList.remove("active"));
+  btn.classList.add("active");
+  applyFilters();
+};
+
+window.toggleAvailOnly = function() {
+  availOnly = !availOnly;
+  document.getElementById("availToggle").classList.toggle("active", availOnly);
+  applyFilters();
+};
+
+window.clearSearch = function() {
+  searchInput.value = "";
+  applyFilters();
+};
+
+/* ─── RENDER ─── */
+function renderLabs(labs) {
+  labContainer.innerHTML = "";
+  document.getElementById("visibleCount").innerText =
+    labs.length + " lab" + (labs.length !== 1 ? "s" : "");
+
+  if (!labs.length) {
+    labContainer.innerHTML = `
+      <div class="empty-state">
+        <span>🔍</span><h3>No labs found</h3>
+        <p>Try a different search or filter</p>
+      </div>`;
+    return;
+  }
+
+  labs.forEach((lab, i) => {
+    const status = lab._status || "notset";
+
+    const statusLabel = status === "available" ? "Available Now"
+                      : status === "occupied"  ? "Occupied"
+                      : "No Timetable";
+
+    /* Equipment tags — first 2 */
+    const equipTags = (lab.equipment && lab.equipment !== "-")
+      ? lab.equipment.split(",").slice(0, 2).map(e =>
+          `<span class="equip-tag">${e.trim()}</span>`
+        ).join("")
+      : "";
+
+    /* Next period hint when available */
+    let nextHint = "";
+    if (status === "available" && lab.periods && lab.periods.length) {
+      const next = nextPeriodInfo(lab.timetable || {}, lab.periods);
+      if (next) {
+        nextHint = `<div class="next-period">🕐 Occupied from ${next.start} (${next.label})</div>`;
+      }
+    }
+
+    const card = document.createElement("div");
+    card.className = "lab-card";
+    card.style.animationDelay = (i * 0.04) + "s";
+
+    card.innerHTML = `
+      <div class="lab-stripe ${status}"></div>
+      <div class="lab-inner">
+        <div class="lab-icon">${getIcon(lab.name)}</div>
+        <div class="lab-body">
+          <div class="lab-name">${lab.name || "Lab"}</div>
+          <div class="lab-meta">📍 ${lab.block || "—"} &nbsp;·&nbsp; ${lab.floor || "—"}${lab.room ? " &nbsp;·&nbsp; Room " + lab.room : ""}</div>
+          <div class="lab-tags">
+            <span class="status-pill ${status}">
+              <span class="status-dot"></span>${statusLabel}
+            </span>
+            ${equipTags}
+          </div>
+          ${nextHint}
+        </div>
+        <div class="lab-chevron">›</div>
+      </div>`;
+
+    card.onclick = () => { location.href = `lab-detail.html?id=${lab.id}`; };
+    labContainer.appendChild(card);
+  });
+}
+</script>
+
+</body>
+</html>

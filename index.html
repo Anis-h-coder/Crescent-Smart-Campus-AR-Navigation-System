@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Crescent Smart Campus</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&family=Fraunces:ital,wght@0,300;0,600;1,300&display=swap" rel="stylesheet"/>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --navy: #0B1F3A;
+    --navy-mid: #132B4F;
+    --navy-light: #1E3D63;
+    --gold: #C9A84C;
+    --gold-light: #E2C070;
+    --gold-pale: #F5E9C8;
+    --white: #FFFFFF;
+    --muted: rgba(255,255,255,0.5);
+  }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--navy);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    position: relative;
+  }
+
+  /* Background grid */
+  body::before {
+    content: '';
+    position: absolute; inset: 0;
+    background-image:
+      linear-gradient(rgba(201,168,76,0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(201,168,76,0.05) 1px, transparent 1px);
+    background-size: 40px 40px;
+    z-index: 0;
+  }
+
+  /* Glowing orbs */
+  .orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    opacity: 0.25;
+    animation: orbFloat 8s ease-in-out infinite;
+  }
+  .orb-1 {
+    width: 400px; height: 400px;
+    background: var(--gold);
+    top: -100px; right: -100px;
+    animation-delay: 0s;
+  }
+  .orb-2 {
+    width: 300px; height: 300px;
+    background: #3B82F6;
+    bottom: -80px; left: -80px;
+    animation-delay: 3s;
+  }
+  .orb-3 {
+    width: 200px; height: 200px;
+    background: var(--gold-light);
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    animation-delay: 1.5s;
+  }
+
+  @keyframes orbFloat {
+    0%, 100% { transform: translateY(0) scale(1); }
+    50% { transform: translateY(-20px) scale(1.05); }
+  }
+
+  /* Main container */
+  .splash {
+    position: relative; z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+    animation: fadeUp 1s ease both;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Logo ring */
+  .logo-ring {
+    width: 140px; height: 140px;
+    border-radius: 50%;
+    border: 1.5px solid rgba(201,168,76,0.4);
+    display: flex; align-items: center; justify-content: center;
+    position: relative;
+    margin-bottom: 36px;
+    animation: spinRing 12s linear infinite;
+  }
+
+  @keyframes spinRing {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+  }
+
+  .logo-ring::before {
+    content: '';
+    position: absolute; inset: 8px;
+    border-radius: 50%;
+    border: 1px solid rgba(201,168,76,0.2);
+  }
+
+  /* Dot on ring */
+  .logo-ring::after {
+    content: '';
+    position: absolute;
+    width: 10px; height: 10px;
+    background: var(--gold);
+    border-radius: 50%;
+    top: 6px; left: 50%;
+    transform: translateX(-50%);
+    box-shadow: 0 0 12px var(--gold);
+  }
+
+  .logo-inner {
+    width: 100px; height: 100px;
+    background: rgba(255,255,255,0.06);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    animation: spinRing 12s linear infinite reverse;
+    border: 1px solid rgba(255,255,255,0.08);
+    backdrop-filter: blur(10px);
+  }
+
+  .logo-inner img {
+    width: 64px;
+    height: 64px;
+    object-fit: contain;
+    filter: drop-shadow(0 0 12px rgba(201,168,76,0.5));
+  }
+
+  /* If no logo image, show fallback */
+  .logo-fallback {
+    font-size: 40px;
+  }
+
+  /* Text */
+  .splash-title {
+    font-family: 'Fraunces', serif;
+    font-size: 32px;
+    font-weight: 600;
+    color: var(--white);
+    text-align: center;
+    letter-spacing: -0.01em;
+    line-height: 1.2;
+    margin-bottom: 10px;
+    animation: fadeUp 1s ease 0.2s both;
+  }
+
+  .splash-title span {
+    color: var(--gold);
+  }
+
+  .splash-sub {
+    font-size: 14px;
+    color: var(--muted);
+    text-align: center;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 48px;
+    animation: fadeUp 1s ease 0.3s both;
+  }
+
+  /* Progress bar */
+  .progress-wrap {
+    width: 200px;
+    height: 2px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 2px;
+    overflow: hidden;
+    animation: fadeUp 1s ease 0.4s both;
+  }
+
+  .progress-bar {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, var(--gold), var(--gold-light));
+    border-radius: 2px;
+    animation: fillBar 3s ease forwards 0.5s;
+  }
+
+  @keyframes fillBar {
+    0%   { width: 0%; }
+    60%  { width: 75%; }
+    90%  { width: 92%; }
+    100% { width: 100%; }
+  }
+
+  .progress-label {
+    margin-top: 14px;
+    font-size: 12px;
+    color: var(--muted);
+    letter-spacing: 0.04em;
+    animation: fadeUp 1s ease 0.5s both;
+  }
+
+  /* Decorative dots */
+  .dots {
+    display: flex; gap: 6px;
+    margin-top: 32px;
+    animation: fadeUp 1s ease 0.6s both;
+  }
+  .dot {
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    background: rgba(201,168,76,0.3);
+    animation: dotPulse 1.5s ease-in-out infinite;
+  }
+  .dot:nth-child(1) { animation-delay: 0s; }
+  .dot:nth-child(2) { animation-delay: 0.3s; }
+  .dot:nth-child(3) { animation-delay: 0.6s; }
+
+  @keyframes dotPulse {
+    0%, 100% { background: rgba(201,168,76,0.3); transform: scale(1); }
+    50%       { background: var(--gold); transform: scale(1.4); }
+  }
+
+  /* Fade out */
+  body.fade-out {
+    opacity: 0;
+    transition: opacity 0.8s ease;
+  }
+</style>
+</head>
+<body>
+
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+
+  <div class="splash">
+    <div class="logo-ring">
+      <div class="logo-inner">
+        <img src="assets/cres-logo1.png" alt="Crescent" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"/>
+        <span class="logo-fallback" style="display:none">🏛️</span>
+      </div>
+    </div>
+
+    <h1 class="splash-title">Crescent <span>Smart</span> Campus</h1>
+    <p class="splash-sub">AI-Powered Navigation System</p>
+
+    <div class="progress-wrap">
+      <div class="progress-bar"></div>
+    </div>
+    <p class="progress-label">Initialising campus map...</p>
+
+    <div class="dots">
+      <div class="dot"></div>
+      <div class="dot"></div>
+      <div class="dot"></div>
+    </div>
+  </div>
+
+<script>
+  setTimeout(() => {
+    document.body.classList.add('fade-out');
+    setTimeout(() => { location.href = "dashboard.html"; }, 800);
+  }, 3500);
+</script>
+
+</body>
+</html>

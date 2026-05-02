@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Admin Login — Crescent Campus</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;1,9..144,300&display=swap" rel="stylesheet"/>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --navy:      #08172E;
+  --navy-2:    #0F2340;
+  --navy-3:    #162F54;
+  --gold:      #C9A84C;
+  --gold-2:    #DDB95E;
+  --gold-3:    #EDD080;
+  --gold-pale: #FBF3DC;
+  --white:     #FFFFFF;
+  --off:       #F4F6F9;
+  --muted:     #8FA3BC;
+  --text:      #0F2340;
+  --border:    rgba(0,0,0,0.09);
+  --danger:    #EF4444;
+  --red-pale:  #FEF2F2;
+}
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--navy);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 20px 48px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* ── BACKGROUND ── */
+.bg-mesh {
+  position: fixed; inset: 0; z-index: 0;
+  background:
+    radial-gradient(ellipse 65% 55% at 10% 15%, rgba(239,68,68,0.07) 0%, transparent 65%),
+    radial-gradient(ellipse 70% 60% at 90% 85%, rgba(201,168,76,0.09) 0%, transparent 65%),
+    radial-gradient(ellipse 40% 40% at 80% 10%, rgba(139,92,246,0.06) 0%, transparent 60%);
+}
+.bg-grid {
+  position: fixed; inset: 0; z-index: 0;
+  background-image:
+    linear-gradient(rgba(201,168,76,0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(201,168,76,0.05) 1px, transparent 1px);
+  background-size: 32px 32px;
+}
+
+/* Decorative nodes */
+.bg-nodes { position: fixed; z-index: 0; pointer-events: none; }
+.bg-nodes.tr { top: 0; right: 0; width: 200px; height: 200px; opacity: 0.45; }
+.bg-nodes.bl { bottom: 0; left: 0; width: 160px; height: 160px; opacity: 0.3; }
+
+/* ── TOP LOGO ── */
+.top-logo {
+  position: relative; z-index: 1;
+  width: 100%; max-width: 380px;
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 24px;
+}
+.top-logo img {
+  max-width: 250px; width: 78%;
+  opacity: 0.82;
+}
+
+/* ── CARD ── */
+.card {
+  position: relative; z-index: 1;
+  width: 100%; max-width: 390px;
+  background: rgba(255,255,255,0.97);
+  border-radius: 24px;
+  padding: 36px 30px 30px;
+  box-shadow: 0 32px 64px rgba(0,0,0,0.32), 0 0 0 1px rgba(255,255,255,0.07);
+  animation: fadeUp 0.55s ease both;
+  backdrop-filter: blur(20px);
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(28px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── CARD HEADER ── */
+.card-header { text-align: center; margin-bottom: 30px; }
+
+.logo-wrap { width: 72px; height: 72px; margin: 0 auto 16px; position: relative; }
+
+.logo-ring {
+  width: 100%; height: 100%; border-radius: 50%;
+  border: 2px solid rgba(239,68,68,0.3);
+  padding: 4px;
+  animation: spinRing 14s linear infinite;
+  position: relative;
+}
+.logo-ring::after {
+  content: '';
+  position: absolute;
+  width: 8px; height: 8px; background: #EF4444;
+  border-radius: 50%;
+  top: 3px; left: 50%; transform: translateX(-50%);
+  box-shadow: 0 0 8px #EF4444;
+}
+@keyframes spinRing {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+.logo-inner {
+  width: 100%; height: 100%; border-radius: 50%;
+  background: linear-gradient(135deg, var(--navy), var(--navy-3));
+  display: flex; align-items: center; justify-content: center;
+  animation: spinRing 14s linear infinite reverse;
+}
+.logo-inner img {
+  width: 40px; height: 40px; object-fit: contain;
+  filter: brightness(1);
+}
+.logo-inner .logo-fallback { font-size: 28px; }
+
+.card-header h2 {
+  font-family: 'Fraunces', serif;
+  font-size: 22px; font-weight: 600; color: var(--navy);
+  letter-spacing: -0.01em; margin-bottom: 5px;
+}
+.card-header p { font-size: 13px; color: var(--muted); line-height: 1.4; }
+
+/* Admin role badge — red toned */
+.role-badge {
+  display: inline-flex; align-items: center; gap: 5px;
+  background: rgba(239,68,68,0.08);
+  border: 1px solid rgba(239,68,68,0.22);
+  padding: 4px 12px; border-radius: 20px;
+  font-size: 11px; font-weight: 600;
+  color: #991B1B; letter-spacing: 0.04em;
+  text-transform: uppercase; margin-top: 10px;
+}
+.role-dot {
+  width: 5px; height: 5px; border-radius: 50%;
+  background: #EF4444;
+  animation: blink 1.8s ease-in-out infinite;
+}
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+/* ── FIELDS ── */
+.field { margin-top: 18px; }
+.field label {
+  display: block; font-size: 12px; font-weight: 500;
+  color: var(--muted); margin-bottom: 7px;
+  letter-spacing: 0.03em; text-transform: uppercase;
+}
+.input-wrap { position: relative; }
+.field input {
+  width: 100%; padding: 13px 44px 13px 16px;
+  border-radius: 12px; border: 1.5px solid var(--border);
+  font-size: 14px; font-family: 'DM Sans', sans-serif;
+  outline: none; background: var(--off); color: var(--text);
+  transition: all 0.22s;
+}
+.field input::placeholder { color: var(--muted); opacity: 0.7; }
+.field input:focus {
+  border-color: var(--gold); background: var(--white);
+  box-shadow: 0 0 0 3px rgba(201,168,76,0.15);
+}
+.field input.has-icon { padding-left: 42px; }
+.field input.err-state { border-color: var(--danger); box-shadow: 0 0 0 3px rgba(239,68,68,0.12); }
+
+.input-icon {
+  position: absolute; left: 14px; top: 50%;
+  transform: translateY(-50%); font-size: 16px;
+  pointer-events: none; opacity: 0.45;
+}
+.eye-btn {
+  position: absolute; right: 12px; top: 50%;
+  transform: translateY(-50%); font-size: 17px;
+  cursor: pointer; color: var(--muted); padding: 4px;
+  transition: opacity 0.2s; user-select: none;
+}
+.eye-btn:hover { opacity: 0.65; }
+
+/* ── LOGIN BTN ── */
+.login-btn {
+  width: 100%; margin-top: 26px; padding: 14px;
+  border-radius: 13px; border: none;
+  font-size: 15px; font-weight: 600;
+  font-family: 'DM Sans', sans-serif;
+  background: linear-gradient(135deg, var(--navy), var(--navy-3));
+  color: var(--white); cursor: pointer;
+  box-shadow: 0 8px 24px rgba(8,23,46,0.35);
+  transition: all 0.25s; position: relative; overflow: hidden;
+  letter-spacing: 0.01em;
+}
+.login-btn::after {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, transparent 60%);
+}
+.login-btn:hover { transform: translateY(-2px); box-shadow: 0 12px 32px rgba(8,23,46,0.45); }
+.login-btn:active { transform: scale(0.98); }
+.login-btn:disabled { opacity: 0.7; cursor: not-allowed; transform: none; }
+
+/* ── ERROR BOX ── */
+.error-box {
+  display: none; margin-top: 16px;
+  background: var(--red-pale);
+  border: 1px solid rgba(239,68,68,0.25);
+  border-left: 3px solid var(--danger);
+  padding: 12px 14px; border-radius: 12px;
+  font-size: 13px; font-weight: 500; color: #991B1B;
+  display: none; align-items: center; gap: 8px;
+  animation: shake 0.4s ease;
+}
+.error-box.show { display: flex; }
+
+@keyframes shake {
+  0%   { transform: translateX(0); }
+  25%  { transform: translateX(-6px); }
+  50%  { transform: translateX(6px); }
+  75%  { transform: translateX(-4px); }
+  100% { transform: translateX(0); }
+}
+
+/* ── DIVIDER ── */
+.divider {
+  display: flex; align-items: center; gap: 10px; margin: 20px 0 0;
+}
+.divider::before, .divider::after {
+  content: ''; flex: 1; height: 1px; background: var(--border);
+}
+.divider span { font-size: 11px; color: var(--muted); white-space: nowrap; }
+
+/* ── FOOTER ── */
+.card-footer {
+  margin-top: 18px; text-align: center;
+  font-size: 12px; color: var(--muted); line-height: 1.5;
+}
+.card-footer a {
+  color: var(--gold); font-weight: 500;
+  text-decoration: none; cursor: pointer;
+}
+.card-footer a:hover { text-decoration: underline; }
+
+/* ── BACK LINK ── */
+.back-link {
+  position: relative; z-index: 1; margin-top: 22px;
+  display: flex; align-items: center; gap: 7px;
+  font-size: 13px; color: rgba(255,255,255,0.4);
+  cursor: pointer; transition: color 0.2s;
+  background: none; border: none; font-family: 'DM Sans', sans-serif; padding: 0;
+}
+.back-link:hover { color: rgba(255,255,255,0.75); }
+
+/* ── SECURITY NOTICE ── */
+.security-notice {
+  position: relative; z-index: 1;
+  margin-top: 16px; max-width: 390px; width: 100%;
+  background: rgba(239,68,68,0.08);
+  border: 1px solid rgba(239,68,68,0.18);
+  border-radius: 12px; padding: 10px 14px;
+  display: flex; align-items: center; gap: 10px;
+}
+.security-notice span { font-size: 15px; flex-shrink: 0; }
+.security-notice p { font-size: 11.5px; color: rgba(255,255,255,0.45); line-height: 1.4; }
+</style>
+</head>
+<body>
+
+<!-- Background -->
+<div class="bg-mesh"></div>
+<div class="bg-grid"></div>
+
+<!-- Decorative nodes -->
+<div class="bg-nodes tr">
+  <svg viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="170" cy="28"  r="6" fill="rgba(239,68,68,0.5)"/>
+    <circle cx="110" cy="55"  r="4" fill="rgba(201,168,76,0.4)"/>
+    <circle cx="185" cy="95"  r="4" fill="rgba(239,68,68,0.4)"/>
+    <circle cx="75"  cy="35"  r="3" fill="rgba(201,168,76,0.3)"/>
+    <line x1="170" y1="28"  x2="110" y2="55"  stroke="rgba(239,68,68,0.2)"  stroke-width="1"/>
+    <line x1="110" y1="55"  x2="185" y2="95"  stroke="rgba(201,168,76,0.18)" stroke-width="1"/>
+    <line x1="75"  y1="35"  x2="110" y2="55"  stroke="rgba(201,168,76,0.15)" stroke-width="1"/>
+  </svg>
+</div>
+<div class="bg-nodes bl">
+  <svg viewBox="0 0 160 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="25"  cy="140" r="5" fill="rgba(239,68,68,0.45)"/>
+    <circle cx="70"  cy="110" r="4" fill="rgba(201,168,76,0.35)"/>
+    <circle cx="18"  cy="80"  r="3" fill="rgba(239,68,68,0.3)"/>
+    <line x1="25" y1="140" x2="70"  y2="110" stroke="rgba(239,68,68,0.18)"  stroke-width="1"/>
+    <line x1="70" y1="110" x2="18"  y2="80"  stroke="rgba(201,168,76,0.15)" stroke-width="1"/>
+  </svg>
+</div>
+
+<!-- Top logo -->
+<div class="top-logo">
+  <img src="assets/crescent-logo.png" alt="Crescent University"
+       onerror="this.style.display='none'"/>
+</div>
+
+<!-- Login Card -->
+<div class="card">
+  <div class="card-header">
+    <div class="logo-wrap">
+      <div class="logo-ring">
+        <div class="logo-inner">
+          <img src="assets/cres-logo1.png" alt="Crescent"
+               onerror="this.style.display='none';this.nextElementSibling.style.display='block'"/>
+          <span class="logo-fallback" style="display:none">🛡️</span>
+        </div>
+      </div>
+    </div>
+    <h2>Admin Login</h2>
+    <p>Crescent Smart Navigation System</p>
+    <div class="role-badge">
+      <span class="role-dot"></span>
+      Administrator Portal
+    </div>
+  </div>
+
+  <!-- Email -->
+  <div class="field">
+    <label>Admin Email</label>
+    <div class="input-wrap">
+      <input id="email" type="email" class="has-icon"
+             placeholder="admin@crescent.education"
+             autocomplete="email"/>
+      <span class="input-icon">✉️</span>
+    </div>
+  </div>
+
+  <!-- Password -->
+  <div class="field">
+    <label>Password</label>
+    <div class="input-wrap">
+      <input id="password" type="password" class="has-icon"
+             placeholder="Enter admin password"
+             autocomplete="current-password"/>
+      <span class="input-icon">🔐</span>
+      <span class="eye-btn" id="eyeBtn" onclick="togglePassword()">👁️</span>
+    </div>
+  </div>
+
+  <!-- Error box -->
+  <div class="error-box" id="errorBox">
+    ⚠️ <span id="errorMsg">Invalid admin credentials</span>
+  </div>
+
+  <!-- Login button -->
+  <button class="login-btn" id="loginBtn" onclick="login()">
+    Login to Dashboard
+  </button>
+
+  <div class="divider"><span>secured by Firebase Auth</span></div>
+
+  <div class="card-footer">
+    Restricted to authorised administrators only.<br/>
+    <a onclick="location.href='dashboard.html'">← Back to home</a>
+  </div>
+</div>
+
+<!-- Back button -->
+<button class="back-link" onclick="location.href='dashboard.html'">
+  ← Return to Dashboard
+</button>
+
+<!-- Security notice -->
+<div class="security-notice">
+  <span>🛡️</span>
+  <p>This portal is restricted to Crescent administrators. Unauthorised access attempts are logged.</p>
+</div>
+
+<!-- Firebase -->
+<script type="module">
+import { initializeApp } from
+  "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
+import { getAuth, signInWithEmailAndPassword }
+  from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
+
+const firebaseConfig = {
+  apiKey:        "AIzaSyBPykUmk_KgytoMbDjhOLR8AwwoSmt4EL4",
+  authDomain:    "crescent-navigation-system.firebaseapp.com",
+  projectId:     "crescent-navigation-system",
+  appId:         "1:418104083143:web:279d0dfa88f2b700fd74e2"
+};
+
+const app  = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+
+const loginBtn = document.getElementById("loginBtn");
+const errorBox = document.getElementById("errorBox");
+const errorMsg = document.getElementById("errorMsg");
+
+function showError(msg) {
+  errorMsg.innerText = msg;
+  errorBox.classList.add("show");
+  document.getElementById("email").classList.add("err-state");
+  document.getElementById("password").classList.add("err-state");
+  setTimeout(() => {
+    errorBox.classList.remove("show");
+    document.getElementById("email").classList.remove("err-state");
+    document.getElementById("password").classList.remove("err-state");
+  }, 4000);
+}
+
+function clearError() {
+  errorBox.classList.remove("show");
+  document.getElementById("email").classList.remove("err-state");
+  document.getElementById("password").classList.remove("err-state");
+}
+
+/* ── LOGIN ── */
+window.login = function() {
+  const email    = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value;
+
+  clearError();
+
+  if (!email || !password) {
+    showError("Please enter your email and password");
+    return;
+  }
+
+  loginBtn.disabled  = true;
+  loginBtn.innerText = "Verifying credentials...";
+
+  signInWithEmailAndPassword(auth, email, password)
+    .then(() => {
+      loginBtn.innerText = "✓ Access granted — redirecting...";
+      setTimeout(() => { location.href = "admin-dashboard.html"; }, 700);
+    })
+    .catch(() => {
+      showError("Invalid admin credentials. Please try again.");
+      loginBtn.disabled  = false;
+      loginBtn.innerText = "Login to Dashboard";
+    });
+};
+
+/* ── TOGGLE PASSWORD ── */
+window.togglePassword = function() {
+  const pass   = document.getElementById("password");
+  const eyeBtn = document.getElementById("eyeBtn");
+  const isText = pass.type === "text";
+  pass.type      = isText ? "password" : "text";
+  eyeBtn.innerText = isText ? "👁️" : "🙈";
+};
+
+/* ── ENTER KEY ── */
+document.addEventListener("keydown", e => {
+  if (e.key === "Enter") window.login();
+});
+
+/* ── CLEAR ERROR ON TYPE ── */
+["email","password"].forEach(id => {
+  document.getElementById(id).addEventListener("input", clearError);
+});
+</script>
+
+</body>
+</html>

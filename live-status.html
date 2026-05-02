@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Live Campus Status — Crescent Campus</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;1,9..144,300&display=swap" rel="stylesheet"/>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --navy:        #08172E;
+  --navy-2:      #0F2340;
+  --navy-3:      #162F54;
+  --gold:        #C9A84C;
+  --gold-2:      #DDB95E;
+  --gold-3:      #EDD080;
+  --gold-pale:   #FBF3DC;
+  --white:       #FFFFFF;
+  --off:         #F4F6F9;
+  --muted:       #8FA3BC;
+  --text:        #0F2340;
+  --card-bg:     #FFFFFF;
+  --border:      rgba(0,0,0,0.06);
+  --card-shadow: 0 2px 14px rgba(8,23,46,0.07);
+}
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--off);
+  color: var(--text);
+  min-height: 100vh;
+  padding-bottom: 40px;
+  overflow-x: hidden;
+}
+
+/* ── HERO ── */
+.hero {
+  background: var(--navy);
+  padding: 20px 20px 52px;
+  position: relative; overflow: hidden;
+}
+.hero-mesh {
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse 70% 80% at 100% 20%, rgba(16,185,129,0.1) 0%, transparent 70%),
+    radial-gradient(ellipse 50% 60% at 0%  90%, rgba(59,130,246,0.07) 0%, transparent 70%);
+}
+.hero-grid {
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(rgba(201,168,76,0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(201,168,76,0.06) 1px, transparent 1px);
+  background-size: 26px 26px;
+  -webkit-mask-image: linear-gradient(to bottom, transparent, black 40%, black 70%, transparent);
+  mask-image: linear-gradient(to bottom, transparent, black 40%, black 70%, transparent);
+}
+.hero-top {
+  position: relative; z-index: 2;
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 20px;
+}
+.back-btn {
+  display: flex; align-items: center; gap: 6px;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.1);
+  color: rgba(255,255,255,0.75);
+  padding: 8px 14px 8px 10px; border-radius: 10px;
+  font-size: 13px; font-weight: 500; cursor: pointer;
+  transition: background 0.2s; font-family: 'DM Sans', sans-serif;
+}
+.back-btn:hover { background: rgba(255,255,255,0.14); }
+
+.live-badge {
+  display: flex; align-items: center; gap: 6px;
+  background: rgba(16,185,129,0.15);
+  border: 1px solid rgba(16,185,129,0.3);
+  padding: 5px 12px; border-radius: 20px;
+  font-size: 11px; font-weight: 600; color: #34D399;
+  letter-spacing: 0.04em; text-transform: uppercase;
+}
+.live-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: #10B981; animation: liveBlink 1.5s ease-in-out infinite;
+}
+@keyframes liveBlink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+.hero-body { position: relative; z-index: 2; }
+.hero-title {
+  font-family: 'Fraunces', serif;
+  font-size: 26px; font-weight: 600; color: var(--white);
+  line-height: 1.2; letter-spacing: -0.02em; margin-bottom: 6px;
+}
+.hero-title .accent { color: var(--gold-2); font-style: italic; }
+.hero-sub { font-size: 13px; color: rgba(255,255,255,0.45); }
+
+/* ── OVERALL STATUS CARD ── */
+.overall-card {
+  margin: -28px 16px 0;
+  position: relative; z-index: 10;
+  background: var(--card-bg);
+  border-radius: 18px;
+  border: 1px solid var(--border);
+  box-shadow: 0 12px 32px rgba(8,23,46,0.13);
+  overflow: hidden;
+  animation: fadeUp 0.4s ease both;
+}
+.overall-strip { height: 4px; transition: background 0.5s; }
+.overall-strip.low      { background: linear-gradient(90deg, #10B981, #34D399); }
+.overall-strip.mid      { background: linear-gradient(90deg, #F59E0B, #FCD34D); }
+.overall-strip.high     { background: linear-gradient(90deg, #EF4444, #F87171); }
+.overall-strip.loading  { background: linear-gradient(90deg, var(--gold), var(--gold-3)); }
+
+.overall-inner {
+  padding: 16px 18px;
+  display: flex; align-items: center; gap: 14px;
+}
+.overall-icon {
+  width: 50px; height: 50px; flex-shrink: 0;
+  border-radius: 14px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 26px; transition: background 0.5s;
+}
+.overall-icon.low  { background: rgba(16,185,129,0.1); }
+.overall-icon.mid  { background: rgba(245,158,11,0.1); }
+.overall-icon.high { background: rgba(239,68,68,0.1); }
+.overall-icon.loading { background: rgba(201,168,76,0.1); }
+
+.overall-text { flex: 1; }
+.overall-status {
+  font-family: 'Fraunces', serif;
+  font-size: 18px; font-weight: 600; color: var(--text); margin-bottom: 3px;
+}
+.overall-time { font-size: 11.5px; color: var(--muted); }
+
+.ai-badge {
+  display: flex; align-items: center; gap: 5px;
+  background: rgba(201,168,76,0.1);
+  border: 1px solid rgba(201,168,76,0.2);
+  padding: 4px 10px; border-radius: 20px;
+  font-size: 10.5px; font-weight: 600; color: #92660A;
+  flex-shrink: 0;
+}
+
+/* ── SECTION ── */
+.section { padding: 18px 16px 0; }
+.sec-title {
+  font-family: 'Fraunces', serif;
+  font-size: 16px; font-weight: 600; color: var(--text);
+  margin-bottom: 12px; display: flex; align-items: center; gap: 8px;
+}
+.sec-title-dot {
+  width: 6px; height: 6px; border-radius: 50%; background: #10B981;
+  animation: liveBlink 1.5s ease-in-out infinite;
+}
+
+/* ── BLOCK CARDS ── */
+.blocks-list { display: flex; flex-direction: column; gap: 10px; }
+
+.block-card {
+  background: var(--card-bg); border-radius: 16px;
+  border: 1px solid var(--border); box-shadow: var(--card-shadow);
+  overflow: hidden; transition: all 0.25s;
+  animation: fadeUp 0.35s ease both;
+}
+.block-card:hover { transform: translateY(-2px); box-shadow: 0 8px 22px rgba(8,23,46,0.1); }
+
+.block-stripe { height: 3px; transition: background 0.5s; }
+.block-stripe.low  { background: linear-gradient(90deg, #10B981, #34D399); }
+.block-stripe.mid  { background: linear-gradient(90deg, #F59E0B, #FCD34D); }
+.block-stripe.high { background: linear-gradient(90deg, #EF4444, #F87171); }
+
+.block-inner { padding: 14px 16px; display: flex; align-items: center; gap: 12px; }
+
+.block-icon {
+  width: 40px; height: 40px; flex-shrink: 0;
+  border-radius: 11px;
+  display: flex; align-items: center; justify-content: center; font-size: 20px;
+}
+.block-icon.low  { background: rgba(16,185,129,0.1); }
+.block-icon.mid  { background: rgba(245,158,11,0.1); }
+.block-icon.high { background: rgba(239,68,68,0.1); }
+
+.block-info { flex: 1; min-width: 0; }
+.block-name { font-size: 13.5px; font-weight: 600; color: var(--text); margin-bottom: 5px; }
+
+.crowd-bar-wrap { display: flex; align-items: center; gap: 8px; }
+.crowd-bar { flex: 1; height: 5px; border-radius: 3px; background: rgba(0,0,0,0.07); overflow: hidden; }
+.crowd-fill { height: 100%; border-radius: 3px; transition: width 0.8s ease, background 0.5s; }
+.crowd-fill.low  { background: linear-gradient(90deg, #10B981, #34D399); }
+.crowd-fill.mid  { background: linear-gradient(90deg, #F59E0B, #FCD34D); }
+.crowd-fill.high { background: linear-gradient(90deg, #EF4444, #F87171); }
+.crowd-pct { font-size: 11px; font-weight: 600; color: var(--muted); white-space: nowrap; }
+
+.block-status {
+  flex-shrink: 0;
+  display: flex; align-items: center; gap: 5px;
+  padding: 4px 11px; border-radius: 20px;
+  font-size: 11px; font-weight: 600;
+}
+.block-status.low  { background: rgba(16,185,129,0.1); color: #065F46; border: 1px solid rgba(16,185,129,0.2); }
+.block-status.mid  { background: rgba(245,158,11,0.1); color: #92400E; border: 1px solid rgba(245,158,11,0.2); }
+.block-status.high { background: rgba(239,68,68,0.1);  color: #991B1B; border: 1px solid rgba(239,68,68,0.2); }
+.status-blink { width: 5px; height: 5px; border-radius: 50%; }
+.block-status.high .status-blink { background: #EF4444; animation: liveBlink 0.8s ease-in-out infinite; }
+.block-status.mid  .status-blink { background: #F59E0B; }
+.block-status.low  .status-blink { background: #10B981; }
+
+/* ── ALERTS CARD ── */
+.alerts-card {
+  background: var(--card-bg); border-radius: 16px;
+  border: 1px solid var(--border); box-shadow: var(--card-shadow);
+  overflow: hidden;
+  animation: fadeUp 0.4s ease 0.15s both;
+}
+.alerts-body { padding: 6px 0; }
+
+.alert-row {
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 18px; transition: background 0.18s;
+  border-bottom: 1px solid var(--border);
+}
+.alert-row:last-child { border-bottom: none; }
+.alert-row:hover { background: var(--off); }
+.alert-icon-wrap {
+  width: 34px; height: 34px; flex-shrink: 0;
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center; font-size: 16px;
+}
+.alert-icon-wrap.red    { background: rgba(239,68,68,0.1); }
+.alert-icon-wrap.amber  { background: rgba(245,158,11,0.1); }
+.alert-icon-wrap.green  { background: rgba(16,185,129,0.1); }
+.alert-text { font-size: 13px; color: var(--text); line-height: 1.4; }
+.alert-text small { display: block; font-size: 11px; color: var(--muted); margin-top: 2px; }
+
+.no-alerts {
+  padding: 18px 18px;
+  display: flex; align-items: center; gap: 10px;
+  font-size: 13px; color: var(--muted);
+}
+
+/* ── SUGGESTIONS CARD ── */
+.suggestions-card {
+  background: var(--navy);
+  border-radius: 16px; padding: 18px;
+  border: 1px solid rgba(255,255,255,0.05);
+  box-shadow: 0 8px 24px rgba(8,23,46,0.18);
+  position: relative; overflow: hidden;
+  animation: fadeUp 0.4s ease 0.2s both;
+}
+.suggestions-card::before {
+  content: ''; position: absolute; right: -16px; top: -16px;
+  width: 100px; height: 100px;
+  background: radial-gradient(circle, rgba(201,168,76,0.12) 0%, transparent 70%);
+}
+.suggestion-row {
+  display: flex; align-items: flex-start; gap: 10px;
+  padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.06);
+  position: relative; z-index: 1;
+}
+.suggestion-row:last-child { border-bottom: none; padding-bottom: 0; }
+.sug-icon {
+  width: 32px; height: 32px; flex-shrink: 0;
+  background: rgba(201,168,76,0.12);
+  border-radius: 9px;
+  display: flex; align-items: center; justify-content: center; font-size: 15px;
+}
+.sug-text { font-size: 13px; color: rgba(255,255,255,0.7); line-height: 1.5; }
+
+.no-suggestions {
+  font-size: 13px; color: rgba(255,255,255,0.4);
+  position: relative; z-index: 1;
+  display: flex; align-items: center; gap: 8px;
+}
+
+/* ── SKELETON ── */
+.sk-block {
+  background: var(--card-bg); border-radius: 16px;
+  border: 1px solid var(--border); padding: 14px 16px;
+  display: flex; align-items: center; gap: 12px;
+}
+.skeleton {
+  background: linear-gradient(90deg, #e8edf2 25%, #f4f6f9 50%, #e8edf2 75%);
+  background-size: 200% 100%; animation: sk 1.5s ease infinite; border-radius: 8px;
+}
+@keyframes sk { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+.sk-i { width: 40px; height: 40px; border-radius: 11px; flex-shrink: 0; }
+.sk-b { flex: 1; display: flex; flex-direction: column; gap: 7px; }
+.sk-l1 { height: 13px; width: 55%; }
+.sk-l2 { height: 8px; width: 80%; }
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.hero { animation: fadeUp 0.4s ease both; }
+</style>
+</head>
+<body>
+
+<!-- ── HERO ── -->
+<div class="hero">
+  <div class="hero-mesh"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-top">
+    <button class="back-btn" onclick="history.back()">← Back</button>
+    <div class="live-badge"><span class="live-dot"></span>Live</div>
+  </div>
+  <div class="hero-body">
+    <h1 class="hero-title">Live Campus <span class="accent">Status</span></h1>
+    <p class="hero-sub">Real-time crowd & block activity powered by AI</p>
+  </div>
+</div>
+
+<!-- ── OVERALL STATUS ── -->
+<div class="overall-card">
+  <div class="overall-strip loading" id="overallStrip"></div>
+  <div class="overall-inner">
+    <div class="overall-icon loading" id="overallIcon">⏳</div>
+    <div class="overall-text">
+      <div class="overall-status" id="overall">Analysing campus...</div>
+      <div class="overall-time" id="time">—</div>
+    </div>
+    <div class="ai-badge">🤖 AI</div>
+  </div>
+</div>
+
+<!-- ── BLOCK STATUS ── -->
+<div class="section">
+  <div class="sec-title">
+    <span class="sec-title-dot"></span>
+    Block-wise Crowd Status
+  </div>
+  <div class="blocks-list" id="blocks">
+    <div class="sk-block"><div class="sk-i skeleton"></div><div class="sk-b"><div class="sk-l1 skeleton"></div><div class="sk-l2 skeleton"></div></div></div>
+    <div class="sk-block" style="margin-top:10px"><div class="sk-i skeleton"></div><div class="sk-b"><div class="sk-l1 skeleton"></div><div class="sk-l2 skeleton"></div></div></div>
+    <div class="sk-block" style="margin-top:10px"><div class="sk-i skeleton"></div><div class="sk-b"><div class="sk-l1 skeleton"></div><div class="sk-l2 skeleton"></div></div></div>
+  </div>
+</div>
+
+<!-- ── ALERTS ── -->
+<div class="section">
+  <div class="sec-title">🚨 Live Alerts</div>
+  <div class="alerts-card">
+    <div class="alerts-body" id="alerts">
+      <div class="no-alerts">⏳ &nbsp;Loading alerts...</div>
+    </div>
+  </div>
+</div>
+
+<!-- ── SUGGESTIONS ── -->
+<div class="section" style="padding-bottom:8px;">
+  <div class="sec-title">✨ Smart Suggestions</div>
+  <div class="suggestions-card">
+    <div id="suggestions">
+      <div class="no-suggestions">⏳ &nbsp;Generating suggestions...</div>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+import { db } from "./js/firebase.js";
+import { ref, onValue }
+  from "https://www.gstatic.com/firebasejs/12.9.0/firebase-database.js";
+
+/* ── BLOCK CONFIG ── */
+const blockIcons = {
+  "CSE Block":              "💻",
+  "Mechanical Block":       "⚙️",
+  "Basic Sciences Block":   "🔬",
+  "Architecture Block":     "🏗️",
+  "EEE Block":              "⚡",
+  "ECE Block":              "📡",
+  "Convocation Centre":     "🏛️",
+  "Crescent Main Canteen":  "🍽️",
+  "Chai Kings":             "☕",
+  "Lemon Tree Cafe":        "🍋"
+};
+
+const blocksData = {
+  "CSE Block":              [],
+  "Mechanical Block":       [],
+  "Basic Sciences Block":   [],
+  "Architecture Block":     [],
+  "Convocation Centre":     [],
+  "Crescent Main Canteen":  [],
+  "Chai Kings":             [],
+  "Lemon Tree Cafe":        []
+};
+
+/* ── TIME-BASED CROWD PREDICTION ──
+   Rules based on Crescent University timetable:
+
+   00:00 – 06:59  → buildings  2%,  canteens  2%   (campus closed)
+   07:00 – 07:59  → buildings 30%,  canteens 15%   (early arrivals)
+   08:00 – 08:59  → buildings 70%,  canteens 40%   (students arriving)
+   09:00 – 10:39  → buildings 82%,  canteens 40%   (classes 1 & 2)
+   10:40 – 10:59  → buildings 60%,  canteens 70%   (break — canteen peaks)
+   11:00 – 12:39  → buildings 75%,  canteens 40%   (classes 3 & 4)
+   12:40 – 14:00  → buildings 50%,  canteens 85%   (lunch — canteen very busy)
+   14:01 – 15:59  → buildings 72%,  canteens 40%   (classes 5, 6 & 7)
+   16:00 – 16:30  → buildings 40%,  canteens 50%   (college leaving time)
+   16:31 – 18:29  → buildings 15%,  canteens 20%   (post-college dispersal)
+   18:30 – 23:59  → buildings  3%,  canteens  3%   (campus empty)
+── */
+function getCrowdLevels() {
+  const now = new Date();
+  const t   = now.getHours() + now.getMinutes() / 60;
+
+  if (t < 7)           return { building: 0.02, canteen: 0.02 };
+  if (t < 8)           return { building: 0.30, canteen: 0.15 };
+  if (t < 9)           return { building: 0.70, canteen: 0.40 };
+  if (t < 10 + 40/60)  return { building: 0.82, canteen: 0.40 };  // 09:00–10:39
+  if (t < 11)          return { building: 0.60, canteen: 0.70 };  // 10:40–10:59 break
+  if (t < 12 + 40/60)  return { building: 0.75, canteen: 0.40 };  // 11:00–12:39
+  if (t < 14 + 1/60)   return { building: 0.50, canteen: 0.85 };  // 12:40–14:00 lunch
+  if (t < 16)          return { building: 0.72, canteen: 0.40 };  // 14:01–15:59
+  if (t < 16.5)        return { building: 0.40, canteen: 0.50 };  // 16:00–16:30 leaving
+  if (t < 18.5)        return { building: 0.15, canteen: 0.20 };  // 16:31–18:29
+  return                { building: 0.03, canteen: 0.03 };        // 18:30+
+}
+
+/* ── REALTIME DATA ── */
+onValue(ref(db, "labs"), async snapshot => {
+  Object.keys(blocksData).forEach(b => { blocksData[b] = []; });
+
+  const blockNameMap = {
+    "CSE":                    "CSE Block",
+    "cse":                    "CSE Block",
+    "Computer Science":       "CSE Block",
+    "Mech Block":             "Mechanical Block",
+    "Mech":                   "Mechanical Block",
+    "Basic Science":          "Basic Sciences Block",
+    "Basic Science Block":    "Basic Sciences Block",
+    "Arch Block":             "Architecture Block",
+    "Arch":                   "Architecture Block",
+    "Convocation Hall":       "Convocation Centre",
+    "Canteen":                "Crescent Main Canteen",
+    "Main Canteen":           "Crescent Main Canteen",
+    "chai kings":             "Chai Kings",
+    "lemon tree":             "Lemon Tree Cafe",
+    "Lemon Tree":             "Lemon Tree Cafe"
+  };
+
+  if (snapshot.exists()) {
+    Object.values(snapshot.val()).forEach(lab => {
+      let block = lab.block || "Other";
+      if (blockNameMap[block]) block = blockNameMap[block];
+      if (!blocksData[block]) return;
+      blocksData[block].push(lab);
+    });
+  }
+  renderStatus();
+});
+
+/* ── RENDER ── */
+function renderStatus() {
+  const now  = new Date();
+
+  document.getElementById("time").innerText =
+    "Last updated: " + now.toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" });
+
+  const blocksEl      = document.getElementById("blocks");
+  const alertsEl      = document.getElementById("alerts");
+  const suggestionsEl = document.getElementById("suggestions");
+
+  blocksEl.innerHTML      = "";
+  alertsEl.innerHTML      = "";
+  suggestionsEl.innerHTML = "";
+
+  const { building: buildingLevel, canteen: canteenLevel } = getCrowdLevels();
+
+  /* Canteen / food location names */
+  const canteenBlocks = new Set([
+    "Crescent Main Canteen", "Chai Kings", "Lemon Tree Cafe"
+  ]);
+  /* Convocation Centre gets a dampened version of building level */
+  const convocationBlocks = new Set(["Convocation Centre"]);
+
+  let overallLevel = "low";
+  const alertRows  = [];
+  const sugRows    = [];
+
+  for (const blockName in blocksData) {
+    const labs = blocksData[blockName];
+    let totalCapacity = 0, totalUsage = 0;
+    labs.forEach(l => {
+      totalCapacity += parseInt(l.capacity     || 0);
+      totalUsage    += parseInt(l.currentUsage || 0);
+    });
+
+    /* Select base prediction for this block type */
+    let baseLevel;
+    if (canteenBlocks.has(blockName)) {
+      /* Per-canteen fine-tuning */
+      if (blockName === "Crescent Main Canteen") baseLevel = canteenLevel;
+      else if (blockName === "Chai Kings")        baseLevel = canteenLevel * 0.90;
+      else                                        baseLevel = canteenLevel * 0.75; // Lemon Tree quieter
+    } else if (convocationBlocks.has(blockName)) {
+      baseLevel = buildingLevel * 0.40; // usually quiet unless event
+    } else {
+      baseLevel = buildingLevel;
+    }
+
+    /* Blend with Firebase live data when available */
+    let combined;
+    if (totalCapacity > 0) {
+      const firebaseRatio = totalUsage / totalCapacity;
+      combined = (firebaseRatio + baseLevel) / 2;
+    } else {
+      combined = baseLevel;
+    }
+
+    combined = Math.min(1.0, Math.max(0, combined));
+    const barPct = Math.round(combined * 100);
+
+    const level =
+      combined > 0.70 ? "high" :
+      combined > 0.40 ? "mid"  : "low";
+
+    const statusLabel =
+      level === "high" ? "Busy" :
+      level === "mid"  ? "Moderate" : "Low";
+
+    const icon = blockIcons[blockName] || "🏢";
+
+    /* Block card */
+    const card = document.createElement("div");
+    card.className = "block-card";
+    card.innerHTML = `
+      <div class="block-stripe ${level}"></div>
+      <div class="block-inner">
+        <div class="block-icon ${level}">${icon}</div>
+        <div class="block-info">
+          <div class="block-name">${blockName}</div>
+          <div class="crowd-bar-wrap">
+            <div class="crowd-bar">
+              <div class="crowd-fill ${level}" style="width:${barPct}%"></div>
+            </div>
+            <span class="crowd-pct">${barPct}%</span>
+          </div>
+        </div>
+        <div class="block-status ${level}">
+          <span class="status-blink"></span>
+          ${statusLabel}
+        </div>
+      </div>`;
+    blocksEl.appendChild(card);
+
+    /* Update overall level */
+    if (level === "high") overallLevel = "high";
+    else if (level === "mid" && overallLevel === "low") overallLevel = "mid";
+
+    /* Alerts */
+    if (level === "high") {
+      alertRows.push(`
+        <div class="alert-row">
+          <div class="alert-icon-wrap red">⚠️</div>
+          <div class="alert-text">
+            ${blockName} is currently crowded
+            <small>High activity detected · Consider alternative timing</small>
+          </div>
+        </div>`);
+    }
+
+    /* Suggestions */
+    if (blockName === "Crescent Main Canteen" && level === "high") {
+      sugRows.push({ icon: "🍽️", text: "Main Canteen is busy right now. Try Chai Kings or Lemon Tree Cafe instead." });
+    }
+    if (blockName === "Crescent Main Canteen" && level === "low") {
+      sugRows.push({ icon: "🍽️", text: "Main Canteen is quiet — good time to grab a meal without waiting." });
+    }
+    if (blockName === "Chai Kings" && level === "high") {
+      sugRows.push({ icon: "☕", text: "Chai Kings is crowded right now. Try Lemon Tree Cafe for a quieter break." });
+    }
+    if (blockName === "Lemon Tree Cafe" && level === "low") {
+      sugRows.push({ icon: "🍋", text: "Lemon Tree Cafe is calm — perfect spot for a quiet coffee break." });
+    }
+    if (blockName === "Convocation Centre" && level === "high") {
+      sugRows.push({ icon: "🏛️", text: "Convocation Centre is busy — an event may be in progress." });
+    }
+    if (level === "high" && !canteenBlocks.has(blockName) && !convocationBlocks.has(blockName)) {
+      sugRows.push({ icon: "🕐", text: `${blockName} is crowded. Plan your visit during off-peak hours.` });
+    }
+  }
+
+  /* Overall badge */
+  const overallEl    = document.getElementById("overall");
+  const overallStrip = document.getElementById("overallStrip");
+  const overallIcon  = document.getElementById("overallIcon");
+
+  const overallConfig = {
+    low:  { label: "🟢 Low Crowd",       icon: "😊", cls: "low"  },
+    mid:  { label: "🟡 Moderate Campus", icon: "😐", cls: "mid"  },
+    high: { label: "🔴 Busy Campus",     icon: "😰", cls: "high" }
+  };
+  const cfg = overallConfig[overallLevel];
+  overallEl.innerText    = cfg.label;
+  overallIcon.innerText  = cfg.icon;
+  overallIcon.className  = `overall-icon ${cfg.cls}`;
+  overallStrip.className = `overall-strip ${cfg.cls}`;
+
+  /* Alerts render */
+  alertsEl.innerHTML = alertRows.length
+    ? alertRows.join("")
+    : `<div class="no-alerts">✅ &nbsp;No crowd alerts right now</div>`;
+
+  /* Suggestions render — deduplicate and cap at 4 */
+  if (sugRows.length) {
+    suggestionsEl.innerHTML = [...new Map(sugRows.map(s => [s.text, s])).values()]
+      .slice(0, 4)
+      .map(s => `
+        <div class="suggestion-row">
+          <div class="sug-icon">${s.icon}</div>
+          <div class="sug-text">${s.text}</div>
+        </div>`).join("");
+  } else {
+    suggestionsEl.innerHTML =
+      `<div class="no-suggestions">✨ &nbsp;No suggestions right now — campus looks good!</div>`;
+  }
+}
+</script>
+
+</body>
+</html>

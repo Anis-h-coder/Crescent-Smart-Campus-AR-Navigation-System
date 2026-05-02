@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Workshops — Crescent Campus</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;1,9..144,300&display=swap" rel="stylesheet"/>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --navy:        #08172E;
+  --navy-2:      #0F2340;
+  --navy-3:      #162F54;
+  --gold:        #C9A84C;
+  --gold-2:      #DDB95E;
+  --gold-3:      #EDD080;
+  --gold-pale:   #FBF3DC;
+  --white:       #FFFFFF;
+  --off:         #F4F6F9;
+  --muted:       #8FA3BC;
+  --text:        #0F2340;
+  --card-bg:     #FFFFFF;
+  --border:      rgba(0,0,0,0.06);
+  --card-shadow: 0 2px 14px rgba(8,23,46,0.07);
+}
+
+body.dark {
+  --off:      #07111F;
+  --card-bg:  #0F2340;
+  --text:     #E8EEF5;
+  --muted:    #6B85A0;
+  --border:   rgba(255,255,255,0.06);
+  --card-shadow: 0 2px 14px rgba(0,0,0,0.3);
+}
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--off);
+  color: var(--text);
+  min-height: 100vh;
+  padding-bottom: 40px;
+  overflow-x: hidden;
+  transition: background 0.3s, color 0.3s;
+}
+
+/* ── HERO ── */
+.hero {
+  background: var(--navy);
+  padding: 20px 20px 52px;
+  position: relative; overflow: hidden;
+}
+.hero-mesh {
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse 70% 80% at 100% 20%, rgba(249,115,22,0.11) 0%, transparent 70%),
+    radial-gradient(ellipse 50% 60% at 0%  90%, rgba(59,130,246,0.07) 0%, transparent 70%);
+}
+.hero-grid {
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(rgba(201,168,76,0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(201,168,76,0.06) 1px, transparent 1px);
+  background-size: 26px 26px;
+  -webkit-mask-image: linear-gradient(to bottom, transparent, black 40%, black 70%, transparent);
+  mask-image: linear-gradient(to bottom, transparent, black 40%, black 70%, transparent);
+}
+.hero-top {
+  position: relative; z-index: 2;
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 20px;
+}
+.back-btn {
+  display: flex; align-items: center; gap: 6px;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.1);
+  color: rgba(255,255,255,0.75);
+  padding: 8px 14px 8px 10px; border-radius: 10px;
+  font-size: 13px; font-weight: 500; cursor: pointer;
+  transition: background 0.2s; font-family: 'DM Sans', sans-serif;
+}
+.back-btn:hover { background: rgba(255,255,255,0.14); }
+.h-btn {
+  width: 36px; height: 36px;
+  background: rgba(255,255,255,0.07);
+  border: 1px solid rgba(255,255,255,0.09);
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 17px; cursor: pointer; transition: background 0.2s;
+}
+.h-btn:hover { background: rgba(255,255,255,0.13); }
+
+.hero-body { position: relative; z-index: 2; }
+.hero-title {
+  font-family: 'Fraunces', serif;
+  font-size: 26px; font-weight: 600; color: var(--white);
+  line-height: 1.2; letter-spacing: -0.02em; margin-bottom: 6px;
+}
+.hero-title .accent { color: var(--gold-2); font-style: italic; }
+.hero-sub { font-size: 13px; color: rgba(255,255,255,0.45); }
+
+/* ── STATS ── */
+.stats-row {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 12px; padding: 0 16px;
+  margin-top: -28px; position: relative; z-index: 10;
+  animation: fadeUp 0.4s ease 0.1s both;
+}
+.sf {
+  background: var(--card-bg); border-radius: 14px;
+  padding: 13px 10px 11px; text-align: center;
+  border: 1px solid var(--border); box-shadow: var(--card-shadow);
+  transition: all 0.22s; position: relative; overflow: hidden;
+}
+.sf::before {
+  content: ''; position: absolute; bottom: 0; left: 0; right: 0;
+  height: 3px; border-radius: 0 0 14px 14px; opacity: 0; transition: opacity 0.22s;
+}
+.sf.orange::before { background: linear-gradient(90deg, #F97316, #FB923C); }
+.sf.green::before  { background: linear-gradient(90deg, #10B981, #34D399); }
+.sf.blue::before   { background: linear-gradient(90deg, #3B82F6, #60A5FA); }
+.sf:hover { transform: translateY(-2px); }
+.sf:hover::before { opacity: 1; }
+.sf-emoji { font-size: 18px; margin-bottom: 5px; display: block; }
+.sf-num {
+  font-family: 'Fraunces', serif;
+  font-size: 20px; font-weight: 600; color: var(--navy); line-height: 1; margin-bottom: 3px;
+}
+body.dark .sf-num { color: var(--white); }
+.sf-label { font-size: 10px; color: var(--muted); font-weight: 500; letter-spacing: 0.04em; }
+
+/* ── FILTERS ── */
+.filter-row {
+  display: flex; gap: 8px; padding: 16px 16px 0;
+  overflow-x: auto; scrollbar-width: none;
+  animation: fadeUp 0.4s ease 0.15s both;
+}
+.filter-row::-webkit-scrollbar { display: none; }
+.filter-btn {
+  flex-shrink: 0; padding: 7px 18px;
+  border-radius: 20px; border: 1.5px solid var(--border);
+  background: var(--card-bg); color: var(--muted);
+  font-size: 12px; font-weight: 600; cursor: pointer;
+  transition: all 0.2s; font-family: 'DM Sans', sans-serif; white-space: nowrap;
+}
+.filter-btn:hover { border-color: #F97316; color: #F97316; }
+.filter-btn.active {
+  background: linear-gradient(135deg, var(--navy-2), var(--navy-3));
+  border-color: var(--navy-2); color: var(--white);
+  box-shadow: 0 4px 12px rgba(8,23,46,0.2);
+}
+
+/* ── SECTION ── */
+.section { padding: 18px 16px 0; }
+.sec-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+.sec-title { font-family: 'Fraunces', serif; font-size: 16px; font-weight: 600; color: var(--text); }
+.sec-count {
+  font-size: 11px; color: var(--muted);
+  background: var(--off); border: 1px solid var(--border);
+  padding: 3px 10px; border-radius: 20px;
+}
+
+/* ── WORKSHOP CARDS ── */
+.workshop-list { display: flex; flex-direction: column; gap: 12px; }
+
+.ws-card {
+  background: var(--card-bg); border-radius: 18px;
+  border: 1px solid var(--border); box-shadow: var(--card-shadow);
+  display: flex; align-items: stretch; overflow: hidden;
+  cursor: pointer; transition: all 0.25s;
+  animation: fadeUp 0.35s ease both;
+}
+.ws-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 14px 34px rgba(8,23,46,0.12);
+}
+.ws-card:active { transform: scale(0.98); }
+
+.ws-stripe { width: 5px; flex-shrink: 0; }
+.ws-stripe.technical     { background: linear-gradient(to bottom, #F97316, #FB923C); }
+.ws-stripe.non-technical { background: linear-gradient(to bottom, #10B981, #34D399); }
+
+/* Image col */
+.ws-img-wrap {
+  width: 80px; flex-shrink: 0; overflow: hidden;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--off);
+}
+.ws-img { width: 100%; height: 100%; object-fit: cover; }
+.ws-img-placeholder {
+  width: 100%; height: 100%; min-height: 90px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 30px;
+  background: linear-gradient(135deg, var(--navy-2), var(--navy-3));
+}
+
+/* Body */
+.ws-inner { flex: 1; padding: 13px 13px 12px; min-width: 0; }
+.ws-title { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ws-meta  { font-size: 11.5px; color: var(--muted); margin-bottom: 7px; }
+.ws-tags  { display: flex; align-items: center; gap: 7px; flex-wrap: wrap; }
+
+.ws-status {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 2px 9px; border-radius: 20px; font-size: 10.5px; font-weight: 600;
+}
+.ws-status.upcoming  { background: rgba(16,185,129,0.1); color: #065F46; border: 1px solid rgba(16,185,129,0.2); }
+.ws-status.completed { background: rgba(239,68,68,0.1);  color: #991B1B; border: 1px solid rgba(239,68,68,0.2); }
+.ws-status-dot { width: 4px; height: 4px; border-radius: 50%; }
+.upcoming  .ws-status-dot { background: #10B981; animation: blink 2s ease-in-out infinite; }
+.completed .ws-status-dot { background: #EF4444; }
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+.ws-cat-badge {
+  padding: 2px 9px; border-radius: 20px; font-size: 10px; font-weight: 600;
+}
+.ws-cat-badge.technical     { background: rgba(249,115,22,0.1); color: #9A3412; }
+.ws-cat-badge.non-technical { background: rgba(16,185,129,0.1); color: #065F46; }
+
+.ws-countdown { font-size: 11px; color: var(--gold); font-weight: 500; margin-top: 5px; }
+
+/* Date chip col */
+.ws-right {
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  padding: 13px 12px 12px 4px; gap: 8px; flex-shrink: 0;
+}
+.ws-date-chip {
+  display: flex; flex-direction: column; align-items: center;
+  background: rgba(249,115,22,0.1);
+  border: 1px solid rgba(249,115,22,0.2);
+  border-radius: 10px; padding: 6px 8px; min-width: 40px;
+}
+.ws-day   { font-family: 'Fraunces', serif; font-size: 18px; font-weight: 600; color: var(--navy); line-height: 1; }
+body.dark .ws-day { color: var(--white); }
+.ws-month { font-size: 9.5px; font-weight: 600; color: #F97316; letter-spacing: 0.04em; text-transform: uppercase; margin-top: 2px; }
+.ws-chevron {
+  width: 28px; height: 28px; border-radius: 8px;
+  background: var(--off); border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; color: var(--muted); transition: all 0.22s;
+}
+.ws-card:hover .ws-chevron { background: var(--navy); color: var(--white); }
+
+/* ── SKELETON ── */
+.sk-card {
+  background: var(--card-bg); border-radius: 18px;
+  border: 1px solid var(--border); padding: 14px 13px;
+  display: flex; align-items: center; gap: 12px; margin-bottom: 12px;
+}
+.skeleton {
+  background: linear-gradient(90deg, #e8edf2 25%, #f4f6f9 50%, #e8edf2 75%);
+  background-size: 200% 100%; animation: sk 1.5s ease infinite; border-radius: 8px;
+}
+body.dark .skeleton {
+  background: linear-gradient(90deg, #0F2340 25%, #162F54 50%, #0F2340 75%);
+  background-size: 200% 100%;
+}
+@keyframes sk { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+.sk-img { width: 70px; height: 70px; border-radius: 12px; flex-shrink: 0; }
+.sk-body { flex: 1; display: flex; flex-direction: column; gap: 8px; }
+.sk-l1 { height: 14px; width: 65%; }
+.sk-l2 { height: 11px; width: 45%; }
+.sk-l3 { height: 11px; width: 30%; }
+
+/* ── EMPTY ── */
+.empty-state {
+  text-align: center; padding: 40px 20px;
+  background: var(--card-bg); border-radius: 16px;
+  border: 1px solid var(--border); box-shadow: var(--card-shadow);
+}
+.empty-state span { font-size: 36px; display: block; margin-bottom: 10px; }
+.empty-state h3 { font-family: 'Fraunces', serif; font-size: 16px; color: var(--text); margin-bottom: 5px; }
+.empty-state p  { font-size: 13px; color: var(--muted); }
+
+/* ── DARK TOGGLE ── */
+.dark-toggle {
+  position: fixed; bottom: 24px; right: 16px;
+  width: 46px; height: 46px;
+  background: var(--card-bg); border: 1px solid var(--border);
+  border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  font-size: 20px; cursor: pointer; box-shadow: var(--card-shadow);
+  z-index: 200; transition: all 0.22s;
+}
+.dark-toggle:hover { transform: scale(1.08); }
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.hero    { animation: fadeUp 0.4s ease both; }
+.section { animation: fadeUp 0.4s ease 0.2s both; }
+</style>
+</head>
+<body>
+
+<script>
+  if (localStorage.dark === "on") document.body.classList.add("dark");
+</script>
+
+<!-- ── HERO ── -->
+<div class="hero">
+  <div class="hero-mesh"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-top">
+    <button class="back-btn" onclick="history.back()">← Back</button>
+    <div class="h-btn" id="darkBtn" onclick="toggleDark()">🌙</div>
+  </div>
+  <div class="hero-body">
+    <h1 class="hero-title">Campus <span class="accent">Workshops</span></h1>
+    <p class="hero-sub">Hands-on learning & skill development sessions</p>
+  </div>
+</div>
+
+<!-- ── STATS ── -->
+<div class="stats-row">
+  <div class="sf orange">
+    <span class="sf-emoji">🛠️</span>
+    <div class="sf-num" id="totalStat">—</div>
+    <div class="sf-label">Total</div>
+  </div>
+  <div class="sf green">
+    <span class="sf-emoji">🟢</span>
+    <div class="sf-num" id="upcomingStat">—</div>
+    <div class="sf-label">Upcoming</div>
+  </div>
+  <div class="sf blue">
+    <span class="sf-emoji">💻</span>
+    <div class="sf-num" id="techStat">—</div>
+    <div class="sf-label">Technical</div>
+  </div>
+</div>
+
+<!-- ── FILTERS ── -->
+<div class="filter-row">
+  <button class="filter-btn active" onclick="setFilter('all', this)">All Workshops</button>
+  <button class="filter-btn" onclick="setFilter('Technical', this)">🔧 Technical</button>
+  <button class="filter-btn" onclick="setFilter('Non-Technical', this)">🎨 Non-Technical</button>
+</div>
+
+<!-- ── WORKSHOP LIST ── -->
+<div class="section">
+  <div class="sec-head">
+    <div class="sec-title">All Workshops</div>
+    <div class="sec-count" id="visibleCount">Loading...</div>
+  </div>
+  <div class="workshop-list" id="workshopContainer">
+    <div class="sk-card" id="sk1"><div class="sk-img skeleton"></div><div class="sk-body"><div class="sk-l1 skeleton"></div><div class="sk-l2 skeleton"></div><div class="sk-l3 skeleton"></div></div></div>
+    <div class="sk-card" id="sk2"><div class="sk-img skeleton"></div><div class="sk-body"><div class="sk-l1 skeleton"></div><div class="sk-l2 skeleton"></div><div class="sk-l3 skeleton"></div></div></div>
+    <div class="sk-card" id="sk3"><div class="sk-img skeleton"></div><div class="sk-body"><div class="sk-l1 skeleton"></div><div class="sk-l2 skeleton"></div><div class="sk-l3 skeleton"></div></div></div>
+  </div>
+</div>
+
+<!-- Dark toggle -->
+<div class="dark-toggle" onclick="toggleDark()"><span id="darkIcon">🌙</span></div>
+
+<script type="module">
+import { initializeApp } from
+  "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
+import { getDatabase, ref, onValue }
+  from "https://www.gstatic.com/firebasejs/12.9.0/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey:        "AIzaSyBPykUmk_KgytoMbDjhOLR8AwwoSmt4EL4",
+  authDomain:    "crescent-navigation-system.firebaseapp.com",
+  databaseURL:   "https://crescent-navigation-system-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId:     "crescent-navigation-system",
+  appId:         "1:418104083143:web:279d0dfa88f2b700fd74e2"
+};
+
+const app       = initializeApp(firebaseConfig);
+const db        = getDatabase(app);
+const container = document.getElementById("workshopContainer");
+
+let allWorkshops  = [];
+let currentFilter = "all";
+const countTimers = {};
+
+/* ── DATE PARSER ── */
+function parseDate(str) {
+  if (!str) return null;
+  if (str.includes("/")) {
+    const [d, m, y] = str.split("/");
+    return new Date(y, m - 1, d);
+  }
+  return new Date(str);
+}
+
+/* ── CLEAR SKELETONS ── */
+function clearSkeletons() {
+  ["sk1","sk2","sk3"].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.remove();
+  });
+}
+
+/* ── REALTIME LOAD ── */
+onValue(ref(db, "workshops"), snapshot => {
+  clearSkeletons();
+
+  if (!snapshot.exists()) {
+    container.innerHTML = `
+      <div class="empty-state">
+        <span>🛠️</span><h3>No workshops yet</h3>
+        <p>Check back soon for upcoming workshops</p>
+      </div>`;
+    ["totalStat","upcomingStat","techStat"].forEach(id =>
+      document.getElementById(id).innerText = "0");
+    return;
+  }
+
+  const data = snapshot.val();
+  allWorkshops = Object.keys(data).map(id => ({ id, ...data[id] }));
+
+  /* Stats */
+  const now      = new Date();
+  const upcoming = allWorkshops.filter(w => parseDate(w.date) >= now).length;
+  const tech     = allWorkshops.filter(w => (w.category || "").toLowerCase() === "technical").length;
+  document.getElementById("totalStat").innerText    = allWorkshops.length;
+  document.getElementById("upcomingStat").innerText = upcoming;
+  document.getElementById("techStat").innerText     = tech;
+
+  renderWorkshops();
+});
+
+/* ── FILTER ── */
+window.setFilter = function(type, btn) {
+  currentFilter = type;
+  document.querySelectorAll(".filter-btn").forEach(b => b.classList.remove("active"));
+  btn.classList.add("active");
+  renderWorkshops();
+};
+
+/* ── RENDER ── */
+function renderWorkshops() {
+  Object.values(countTimers).forEach(clearInterval);
+  container.innerHTML = "";
+  const now = new Date();
+
+  let filtered = allWorkshops.filter(w =>
+    currentFilter === "all" || w.category === currentFilter
+  );
+
+  /* Sort: upcoming first (nearest), then completed */
+  filtered.sort((a, b) => {
+    const dA = parseDate(a.date), dB = parseDate(b.date);
+    const upA = dA >= now, upB = dB >= now;
+    if (upA && !upB) return -1;
+    if (!upA && upB) return 1;
+    return upA ? dA - dB : dB - dA;
+  });
+
+  document.getElementById("visibleCount").innerText =
+    filtered.length + " workshop" + (filtered.length !== 1 ? "s" : "");
+
+  if (!filtered.length) {
+    container.innerHTML = `
+      <div class="empty-state">
+        <span>🔍</span><h3>No workshops found</h3>
+        <p>No workshops match the selected filter</p>
+      </div>`;
+    return;
+  }
+
+  filtered.forEach((w, i) => {
+    const wDate     = parseDate(w.date);
+    if (!wDate) return;
+    const isUpcoming = wDate >= now;
+    const cat        = (w.category || "Technical").toLowerCase().replace(/\s+/g, "-");
+    const isTech     = cat === "technical";
+    const icon       = isTech ? "🔧" : "🎨";
+
+    /* Date chip */
+    let dayNum = "—", monthStr = "—";
+    if (w.date) {
+      const d   = parseDate(w.date);
+      dayNum    = d.getDate();
+      monthStr  = d.toLocaleString("en", { month: "short" }).toUpperCase();
+    }
+
+    const card = document.createElement("div");
+    card.className = "ws-card";
+    card.style.animationDelay = (i * 0.05) + "s";
+
+    card.innerHTML = `
+      <div class="ws-stripe ${cat}"></div>
+      <div class="ws-img-wrap">
+        ${w.image
+          ? `<img src="${w.image}" class="ws-img" alt="${w.title}"/>`
+          : `<div class="ws-img-placeholder">${icon}</div>`}
+      </div>
+      <div class="ws-inner">
+        <div class="ws-title">${w.title || "—"}</div>
+        <div class="ws-meta">📍 ${w.location || "—"} &nbsp;·&nbsp; ${w.date || "—"}</div>
+        <div class="ws-tags">
+          <span class="ws-status ${isUpcoming ? 'upcoming' : 'completed'}">
+            <span class="ws-status-dot"></span>
+            ${isUpcoming ? "Upcoming" : "Completed"}
+          </span>
+          <span class="ws-cat-badge ${cat}">${w.category || "Technical"}</span>
+        </div>
+        ${isUpcoming ? `<div class="ws-countdown" id="cd-${w.id}"></div>` : ""}
+      </div>
+      <div class="ws-right">
+        <div class="ws-date-chip">
+          <div class="ws-day">${dayNum}</div>
+          <div class="ws-month">${monthStr}</div>
+        </div>
+        <div class="ws-chevron">›</div>
+      </div>`;
+
+    card.onclick = () => { location.href = `workshop-detail.html?id=${w.id}`; };
+    container.appendChild(card);
+
+    /* Countdown */
+    if (isUpcoming) {
+      const cdEl = document.getElementById("cd-" + w.id);
+      function tick() {
+        const diff  = wDate - new Date();
+        if (diff <= 0) { cdEl.innerText = "🟢 Starting now!"; clearInterval(countTimers[w.id]); return; }
+        const days  = Math.floor(diff / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+        const mins  = Math.floor((diff / (1000 * 60)) % 60);
+        cdEl.innerText = days > 0 ? `⏳ ${days}d ${hours}h ${mins}m` : `⏳ ${hours}h ${mins}m`;
+      }
+      tick();
+      countTimers[w.id] = setInterval(tick, 60000);
+    }
+  });
+}
+</script>
+
+<script>
+  function toggleDark() {
+    const isDark = document.body.classList.toggle("dark");
+    localStorage.dark = isDark ? "on" : "off";
+    document.getElementById("darkBtn").innerText  = isDark ? "☀️" : "🌙";
+    document.getElementById("darkIcon").innerText = isDark ? "☀️" : "🌙";
+  }
+  if (localStorage.dark === "on") {
+    document.getElementById("darkBtn").innerText  = "☀️";
+    document.getElementById("darkIcon").innerText = "☀️";
+  }
+</script>
+
+</body>
+</html>

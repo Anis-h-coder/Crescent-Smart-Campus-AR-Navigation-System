@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Confirm Navigation — Crescent Campus</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;1,9..144,300&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --navy:        #08172E;
+  --navy-2:      #0F2340;
+  --navy-3:      #162F54;
+  --gold:        #C9A84C;
+  --gold-2:      #DDB95E;
+  --gold-3:      #EDD080;
+  --gold-pale:   #FBF3DC;
+  --white:       #FFFFFF;
+  --off:         #F4F6F9;
+  --muted:       #8FA3BC;
+  --text:        #0F2340;
+  --card-bg:     #FFFFFF;
+  --border:      rgba(0,0,0,0.06);
+  --card-shadow: 0 2px 14px rgba(8,23,46,0.07);
+}
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--off);
+  color: var(--text);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow-x: hidden;
+  padding-bottom: 32px;
+}
+
+/* ── TOPBAR ── */
+.topbar {
+  background: var(--navy);
+  padding: 14px 20px;
+  display: flex; align-items: center; justify-content: space-between;
+  flex-shrink: 0;
+}
+.back-btn {
+  display: flex; align-items: center; gap: 6px;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.1);
+  color: rgba(255,255,255,0.75);
+  padding: 8px 14px 8px 10px; border-radius: 10px;
+  font-size: 13px; font-weight: 500; cursor: pointer;
+  transition: background 0.2s; font-family: 'DM Sans', sans-serif;
+}
+.back-btn:hover { background: rgba(255,255,255,0.14); }
+
+.topbar-title strong {
+  display: block; font-family: 'Fraunces', serif;
+  font-size: 15px; font-weight: 600; color: var(--white);
+}
+.topbar-title span { font-size: 10.5px; color: var(--muted); letter-spacing: 0.05em; text-transform: uppercase; }
+
+/* ── DESTINATION HERO ── */
+.dest-hero {
+  background: var(--navy);
+  padding: 0 20px 28px;
+  position: relative; overflow: hidden;
+}
+.hero-mesh {
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse 65% 80% at 95% 40%, rgba(201,168,76,0.13) 0%, transparent 70%),
+    radial-gradient(ellipse 40% 60% at 5%  90%, rgba(59,130,246,0.07) 0%, transparent 70%);
+}
+.hero-grid {
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(rgba(201,168,76,0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(201,168,76,0.06) 1px, transparent 1px);
+  background-size: 26px 26px;
+  -webkit-mask-image: linear-gradient(to bottom, transparent, black 40%, black 70%, transparent);
+  mask-image: linear-gradient(to bottom, transparent, black 40%, black 70%, transparent);
+}
+.dest-content { position: relative; z-index: 2; padding-top: 18px; }
+.dest-eyebrow {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: rgba(201,168,76,0.15);
+  border: 1px solid rgba(201,168,76,0.3);
+  padding: 4px 12px; border-radius: 20px;
+  font-size: 11px; font-weight: 600; color: var(--gold-2);
+  letter-spacing: 0.04em; text-transform: uppercase;
+  margin-bottom: 10px;
+}
+.dest-dot {
+  width: 5px; height: 5px; border-radius: 50%;
+  background: var(--gold);
+  animation: blink 1.8s ease-in-out infinite;
+}
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+.dest-name {
+  font-family: 'Fraunces', serif;
+  font-size: 26px; font-weight: 600; color: var(--white);
+  line-height: 1.2; letter-spacing: -0.02em; margin-bottom: 6px;
+  min-height: 32px;
+}
+.dest-sub { font-size: 12.5px; color: rgba(255,255,255,0.45); }
+
+/* ── STATS STRIP (float) ── */
+.stats-strip {
+  display: grid; grid-template-columns: 1fr 1fr 1fr;
+  gap: 12px; padding: 0 16px;
+  margin-top: -28px; position: relative; z-index: 10;
+  animation: fadeUp 0.4s ease 0.1s both;
+}
+.stat-chip {
+  background: var(--card-bg); border-radius: 14px;
+  padding: 14px 10px 12px; text-align: center;
+  border: 1px solid var(--border); box-shadow: var(--card-shadow);
+  transition: all 0.22s;
+}
+.stat-chip:hover { transform: translateY(-2px); }
+.chip-icon  { font-size: 18px; margin-bottom: 6px; display: block; }
+.chip-val {
+  font-family: 'Fraunces', serif;
+  font-size: 18px; font-weight: 600; color: var(--navy); line-height: 1; margin-bottom: 3px;
+}
+.chip-label { font-size: 10px; color: var(--muted); font-weight: 500; letter-spacing: 0.04em; }
+
+/* ── MAP CARD ── */
+.map-card {
+  background: var(--card-bg); border-radius: 18px;
+  margin: 16px 16px 0;
+  border: 1px solid var(--border); box-shadow: var(--card-shadow);
+  overflow: hidden;
+  animation: fadeUp 0.4s ease 0.15s both;
+}
+.map-card-header {
+  padding: 14px 18px 12px;
+  display: flex; align-items: center; justify-content: space-between;
+  border-bottom: 1px solid var(--border);
+}
+.map-card-title {
+  font-family: 'Fraunces', serif; font-size: 15px; font-weight: 600; color: var(--text);
+}
+.map-card-sub { font-size: 11px; color: var(--muted); margin-top: 1px; }
+
+.map-live-badge {
+  display: flex; align-items: center; gap: 5px;
+  background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.2);
+  padding: 4px 10px; border-radius: 20px;
+  font-size: 10.5px; font-weight: 600; color: #065F46;
+}
+.live-dot {
+  width: 5px; height: 5px; border-radius: 50%;
+  background: #10B981; animation: blink 1.5s ease-in-out infinite;
+}
+
+#map {
+  height: 260px; width: 100%;
+  background: #e8edf2;
+  position: relative;
+}
+
+/* Loading map overlay */
+.map-loading {
+  position: absolute; inset: 0;
+  background: linear-gradient(135deg, var(--navy-2), var(--navy-3));
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 10px;
+  z-index: 500;
+  transition: opacity 0.4s ease;
+}
+.map-loading.hidden { opacity: 0; pointer-events: none; }
+.map-loading-icon { font-size: 36px; animation: mapPulse 1.5s ease-in-out infinite; }
+@keyframes mapPulse {
+  0%,100% { transform: scale(1); }
+  50%      { transform: scale(1.12); }
+}
+.map-loading p { font-size: 13px; color: rgba(255,255,255,0.55); }
+
+/* ── ROUTE INFO ── */
+.route-info {
+  margin: 12px 16px 0;
+  background: var(--card-bg); border-radius: 16px;
+  border: 1px solid var(--border); box-shadow: var(--card-shadow);
+  overflow: hidden;
+  animation: fadeUp 0.4s ease 0.2s both;
+}
+
+.route-row {
+  display: flex; align-items: center; gap: 12px;
+  padding: 13px 18px;
+  border-bottom: 1px solid var(--border);
+}
+.route-row:last-child { border-bottom: none; }
+
+.route-icon {
+  width: 36px; height: 36px; border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 17px; flex-shrink: 0;
+}
+.route-icon.gold   { background: rgba(201,168,76,0.12); }
+.route-icon.blue   { background: rgba(59,130,246,0.10); }
+.route-icon.green  { background: rgba(16,185,129,0.10); }
+
+.route-label { font-size: 11px; color: var(--muted); font-weight: 500; letter-spacing: 0.03em; margin-bottom: 2px; }
+.route-val   { font-size: 14px; font-weight: 600; color: var(--text); }
+
+/* ── ACTION BUTTONS ── */
+.actions {
+  padding: 16px 16px 0;
+  display: flex; flex-direction: column; gap: 10px;
+  animation: fadeUp 0.4s ease 0.25s both;
+}
+
+.start-btn {
+  width: 100%; padding: 15px;
+  background: linear-gradient(135deg, var(--gold), var(--gold-2));
+  color: var(--navy); border: none; border-radius: 14px;
+  font-size: 15px; font-weight: 600; font-family: 'DM Sans', sans-serif;
+  cursor: pointer; box-shadow: 0 8px 24px rgba(201,168,76,0.4);
+  transition: all 0.25s; position: relative; overflow: hidden;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+}
+.start-btn::after {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.25) 0%, transparent 60%);
+}
+.start-btn:hover { transform: translateY(-2px); box-shadow: 0 12px 32px rgba(201,168,76,0.5); }
+.start-btn:active { transform: scale(0.98); }
+.start-btn:disabled {
+  background: var(--off); color: var(--muted);
+  border: 1.5px solid var(--border);
+  box-shadow: none; cursor: not-allowed;
+  transform: none;
+}
+.start-btn:disabled::after { display: none; }
+
+.back-action-btn {
+  width: 100%; padding: 13px;
+  background: var(--off); color: var(--muted);
+  border: 1.5px solid var(--border); border-radius: 14px;
+  font-size: 14px; font-weight: 500; font-family: 'DM Sans', sans-serif;
+  cursor: pointer; transition: all 0.22s;
+  display: flex; align-items: center; justify-content: center; gap: 7px;
+}
+.back-action-btn:hover { background: var(--navy); color: var(--white); border-color: var(--navy); }
+
+/* ── GPS STATUS TOAST ── */
+.gps-toast {
+  position: fixed; bottom: 24px; left: 50%;
+  transform: translateX(-50%) translateY(80px);
+  background: var(--navy-2); color: var(--white);
+  padding: 10px 18px; border-radius: 20px;
+  font-size: 13px; font-weight: 500;
+  display: flex; align-items: center; gap: 8px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+  z-index: 300; transition: transform 0.35s ease;
+  white-space: nowrap;
+}
+.gps-toast.show { transform: translateX(-50%) translateY(0); }
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.topbar    { animation: fadeUp 0.35s ease both; }
+.dest-hero { animation: fadeUp 0.35s ease both; }
+</style>
+</head>
+<body>
+
+<!-- GPS Toast -->
+<div class="gps-toast" id="gpsToast">📡 <span id="gpsMsg">Getting your location...</span></div>
+
+<!-- ── TOPBAR ── -->
+<header class="topbar">
+  <button class="back-btn" onclick="history.back()">← Back</button>
+  <div class="topbar-title">
+    <strong>Confirm Route</strong>
+    <span>AR Navigation</span>
+  </div>
+</header>
+
+<!-- ── DESTINATION HERO ── -->
+<div class="dest-hero">
+  <div class="hero-mesh"></div>
+  <div class="hero-grid"></div>
+  <div class="dest-content">
+    <div class="dest-eyebrow">
+      <span class="dest-dot"></span>
+      Destination
+    </div>
+    <div class="dest-name" id="placeName">Loading...</div>
+    <div class="dest-sub">Crescent University Campus</div>
+  </div>
+</div>
+
+<!-- ── STATS STRIP ── -->
+<div class="stats-strip">
+  <div class="stat-chip">
+    <span class="chip-icon">📍</span>
+    <div class="chip-val" id="distanceChip">--</div>
+    <div class="chip-label">Distance</div>
+  </div>
+  <div class="stat-chip">
+    <span class="chip-icon">⏱️</span>
+    <div class="chip-val" id="etaChip">--</div>
+    <div class="chip-label">ETA (walk)</div>
+  </div>
+  <div class="stat-chip">
+    <span class="chip-icon">🧭</span>
+    <div class="chip-val" id="modeChip">AR</div>
+    <div class="chip-label">Mode</div>
+  </div>
+</div>
+
+<!-- ── MAP ── -->
+<div class="map-card">
+  <div class="map-card-header">
+    <div>
+      <div class="map-card-title">Route Preview</div>
+      <div class="map-card-sub">Your location → Destination</div>
+    </div>
+    <div class="map-live-badge">
+      <span class="live-dot"></span>
+      Live GPS
+    </div>
+  </div>
+  <div style="position:relative;">
+    <div id="map"></div>
+    <div class="map-loading" id="mapLoading">
+      <div class="map-loading-icon">🗺️</div>
+      <p>Loading map...</p>
+    </div>
+  </div>
+</div>
+
+<!-- ── ROUTE DETAILS ── -->
+<div class="route-info">
+  <div class="route-row">
+    <div class="route-icon gold">📍</div>
+    <div>
+      <div class="route-label">Distance</div>
+      <div class="route-val" id="distance">Calculating...</div>
+    </div>
+  </div>
+  <div class="route-row">
+    <div class="route-icon blue">⏱️</div>
+    <div>
+      <div class="route-label">Walking ETA</div>
+      <div class="route-val" id="eta">Calculating...</div>
+    </div>
+  </div>
+  <div class="route-row">
+    <div class="route-icon green">🚶</div>
+    <div>
+      <div class="route-label">Navigation mode</div>
+      <div class="route-val">AR Augmented Reality · GPS guided</div>
+    </div>
+  </div>
+</div>
+
+<!-- ── ACTIONS ── -->
+<div class="actions">
+  <button class="start-btn" id="startBtn" onclick="startAR()" disabled>
+    🧭 Start AR Navigation
+  </button>
+  <button class="back-action-btn" onclick="history.back()">← Go Back</button>
+</div>
+
+<!-- Leaflet -->
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+<script>
+  const params = new URLSearchParams(location.search);
+  const idx    = params.get("place");
+  const role   = params.get("role") || "visitor";
+
+  /* ── LOGIN CHECK ── */
+  if (role === "student" && !localStorage.getItem("student")) {
+    alert("Please login with your college email");
+    location.href = "student-login.html";
+  }
+  if (idx === null) {
+    alert("Invalid navigation request");
+    location.href = "index.html";
+  }
+
+  /* ── GPS TOAST ── */
+  function showToast(msg) {
+    const t = document.getElementById("gpsToast");
+    document.getElementById("gpsMsg").innerText = msg;
+    t.classList.add("show");
+    setTimeout(() => t.classList.remove("show"), 3000);
+  }
+
+  /* ── LOAD DESTINATION ── */
+  fetch("./data/locations.json")
+    .then(res => res.json())
+    .then(data => {
+      const dest = data[idx];
+      document.getElementById("placeName").innerText = dest.name;
+      initMap(dest);
+    })
+    .catch(() => {
+      alert("Navigation data could not be loaded");
+      location.href = "index.html";
+    });
+
+  /* ── INIT MAP ── */
+  function initMap(destination) {
+    const map = L.map("map").setView([destination.lat, destination.lng], 17);
+
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      attribution: "© OpenStreetMap"
+    }).addTo(map);
+
+    /* Hide map loading overlay once tiles load */
+    map.on("load", () => {
+      document.getElementById("mapLoading").classList.add("hidden");
+    });
+    setTimeout(() => {
+      document.getElementById("mapLoading").classList.add("hidden");
+    }, 2500);
+
+    /* Custom marker icons */
+    const destIcon = L.divIcon({
+      className: "",
+      html: `<div style="
+        width:36px;height:36px;border-radius:50%;
+        background:linear-gradient(135deg,#C9A84C,#EDD080);
+        display:flex;align-items:center;justify-content:center;
+        font-size:18px;
+        box-shadow:0 4px 14px rgba(201,168,76,0.6);
+        border:2px solid white;">📍</div>`,
+      iconSize: [36, 36], iconAnchor: [18, 18]
+    });
+
+    const userIcon = L.divIcon({
+      className: "",
+      html: `<div style="
+        width:32px;height:32px;border-radius:50%;
+        background:linear-gradient(135deg,#0F2340,#162F54);
+        display:flex;align-items:center;justify-content:center;
+        font-size:16px;
+        box-shadow:0 4px 14px rgba(8,23,46,0.5);
+        border:2px solid white;">🧭</div>`,
+      iconSize: [32, 32], iconAnchor: [16, 16]
+    });
+
+    L.marker([destination.lat, destination.lng], { icon: destIcon })
+      .addTo(map)
+      .bindPopup(`<strong>${destination.name}</strong>`);
+
+    showToast("Getting your location...");
+
+    navigator.geolocation.getCurrentPosition(
+      pos => {
+        const userLat = pos.coords.latitude;
+        const userLng = pos.coords.longitude;
+
+        L.marker([userLat, userLng], { icon: userIcon })
+          .addTo(map)
+          .bindPopup("You are here")
+          .openPopup();
+
+        /* Route line */
+        const route = L.polyline(
+          [[userLat, userLng], [destination.lat, destination.lng]],
+          { color: "#C9A84C", weight: 4, opacity: 0.85, dashArray: "8 6" }
+        ).addTo(map);
+
+        map.fitBounds(route.getBounds(), { padding: [40, 40] });
+
+        /* Distance + ETA */
+        const dist  = calculateDistance(userLat, userLng, destination.lat, destination.lng);
+        const meters = Math.round(dist * 1000);
+        const walkMin = Math.max(1, Math.round((dist / 5) * 60));
+
+        const distStr = meters < 1000
+          ? meters + " m"
+          : (dist).toFixed(2) + " km";
+
+        document.getElementById("distance").innerText    = distStr;
+        document.getElementById("eta").innerText         = walkMin + " min walk";
+        document.getElementById("distanceChip").innerText = distStr;
+        document.getElementById("etaChip").innerText      = walkMin + " min";
+
+        document.getElementById("startBtn").disabled = false;
+        showToast("📍 Location found! Ready to navigate.");
+      },
+      err => {
+        showToast("⚠️ GPS unavailable — enabling anyway");
+        document.getElementById("distance").innerText    = "GPS unavailable";
+        document.getElementById("eta").innerText         = "GPS unavailable";
+        document.getElementById("distanceChip").innerText = "N/A";
+        document.getElementById("etaChip").innerText      = "N/A";
+        document.getElementById("startBtn").disabled = false;
+      }
+    );
+  }
+
+  /* ── HAVERSINE ── */
+  function calculateDistance(lat1, lon1, lat2, lon2) {
+    const R    = 6371;
+    const dLat = (lat2 - lat1) * Math.PI / 180;
+    const dLon = (lon2 - lon1) * Math.PI / 180;
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+      Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  }
+
+  /* ── START AR ── */
+  function startAR() {
+    location.href = `ar.html?place=${idx}&role=${role}`;
+  }
+</script>
+
+</body>
+</html>

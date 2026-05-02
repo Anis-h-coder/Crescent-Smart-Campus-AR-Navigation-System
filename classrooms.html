@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Classrooms — Crescent Campus</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;1,9..144,300&display=swap" rel="stylesheet"/>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --navy:        #08172E;
+  --navy-2:      #0F2340;
+  --navy-3:      #162F54;
+  --gold:        #C9A84C;
+  --gold-2:      #DDB95E;
+  --gold-3:      #EDD080;
+  --gold-pale:   #FBF3DC;
+  --white:       #FFFFFF;
+  --off:         #F4F6F9;
+  --muted:       #8FA3BC;
+  --text:        #0F2340;
+  --card-bg:     #FFFFFF;
+  --border:      rgba(0,0,0,0.06);
+  --card-shadow: 0 2px 14px rgba(8,23,46,0.07);
+}
+
+body.dark {
+  --off:         #07111F;
+  --card-bg:     #0F2340;
+  --text:        #E8EEF5;
+  --muted:       #6B85A0;
+  --border:      rgba(255,255,255,0.06);
+  --card-shadow: 0 2px 14px rgba(0,0,0,0.3);
+}
+body.accessible { font-size: 18px; line-height: 1.7; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--off);
+  color: var(--text);
+  min-height: 100vh;
+  padding-bottom: 40px;
+  overflow-x: hidden;
+  transition: background 0.3s, color 0.3s;
+}
+
+/* ── HERO ── */
+.hero {
+  background: var(--navy);
+  padding: 20px 20px 52px;
+  position: relative; overflow: hidden;
+}
+.hero-mesh {
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse 70% 80% at 100% 20%, rgba(201,168,76,0.12) 0%, transparent 70%),
+    radial-gradient(ellipse 50% 60% at 0%  90%, rgba(59,130,246,0.07) 0%, transparent 70%);
+}
+.hero-grid {
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(rgba(201,168,76,0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(201,168,76,0.06) 1px, transparent 1px);
+  background-size: 26px 26px;
+  -webkit-mask-image: linear-gradient(to bottom, transparent, black 40%, black 70%, transparent);
+  mask-image: linear-gradient(to bottom, transparent, black 40%, black 70%, transparent);
+}
+
+.hero-top {
+  position: relative; z-index: 2;
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 20px;
+}
+.back-btn {
+  display: flex; align-items: center; gap: 6px;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.1);
+  color: rgba(255,255,255,0.75);
+  padding: 8px 14px 8px 10px; border-radius: 10px;
+  font-size: 13px; font-weight: 500; cursor: pointer;
+  transition: background 0.2s; font-family: 'DM Sans', sans-serif;
+}
+.back-btn:hover { background: rgba(255,255,255,0.14); }
+
+.h-btn {
+  width: 36px; height: 36px;
+  background: rgba(255,255,255,0.07);
+  border: 1px solid rgba(255,255,255,0.09);
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 17px; cursor: pointer; transition: background 0.2s;
+}
+.h-btn:hover { background: rgba(255,255,255,0.13); }
+
+.hero-body { position: relative; z-index: 2; }
+.hero-title {
+  font-family: 'Fraunces', serif;
+  font-size: 26px; font-weight: 600; color: var(--white);
+  line-height: 1.2; letter-spacing: -0.02em; margin-bottom: 6px;
+}
+.hero-title .accent { color: var(--gold-2); font-style: italic; }
+.hero-sub { font-size: 13px; color: rgba(255,255,255,0.45); }
+
+/* ── STATS STRIP ── */
+.stats-row {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 12px; padding: 18px 16px 0;
+  margin-top: -28px; position: relative; z-index: 10;
+  animation: fadeUp 0.4s ease 0.1s both;
+}
+.sf {
+  background: var(--card-bg); border-radius: 14px;
+  padding: 13px 10px 11px; text-align: center;
+  border: 1px solid var(--border); box-shadow: var(--card-shadow);
+  transition: all 0.22s; position: relative; overflow: hidden;
+}
+.sf::before {
+  content: ''; position: absolute; bottom: 0; left: 0; right: 0;
+  height: 3px; border-radius: 0 0 14px 14px; opacity: 0; transition: opacity 0.22s;
+}
+.sf.blue::before   { background: linear-gradient(90deg, #3B82F6, #60A5FA); }
+.sf.green::before  { background: linear-gradient(90deg, #10B981, #34D399); }
+.sf.orange::before { background: linear-gradient(90deg, #F97316, #FB923C); }
+.sf:hover { transform: translateY(-2px); }
+.sf:hover::before { opacity: 1; }
+.sf-emoji { font-size: 18px; margin-bottom: 5px; display: block; }
+.sf-num {
+  font-family: 'Fraunces', serif;
+  font-size: 20px; font-weight: 600; color: var(--navy); line-height: 1; margin-bottom: 3px;
+}
+body.dark .sf-num { color: var(--white); }
+.sf-label { font-size: 10px; color: var(--muted); font-weight: 500; letter-spacing: 0.04em; }
+
+/* ── FILTER PILLS ── */
+.filter-row {
+  display: flex; gap: 8px; padding: 16px 16px 0;
+  overflow-x: auto; scrollbar-width: none;
+  animation: fadeUp 0.4s ease 0.15s both;
+}
+.filter-row::-webkit-scrollbar { display: none; }
+.filter-btn {
+  flex-shrink: 0; padding: 7px 18px;
+  border-radius: 20px; border: 1.5px solid var(--border);
+  background: var(--card-bg); color: var(--muted);
+  font-size: 12px; font-weight: 600; cursor: pointer;
+  transition: all 0.2s; font-family: 'DM Sans', sans-serif;
+  white-space: nowrap;
+}
+.filter-btn:hover { border-color: var(--gold); color: var(--gold); }
+.filter-btn.active {
+  background: linear-gradient(135deg, var(--navy-2), var(--navy-3));
+  border-color: var(--navy-2); color: var(--white);
+  box-shadow: 0 4px 12px rgba(8,23,46,0.25);
+}
+
+/* ── SECTION HEADER ── */
+.section { padding: 20px 16px 0; }
+.sec-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+.sec-title {
+  font-family: 'Fraunces', serif;
+  font-size: 16px; font-weight: 600; color: var(--text);
+}
+.sec-count {
+  font-size: 11px; color: var(--muted); font-weight: 500;
+  background: var(--off); border: 1px solid var(--border);
+  padding: 3px 10px; border-radius: 20px;
+}
+
+/* ── CLASS CARDS ── */
+.class-list { display: flex; flex-direction: column; gap: 10px; }
+
+.class-card {
+  background: var(--card-bg);
+  border-radius: 16px;
+  border: 1px solid var(--border);
+  box-shadow: var(--card-shadow);
+  display: flex; align-items: stretch;
+  overflow: hidden; transition: all 0.25s;
+  cursor: pointer;
+}
+.class-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 30px rgba(8,23,46,0.11);
+}
+.class-card:active { transform: scale(0.98); }
+
+/* Color stripe per dept */
+.card-stripe { width: 4px; flex-shrink: 0; }
+.class-card[data-dept="cse"]  .card-stripe { background: linear-gradient(to bottom, #3B82F6, #60A5FA); }
+.class-card[data-dept="ece"]  .card-stripe { background: linear-gradient(to bottom, #10B981, #34D399); }
+.class-card[data-dept="mech"] .card-stripe { background: linear-gradient(to bottom, #F97316, #FB923C); }
+.class-card[data-dept="eee"]  .card-stripe { background: linear-gradient(to bottom, var(--gold), var(--gold-3)); }
+.class-card[data-dept="civil"].card-stripe { background: linear-gradient(to bottom, #8B5CF6, #A78BFA); }
+
+.card-inner {
+  flex: 1; display: flex; align-items: center;
+  gap: 13px; padding: 15px 14px;
+}
+
+.room-icon {
+  width: 46px; height: 46px; flex-shrink: 0;
+  border-radius: 13px;
+  display: flex; align-items: center; justify-content: center; font-size: 22px;
+}
+.class-card[data-dept="cse"]  .room-icon { background: linear-gradient(135deg, rgba(59,130,246,0.10), rgba(96,165,250,0.16)); }
+.class-card[data-dept="ece"]  .room-icon { background: linear-gradient(135deg, rgba(16,185,129,0.10), rgba(52,211,153,0.16)); }
+.class-card[data-dept="mech"] .room-icon { background: linear-gradient(135deg, rgba(249,115,22,0.10), rgba(251,146,60,0.16)); }
+.class-card[data-dept="eee"]  .room-icon { background: linear-gradient(135deg, rgba(201,168,76,0.12), rgba(237,208,128,0.18)); }
+.class-card[data-dept="civil"].room-icon { background: linear-gradient(135deg, rgba(139,92,246,0.10), rgba(167,139,250,0.16)); }
+
+.room-info { flex: 1; min-width: 0; }
+.room-name { font-size: 14.5px; font-weight: 600; color: var(--text); margin-bottom: 3px; }
+.room-meta { font-size: 11.5px; color: var(--muted); margin-bottom: 6px; }
+.room-badge {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 2px 9px; border-radius: 20px;
+  font-size: 10px; font-weight: 600;
+}
+.class-card[data-dept="cse"]  .room-badge { background: rgba(59,130,246,0.10); color: #1D4ED8; }
+.class-card[data-dept="ece"]  .room-badge { background: rgba(16,185,129,0.10); color: #065F46; }
+.class-card[data-dept="mech"] .room-badge { background: rgba(249,115,22,0.10); color: #9A3412; }
+.class-card[data-dept="eee"]  .room-badge { background: rgba(201,168,76,0.12); color: #92660A; }
+.class-card[data-dept="civil"].room-badge { background: rgba(139,92,246,0.10); color: #5B21B6; }
+
+.view-chevron {
+  width: 32px; height: 32px; border-radius: 9px;
+  background: var(--off); border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; color: var(--muted); flex-shrink: 0;
+  transition: all 0.22s;
+}
+.class-card:hover .view-chevron { background: var(--navy); color: var(--white); transform: translateX(2px); }
+
+/* Empty state */
+.empty-state {
+  text-align: center; padding: 36px 20px;
+  background: var(--card-bg); border-radius: 16px;
+  border: 1px solid var(--border);
+}
+.empty-state span { font-size: 36px; display: block; margin-bottom: 10px; }
+.empty-state p { font-size: 13px; color: var(--muted); }
+
+/* ── DARK TOGGLE ── */
+.dark-toggle {
+  position: fixed; bottom: 24px; right: 16px;
+  width: 46px; height: 46px;
+  background: var(--card-bg); border: 1px solid var(--border);
+  border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  font-size: 20px; cursor: pointer; box-shadow: var(--card-shadow);
+  z-index: 200; transition: all 0.22s;
+}
+.dark-toggle:hover { transform: scale(1.08); }
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.hero    { animation: fadeUp 0.4s ease both; }
+.section { animation: fadeUp 0.4s ease 0.2s both; }
+
+@media (max-width: 360px) {
+  .hero-title { font-size: 22px; }
+}
+</style>
+</head>
+<body>
+
+<script>
+  if (localStorage.dark   === "on") document.body.classList.add("dark");
+  if (localStorage.access === "on") document.body.classList.add("accessible");
+</script>
+
+<!-- ── HERO ── -->
+<div class="hero">
+  <div class="hero-mesh"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-top">
+    <button class="back-btn" onclick="history.back()">← Back</button>
+    <div class="h-btn" id="darkBtn" onclick="toggleDark()">🌙</div>
+  </div>
+  <div class="hero-body">
+    <h1 class="hero-title">Campus <span class="accent">Classrooms</span></h1>
+    <p class="hero-sub">Browse by department and navigate to any room</p>
+  </div>
+</div>
+
+<!-- ── STATS ── -->
+<div class="stats-row">
+  <div class="sf blue">
+    <span class="sf-emoji">🏫</span>
+    <div class="sf-num" id="totalRooms">4</div>
+    <div class="sf-label">Total Rooms</div>
+  </div>
+  <div class="sf green">
+    <span class="sf-emoji">🏢</span>
+    <div class="sf-num">3</div>
+    <div class="sf-label">Blocks</div>
+  </div>
+  <div class="sf orange">
+    <span class="sf-emoji">📚</span>
+    <div class="sf-num">3</div>
+    <div class="sf-label">Departments</div>
+  </div>
+</div>
+
+<!-- ── FILTERS ── -->
+<div class="filter-row">
+  <button class="filter-btn active" onclick="filterDept('all', this)">All</button>
+  <button class="filter-btn" onclick="filterDept('cse',  this)">💻 CSE</button>
+  <button class="filter-btn" onclick="filterDept('ece',  this)">📡 ECE</button>
+  <button class="filter-btn" onclick="filterDept('mech', this)">⚙️ Mech</button>
+  <button class="filter-btn" onclick="filterDept('eee',  this)">⚡ EEE</button>
+  <button class="filter-btn" onclick="filterDept('civil',this)">🏗️ Civil</button>
+</div>
+
+<!-- ── CLASSROOM LIST ── -->
+<div class="section">
+  <div class="sec-head">
+    <div class="sec-title">All Classrooms</div>
+    <div class="sec-count" id="visibleCount">4 rooms</div>
+  </div>
+
+  <div class="class-list" id="classList">
+
+    <!-- CSE -->
+    <div class="class-card" data-dept="cse"
+         onclick="openClass('CSE-101','Computer Science Block','Ground Floor')">
+      <div class="card-stripe"></div>
+      <div class="card-inner">
+        <div class="room-icon">💻</div>
+        <div class="room-info">
+          <div class="room-name">CSE – 101</div>
+          <div class="room-meta">📍 Computer Science Block · Ground Floor</div>
+          <span class="room-badge">💻 CSE</span>
+        </div>
+        <div class="view-chevron">›</div>
+      </div>
+    </div>
+
+    <div class="class-card" data-dept="cse"
+         onclick="openClass('CSE-202','Computer Science Block','2nd Floor')">
+      <div class="card-stripe"></div>
+      <div class="card-inner">
+        <div class="room-icon">💻</div>
+        <div class="room-info">
+          <div class="room-name">CSE – 202</div>
+          <div class="room-meta">📍 Computer Science Block · 2nd Floor</div>
+          <span class="room-badge">💻 CSE</span>
+        </div>
+        <div class="view-chevron">›</div>
+      </div>
+    </div>
+
+    <!-- ECE -->
+    <div class="class-card" data-dept="ece"
+         onclick="openClass('ECE-105','Electronics Block','1st Floor')">
+      <div class="card-stripe"></div>
+      <div class="card-inner">
+        <div class="room-icon">📡</div>
+        <div class="room-info">
+          <div class="room-name">ECE – 105</div>
+          <div class="room-meta">📍 Electronics Block · 1st Floor</div>
+          <span class="room-badge">📡 ECE</span>
+        </div>
+        <div class="view-chevron">›</div>
+      </div>
+    </div>
+
+    <!-- MECH -->
+    <div class="class-card" data-dept="mech"
+         onclick="openClass('MECH-210','Mechanical Science Block','2nd Floor')">
+      <div class="card-stripe"></div>
+      <div class="card-inner">
+        <div class="room-icon">⚙️</div>
+        <div class="room-info">
+          <div class="room-name">MECH – 210</div>
+          <div class="room-meta">📍 Mechanical Science Block · 2nd Floor</div>
+          <span class="room-badge">⚙️ Mech</span>
+        </div>
+        <div class="view-chevron">›</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Dark toggle -->
+<div class="dark-toggle" onclick="toggleDark()">
+  <span id="darkIcon">🌙</span>
+</div>
+
+<script>
+  /* ── FILTER ── */
+  function filterDept(dep, btn) {
+    document.querySelectorAll(".filter-btn")
+      .forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+
+    const cards = document.querySelectorAll(".class-card");
+    let visible = 0;
+    cards.forEach(card => {
+      const show = dep === "all" || card.dataset.dept === dep;
+      card.style.display = show ? "flex" : "none";
+      if (show) visible++;
+    });
+
+    document.getElementById("visibleCount").innerText =
+      visible + " room" + (visible !== 1 ? "s" : "");
+
+    /* Empty state */
+    const list = document.getElementById("classList");
+    const emptyEl = list.querySelector(".empty-state");
+    if (visible === 0) {
+      if (!emptyEl) {
+        const div = document.createElement("div");
+        div.className = "empty-state";
+        div.innerHTML = `<span>🏫</span><p>No classrooms found for this department</p>`;
+        list.appendChild(div);
+      }
+    } else if (emptyEl) {
+      emptyEl.remove();
+    }
+  }
+
+  /* ── OPEN CLASS ── */
+  function openClass(room, block, floor) {
+    location.href =
+      `classroom-detail.html?room=${encodeURIComponent(room)}&block=${encodeURIComponent(block)}&floor=${encodeURIComponent(floor)}`;
+  }
+
+  /* ── DARK MODE ── */
+  function toggleDark() {
+    const isDark = document.body.classList.toggle("dark");
+    localStorage.dark = isDark ? "on" : "off";
+    document.getElementById("darkBtn").innerText  = isDark ? "☀️" : "🌙";
+    document.getElementById("darkIcon").innerText = isDark ? "☀️" : "🌙";
+  }
+  if (localStorage.dark === "on") {
+    document.getElementById("darkBtn").innerText  = "☀️";
+    document.getElementById("darkIcon").innerText = "☀️";
+  }
+</script>
+
+</body>
+</html>

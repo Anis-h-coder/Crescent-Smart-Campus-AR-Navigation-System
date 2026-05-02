@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>AR Navigation — Crescent Campus</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;1,9..144,300&display=swap" rel="stylesheet"/>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --gold:      #C9A84C;
+  --gold-2:    #DDB95E;
+  --gold-3:    #EDD080;
+  --navy:      #08172E;
+  --white:     #FFFFFF;
+  --glass:     rgba(8, 23, 46, 0.55);
+  --glass-2:   rgba(8, 23, 46, 0.75);
+  --glass-lt:  rgba(255,255,255,0.1);
+  --blur:      blur(16px);
+  --muted:     rgba(255,255,255,0.55);
+}
+
+body {
+  margin: 0; overflow: hidden;
+  font-family: 'DM Sans', sans-serif;
+  background: #000;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* ── CAMERA ── */
+#camera {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  object-fit: cover;
+  z-index: 0;        /* ← must be behind UI elements */
+}
+
+/* ── SCAN LINE OVERLAY ── */
+.scan-overlay {
+  position: fixed; inset: 0; z-index: 1;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 3px,
+    rgba(0,0,0,0.04) 3px,
+    rgba(0,0,0,0.04) 4px
+  );
+  pointer-events: none;
+}
+
+/* ── VIGNETTE ── */
+.vignette {
+  position: fixed; inset: 0; z-index: 2;
+  background: radial-gradient(ellipse at center,
+    transparent 40%,
+    rgba(0,0,0,0.55) 100%
+  );
+  pointer-events: none;
+}
+
+/* ── TOP BAR ── */
+.top-bar {
+  position: fixed; top: 0; left: 0; right: 0;
+  z-index: 100;
+  padding: 14px 16px 10px;
+  display: flex; align-items: center; justify-content: space-between;
+  background: linear-gradient(to bottom, rgba(8,23,46,0.7) 0%, transparent 100%);
+}
+
+/* Back button */
+.back-btn {
+  display: flex; align-items: center; gap: 6px;
+  background: var(--glass);
+  backdrop-filter: var(--blur);
+  -webkit-backdrop-filter: var(--blur);
+  border: 1px solid rgba(255,255,255,0.12);
+  color: var(--white); padding: 8px 14px;
+  border-radius: 40px; font-size: 13px; font-weight: 500;
+  cursor: pointer; transition: background 0.2s;
+  font-family: 'DM Sans', sans-serif;
+}
+.back-btn:hover { background: rgba(8,23,46,0.75); }
+
+/* Destination pill */
+#destinationBar {
+  flex: 1; margin: 0 10px;
+  display: flex; align-items: center; justify-content: center; gap: 7px;
+  background: var(--glass);
+  backdrop-filter: var(--blur);
+  -webkit-backdrop-filter: var(--blur);
+  border: 1px solid rgba(201,168,76,0.25);
+  padding: 9px 18px; border-radius: 40px;
+  font-size: 14px; font-weight: 500; color: var(--white);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  max-width: 220px;
+}
+.dest-dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--gold); flex-shrink: 0;
+  box-shadow: 0 0 8px var(--gold);
+  animation: destPulse 2s ease-in-out infinite;
+}
+@keyframes destPulse {
+  0%,100% { box-shadow: 0 0 8px var(--gold); transform: scale(1); }
+  50%      { box-shadow: 0 0 16px var(--gold); transform: scale(1.3); }
+}
+
+/* Compass */
+#compass {
+  width: 44px; height: 44px; border-radius: 50%;
+  background: var(--glass);
+  backdrop-filter: var(--blur);
+  -webkit-backdrop-filter: var(--blur);
+  border: 1px solid rgba(255,255,255,0.12);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px; flex-shrink: 0;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.35);
+}
+
+/* ── AI DETECTION CHIP ── */
+#aiDetectBox {
+  position: fixed; top: 74px; left: 50%;
+  transform: translateX(-50%);
+  z-index: 100;
+  display: flex; align-items: center; gap: 8px;
+  background: var(--glass);
+  backdrop-filter: var(--blur);
+  -webkit-backdrop-filter: var(--blur);
+  border: 1px solid rgba(255,255,255,0.1);
+  padding: 7px 16px; border-radius: 40px;
+  font-size: 12.5px; color: var(--white);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+  white-space: nowrap;
+}
+.ai-icon { font-size: 14px; }
+.ai-label { color: var(--muted); }
+#aiBuilding { color: var(--gold-3); font-weight: 600; }
+.conf-bar {
+  width: 50px; height: 4px; border-radius: 2px;
+  background: rgba(255,255,255,0.15); overflow: hidden;
+}
+.conf-fill {
+  height: 100%; width: 0%;
+  background: linear-gradient(90deg, var(--gold), var(--gold-3));
+  border-radius: 2px; transition: width 0.5s ease;
+}
+
+/* ── STATUS CHIP ── */
+#routeStatus {
+  position: fixed; top: 116px; left: 16px;
+  z-index: 100;
+  display: flex; align-items: center; gap: 7px;
+  background: var(--glass);
+  backdrop-filter: var(--blur);
+  -webkit-backdrop-filter: var(--blur);
+  border: 1px solid rgba(255,255,255,0.1);
+  padding: 6px 14px; border-radius: 40px;
+  font-size: 12px; color: var(--muted);
+  box-shadow: 0 4px 14px rgba(0,0,0,0.25);
+}
+.status-dot-live {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: #10B981;
+  animation: liveBlink 1.5s ease-in-out infinite;
+}
+@keyframes liveBlink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+/* ── AR GUIDE LINE ── */
+#guideLine {
+  position: fixed; bottom: 0; left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+  width: 3px; height: 260px;
+  background: linear-gradient(
+    to top,
+    rgba(201,168,76,0.9),
+    rgba(201,168,76,0.3),
+    transparent
+  );
+  filter: blur(0.5px);
+}
+
+/* Guide line glow dots */
+#guideLine::before {
+  content: '';
+  position: absolute; bottom: 0; left: 50%;
+  transform: translateX(-50%);
+  width: 12px; height: 12px; border-radius: 50%;
+  background: var(--gold);
+  box-shadow: 0 0 20px var(--gold), 0 0 40px rgba(201,168,76,0.5);
+  animation: glowPulse 1.5s ease-in-out infinite;
+}
+@keyframes glowPulse {
+  0%,100% { transform: translateX(-50%) scale(1); opacity: 1; }
+  50%      { transform: translateX(-50%) scale(1.4); opacity: 0.7; }
+}
+
+/* ── NAV ARROW ── */
+#navArrow {
+  position: fixed; bottom: 220px; left: 50%;
+  transform: translateX(-50%);
+  z-index: 20;
+  width: 110px; height: 110px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  background: linear-gradient(135deg,
+    rgba(201,168,76,0.25),
+    rgba(201,168,76,0.08)
+  );
+  border: 2px solid rgba(201,168,76,0.5);
+  box-shadow:
+    0 0 30px rgba(201,168,76,0.4),
+    0 0 60px rgba(201,168,76,0.2),
+    inset 0 0 20px rgba(201,168,76,0.1);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  animation: arrowPulse 2s ease-in-out infinite;
+}
+
+@keyframes arrowPulse {
+  0%,100% { transform: translateX(-50%) scale(1); box-shadow: 0 0 30px rgba(201,168,76,0.4), 0 0 60px rgba(201,168,76,0.2); }
+  50%      { transform: translateX(-50%) scale(1.06); box-shadow: 0 0 50px rgba(201,168,76,0.6), 0 0 100px rgba(201,168,76,0.3); }
+}
+
+/* Outer ring */
+.arrow-ring {
+  position: fixed; bottom: 210px; left: 50%;
+  transform: translateX(-50%);
+  z-index: 19;
+  width: 130px; height: 130px; border-radius: 50%;
+  border: 1px solid rgba(201,168,76,0.2);
+  animation: ringExpand 2s ease-in-out infinite;
+  pointer-events: none;
+}
+@keyframes ringExpand {
+  0%   { transform: translateX(-50%) scale(1); opacity: 0.5; }
+  100% { transform: translateX(-50%) scale(1.4); opacity: 0; }
+}
+
+#arrowIcon {
+  font-size: 50px; line-height: 1;
+  filter: drop-shadow(0 0 12px rgba(201,168,76,0.8));
+  transition: transform 0.25s ease;
+}
+
+/* Follow hint */
+#arrowHint {
+  position: fixed; bottom: 194px; left: 50%;
+  transform: translateX(-50%);
+  z-index: 20;
+  font-size: 11.5px; color: var(--muted);
+  letter-spacing: 0.08em; text-transform: uppercase;
+  white-space: nowrap;
+  text-shadow: 0 1px 6px rgba(0,0,0,0.8);
+}
+
+/* ── NAV CARD ── */
+#navCard {
+  position: fixed; bottom: 24px; left: 16px; right: 16px;
+  z-index: 100;
+  background: var(--glass-2);
+  backdrop-filter: var(--blur);
+  -webkit-backdrop-filter: var(--blur);
+  border: 1px solid rgba(201,168,76,0.2);
+  border-radius: 22px;
+  padding: 18px 20px;
+  box-shadow: 0 16px 50px rgba(0,0,0,0.5);
+  display: flex; align-items: center; gap: 16px;
+}
+
+.nav-card-left {
+  width: 56px; height: 56px; flex-shrink: 0;
+  border-radius: 16px;
+  background: linear-gradient(135deg, rgba(201,168,76,0.2), rgba(201,168,76,0.08));
+  border: 1px solid rgba(201,168,76,0.3);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 28px;
+}
+
+.nav-card-body { flex: 1; min-width: 0; }
+
+#nextTurnText {
+  font-family: 'Fraunces', serif;
+  font-size: 18px; font-weight: 600; color: var(--white);
+  line-height: 1.2; margin-bottom: 5px;
+}
+
+#dist {
+  font-size: 13px; color: var(--muted);
+  display: flex; align-items: center; gap: 6px;
+}
+
+.dist-bar {
+  flex: 1; height: 3px; border-radius: 2px;
+  background: rgba(255,255,255,0.1); overflow: hidden;
+  max-width: 100px;
+}
+.dist-fill {
+  height: 100%; width: 65%;
+  background: linear-gradient(90deg, var(--gold), var(--gold-3));
+  border-radius: 2px;
+}
+
+.nav-card-right {
+  display: flex; flex-direction: column; align-items: flex-end; gap: 6px;
+  flex-shrink: 0;
+}
+
+.eta-chip {
+  background: rgba(201,168,76,0.15);
+  border: 1px solid rgba(201,168,76,0.25);
+  padding: 4px 10px; border-radius: 20px;
+  font-size: 11px; font-weight: 600; color: var(--gold-3);
+  white-space: nowrap;
+}
+
+.recenter-btn {
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.15);
+  padding: 5px 10px; border-radius: 20px;
+  font-size: 11px; color: rgba(255,255,255,0.6);
+  cursor: pointer; white-space: nowrap;
+  font-family: 'DM Sans', sans-serif;
+  transition: background 0.2s;
+}
+.recenter-btn:hover { background: rgba(255,255,255,0.18); }
+
+/* ── CROSSHAIR ── */
+.crosshair {
+  position: fixed; top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 15; pointer-events: none;
+}
+.ch-h, .ch-v {
+  position: absolute; background: rgba(201,168,76,0.4);
+}
+.ch-h { width: 40px; height: 1px; top: 50%; left: 50%; transform: translate(-50%, -50%); }
+.ch-v { width: 1px; height: 40px; top: 50%; left: 50%; transform: translate(-50%, -50%); }
+.ch-center {
+  width: 8px; height: 8px; border-radius: 50%;
+  border: 1.5px solid rgba(201,168,76,0.6);
+  position: absolute; top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+/* ── CORNER BRACKETS ── */
+.brackets {
+  position: fixed; z-index: 15; pointer-events: none;
+}
+.bracket {
+  position: fixed; width: 24px; height: 24px;
+  z-index: 15; pointer-events: none;
+}
+.bracket-tl { top: 46%; left: calc(50% - 60px);
+  border-top: 2px solid rgba(201,168,76,0.5);
+  border-left: 2px solid rgba(201,168,76,0.5); }
+.bracket-tr { top: 46%; left: calc(50% + 36px);
+  border-top: 2px solid rgba(201,168,76,0.5);
+  border-right: 2px solid rgba(201,168,76,0.5); }
+.bracket-bl { top: calc(46% + 52px); left: calc(50% - 60px);
+  border-bottom: 2px solid rgba(201,168,76,0.5);
+  border-left: 2px solid rgba(201,168,76,0.5); }
+.bracket-br { top: calc(46% + 52px); left: calc(50% + 36px);
+  border-bottom: 2px solid rgba(201,168,76,0.5);
+  border-right: 2px solid rgba(201,168,76,0.5); }
+
+/* ── LANDMARK SCAN LABEL ── */
+#scanLabel {
+  position: fixed; top: 50%; left: 50%;
+  transform: translate(-50%, calc(-50% + 50px));
+  z-index: 16; pointer-events: none;
+  display: flex; align-items: center; gap: 5px;
+  background: rgba(8,23,46,0.6);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(201,168,76,0.2);
+  padding: 4px 12px; border-radius: 20px;
+  font-size: 11px; color: rgba(255,255,255,0.5);
+  letter-spacing: 0.06em; text-transform: uppercase;
+}
+.scan-anim {
+  width: 5px; height: 5px; border-radius: 50%;
+  background: var(--gold);
+  animation: liveBlink 1s ease-in-out infinite;
+}
+/* ── MINI MAP ── */
+#miniMap {
+  position: fixed;
+  top: 110px;   /* adjust this value based on your UI */
+  right: 16px;
+  z-index: 100;
+  width: 140px;
+  height: 120px;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid rgba(201,168,76,0.3);
+  background: rgba(8,23,46,0.82);
+  backdrop-filter: var(--blur);
+  -webkit-backdrop-filter: var(--blur);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+  cursor: pointer;
+  transition: transform 0.2s, width 0.3s, height 0.3s;
+}
+#miniMap:hover { transform: scale(1.04); }
+#miniMap.expanded { width: 220px; height: 190px; bottom: 130px; }
+#mmCanvas { display: block; width: 100%; height: 100%; }
+.mm-header {
+  position: absolute; top: 6px; left: 8px;
+  display: flex; align-items: center; gap: 4px;
+}
+.mm-live-dot {
+  width: 5px; height: 5px; border-radius: 50%;
+  background: #10B981;
+  animation: liveBlink 1.5s ease-in-out infinite;
+}
+.mm-label-text {
+  font-size: 9px; font-weight: 600;
+  letter-spacing: 0.07em; text-transform: uppercase;
+  color: rgba(255,255,255,0.45);
+}
+.mm-north-label {
+  position: absolute; top: 6px; right: 7px;
+  font-size: 9px; font-weight: 600;
+  color: rgba(201,168,76,0.65);
+  letter-spacing: 0.04em;
+}
+#mmDistLabel {
+  position: absolute; bottom: 6px; left: 8px;
+  font-size: 11px; font-weight: 600;
+  color: #C9A84C;
+}
+.mm-legend {
+  position: absolute; bottom: 6px; right: 7px;
+  display: flex; flex-direction: column; gap: 3px;
+}
+.mm-legend-row {
+  display: flex; align-items: center; gap: 3px;
+  font-size: 8.5px; color: rgba(255,255,255,0.35);
+}
+.mm-dot-you {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: #C9A84C; border: 1px solid rgba(255,255,255,0.2);
+}
+.mm-dot-dest {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: #EF4444; border: 1px solid rgba(255,255,255,0.2);
+}
+
+/* ── FADE-IN ── */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+body > * { animation: fadeIn 0.5s ease both; }
+</style>
+</head>
+<body>
+
+<!-- Camera -->
+<video id="camera" 
+  autoplay 
+  playsinline 
+  muted
+  style="position:fixed;top:0;left:0;width:100%;height:100%;object-fit:cover;z-index:0;">
+</video>
+
+<!-- Overlays -->
+<div class="scan-overlay"></div>
+<div class="vignette"></div>
+
+<!-- ── TOP BAR ── -->
+<div class="top-bar">
+  <button class="back-btn" onclick="history.back()">← Back</button>
+
+  <div id="destinationBar">
+    <span class="dest-dot"></span>
+    <span id="destinationName">Loading...</span>
+  </div>
+
+  <div id="compass">🧭</div>
+</div>
+
+<!-- ── AI DETECTION ── -->
+<div id="aiDetectBox">
+  <span class="ai-icon">🤖</span>
+  <span class="ai-label">Detected:</span>
+  <strong id="aiBuilding">---</strong>
+  <div class="conf-bar"><div class="conf-fill" id="confFill"></div></div>
+  <span style="font-size:11px;color:var(--muted)"><span id="aiConfidence">0</span>%</span>
+</div>
+
+<!-- ── STATUS ── -->
+<div id="routeStatus">
+  <span class="status-dot-live"></span>
+  <span id="statusText">Initialising GPS...</span>
+</div>
+
+<!-- ── CROSSHAIR ── -->
+<div class="crosshair">
+  <div class="ch-h"></div>
+  <div class="ch-v"></div>
+  <div class="ch-center"></div>
+</div>
+
+<!-- Corner brackets -->
+<div class="bracket bracket-tl"></div>
+<div class="bracket bracket-tr"></div>
+<div class="bracket bracket-bl"></div>
+<div class="bracket bracket-br"></div>
+
+<!-- Scan label -->
+<div id="scanLabel">
+  <span class="scan-anim"></span>
+  Scanning landmark
+</div>
+
+<!-- ── AR GUIDE ── -->
+<div id="guideLine"></div>
+<div class="arrow-ring"></div>
+
+<!-- ── AR ARROW ── -->
+<div id="navArrow">
+  <div id="arrowIcon">⬆</div>
+</div>
+
+<div id="arrowHint">Follow direction</div>
+
+<!-- ── MINI MAP ── -->
+<div id="miniMap">
+  <canvas id="mmCanvas"></canvas>
+  <div class="mm-header">
+    <span class="mm-live-dot"></span>
+    <span class="mm-label-text">Mini map</span>
+  </div>
+  <div class="mm-north-label">N ↑</div>
+  <div id="mmDistLabel">-- m</div>
+  <div class="mm-legend">
+    <div class="mm-legend-row"><span class="mm-dot-you"></span> You</div>
+    <div class="mm-legend-row"><span class="mm-dot-dest"></span> Dest</div>
+  </div>
+</div>
+
+<!-- ── NAV CARD ── -->
+<div id="navCard">
+  <div class="nav-card-left">
+    <div id="nextTurnIcon">⬆</div>
+  </div>
+  <div class="nav-card-body">
+    <div id="nextTurnText">Move phone to start</div>
+    <div id="dist">
+      <span id="distText">Calculating...</span>
+      <div class="dist-bar"><div class="dist-fill" id="distFill"></div></div>
+    </div>
+  </div>
+  <div class="nav-card-right">
+    <div class="eta-chip" id="etaChip">ETA --</div>
+    <button class="recenter-btn" onclick="recenter()">⊕ Recenter</button>
+  </div>
+</div>
+
+<script src="js/ar.js"></script>
+
+<script>
+  /* ── EXPOSE UI UPDATE HOOKS for ar.js ── */
+
+  /* Update destination name */
+  window.setDestination = function(name) {
+    document.getElementById("destinationName").innerText = name || "Unknown";
+  };
+
+  /* Update AI detection */
+  window.setAIDetection = function(building, confidence) {
+    document.getElementById("aiBuilding").innerText    = building    || "---";
+    document.getElementById("aiConfidence").innerText  = confidence  || 0;
+    const pct = Math.min(100, parseInt(confidence) || 0);
+    document.getElementById("confFill").style.width    = pct + "%";
+  };
+
+  /* Update GPS status */
+  window.setStatus = function(msg) {
+    document.getElementById("statusText").innerText = msg || "";
+  };
+
+  /* Update nav arrow direction (degrees) */
+  window.setArrowDirection = function(deg) {
+    document.getElementById("arrowIcon").style.transform  = `rotate(${deg}deg)`;
+    document.getElementById("nextTurnIcon").style.transform = `rotate(${deg}deg)`;
+  };
+
+  /* Update navigation instruction */
+  window.setNavInstruction = function(icon, text, distStr, etaStr, distPct) {
+    document.getElementById("nextTurnIcon").innerText = icon  || "⬆";
+    document.getElementById("arrowIcon").innerText    = icon  || "⬆";
+    document.getElementById("nextTurnText").innerText = text  || "Move phone to start";
+    document.getElementById("distText").innerText     = distStr || "Calculating...";
+    document.getElementById("etaChip").innerText      = etaStr  ? "ETA " + etaStr : "ETA --";
+    if (distPct !== undefined) {
+      document.getElementById("distFill").style.width = Math.min(100, distPct) + "%";
+    }
+  };
+
+  /* Recenter placeholder */
+  window.recenter = function() {
+    document.getElementById("statusText").innerText = "Recentering GPS...";
+  };
+
+  /* ── Read URL param for destination ── */
+  const destParam = params.get("destination") || params.get("dest");
+  if (destParam) {
+    document.getElementById("destinationName").innerText = decodeURIComponent(destParam);
+  }
+
+  /* ── MINI MAP ENGINE ── */
+(function(){
+  const canvas = document.getElementById('mmCanvas');
+  const ctx = canvas.getContext('2d');
+  let W, H;
+
+  // Tap to expand/collapse
+  document.getElementById('miniMap').addEventListener('click', () => {
+    document.getElementById('miniMap').classList.toggle('expanded');
+    resizeCanvas();
+  });
+
+  function resizeCanvas() {
+    const el = document.getElementById('miniMap');
+    W = el.offsetWidth; H = el.offsetHeight;
+    canvas.width = W; canvas.height = H;
+  }
+
+  resizeCanvas();
+  window.addEventListener('resize', resizeCanvas);
+
+  // User & destination positions (update via setMMPositions)
+  let userGPS   = { lat: 12.9851, lng: 80.2108 };  // default: your campus coords
+  let destGPS   = { lat: 12.9871, lng: 80.2128 };
+  let heading   = 0;
+  let pingR     = 0, pingA = 0.6;
+  let pathDash  = 0;
+
+  // Hook: call this from ar.js to update positions
+  window.setMMPositions = function(uLat, uLng, dLat, dLng, hdg) {
+    userGPS  = { lat: uLat, lng: uLng };
+    destGPS  = { lat: dLat, lng: dLng };
+    if (hdg !== undefined) heading = hdg;
+  };
+
+  function gpsToCanvas(lat, lng) {
+    const scale = 8000;
+    const cx = W / 2, cy = H / 2;
+    const dLng = (lng - userGPS.lng) * scale;
+    const dLat = -(lat - userGPS.lat) * scale;
+    // Rotate by heading so north is up
+    const rad = (heading * Math.PI) / 180;
+    return {
+      x: cx + dLng * Math.cos(rad) - dLat * Math.sin(rad),
+      y: cy + dLng * Math.sin(rad) + dLat * Math.cos(rad)
+    };
+  }
+
+  function drawGrid() {
+    ctx.strokeStyle = 'rgba(255,255,255,0.04)';
+    ctx.lineWidth = 0.5;
+    const step = W / 5;
+    for (let x = 0; x < W; x += step) {
+      ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,H); ctx.stroke();
+    }
+    for (let y = 0; y < H; y += step) {
+      ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(W,y); ctx.stroke();
+    }
+  }
+
+  function drawPath(user, dest) {
+    ctx.save();
+    ctx.beginPath();
+    ctx.moveTo(user.x, user.y);
+    ctx.lineTo(dest.x, dest.y);
+    ctx.strokeStyle = 'rgba(201,168,76,0.18)';
+    ctx.lineWidth   = 6; ctx.lineCap = 'round';
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(user.x, user.y);
+    ctx.lineTo(dest.x, dest.y);
+    ctx.strokeStyle = 'rgba(201,168,76,0.65)';
+    ctx.lineWidth   = 1.5;
+    ctx.setLineDash([4,4]);
+    ctx.lineDashOffset = -pathDash;
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.restore();
+  }
+
+  function drawDestPin(pos) {
+    const pulse = 0.5 + 0.5 * Math.sin(Date.now() * 0.003);
+    ctx.beginPath();
+    ctx.arc(pos.x, pos.y, 10 + pulse * 4, 0, Math.PI*2);
+    ctx.fillStyle = `rgba(239,68,68,${0.08 + pulse*0.06})`;
+    ctx.fill();
+    ctx.beginPath();
+    ctx.arc(pos.x, pos.y, 5, 0, Math.PI*2);
+    ctx.fillStyle = '#EF4444'; ctx.fill();
+    ctx.strokeStyle = 'rgba(255,255,255,0.5)'; ctx.lineWidth = 1.2; ctx.stroke();
+  }
+
+  function drawUserPin() {
+    const cx = W/2, cy = H/2;
+    pingR += 0.35; pingA -= 0.006;
+    if (pingR > 18) { pingR = 0; pingA = 0.5; }
+    ctx.beginPath();
+    ctx.arc(cx, cy, pingR, 0, Math.PI*2);
+    ctx.strokeStyle = `rgba(201,168,76,${pingA})`;
+    ctx.lineWidth = 0.8; ctx.stroke();
+
+    ctx.beginPath();
+    ctx.arc(cx, cy, 7, 0, Math.PI*2);
+    ctx.fillStyle = 'rgba(201,168,76,0.25)'; ctx.fill();
+    ctx.beginPath();
+    ctx.arc(cx, cy, 4.5, 0, Math.PI*2);
+    ctx.fillStyle = '#C9A84C'; ctx.fill();
+    ctx.strokeStyle = '#fff'; ctx.lineWidth = 1; ctx.stroke();
+
+    // direction triangle
+    const dest = gpsToCanvas(destGPS.lat, destGPS.lng);
+    const angle = Math.atan2(dest.y - cy, dest.x - cx);
+    ctx.save();
+    ctx.translate(cx, cy);
+    ctx.rotate(angle);
+    ctx.beginPath();
+    ctx.moveTo(7,0); ctx.lineTo(4,-3); ctx.lineTo(4,3);
+    ctx.fillStyle = '#C9A84C'; ctx.fill();
+    ctx.restore();
+  }
+
+  function metersDist() {
+    const R = 6371000;
+    const dLat = (destGPS.lat - userGPS.lat) * Math.PI / 180;
+    const dLng = (destGPS.lng - userGPS.lng) * Math.PI / 180;
+    const a = Math.sin(dLat/2)**2 +
+      Math.cos(userGPS.lat*Math.PI/180) * Math.cos(destGPS.lat*Math.PI/180) *
+      Math.sin(dLng/2)**2;
+    return Math.round(R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)));
+  }
+
+  function frame() {
+    if (!ctx) return;
+    W = canvas.width; H = canvas.height;
+    ctx.clearRect(0, 0, W, H);
+    drawGrid();
+    const destPos = gpsToCanvas(destGPS.lat, destGPS.lng);
+    drawPath({ x: W/2, y: H/2 }, destPos);
+    drawDestPin(destPos);
+    drawUserPin();
+    pathDash += 0.3;
+    document.getElementById('mmDistLabel').textContent = metersDist() + ' m';
+    requestAnimationFrame(frame);
+  }
+
+  frame();
+})();
+
+  /* ── Compass rotation via DeviceOrientation ── */
+  if (window.DeviceOrientationEvent) {
+    window.addEventListener("deviceorientation", e => {
+      const heading = e.alpha ? Math.round(e.alpha) : 0;
+      document.getElementById("compass").innerText =
+        heading < 45  || heading >= 315 ? "⬆" :
+        heading < 135 ? "➡" :
+        heading < 225 ? "⬇" : "⬅";
+    });
+  }
+</script>
+
+</body>
+</html>

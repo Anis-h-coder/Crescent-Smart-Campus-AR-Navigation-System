@@ -1,0 +1,939 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Lab Management — Crescent Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;1,9..144,300&display=swap" rel="stylesheet"/>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --navy:        #08172E;
+  --navy-2:      #0F2340;
+  --navy-3:      #162F54;
+  --gold:        #C9A84C;
+  --gold-2:      #DDB95E;
+  --gold-3:      #EDD080;
+  --gold-pale:   #FBF3DC;
+  --white:       #FFFFFF;
+  --off:         #F4F6F9;
+  --muted:       #8FA3BC;
+  --text:        #0F2340;
+  --card-bg:     #FFFFFF;
+  --border:      rgba(0,0,0,0.06);
+  --card-shadow: 0 2px 14px rgba(8,23,46,0.07);
+  --success:     #10B981;
+  --danger:      #EF4444;
+  --purple:      #8B5CF6;
+}
+
+html, body { overflow-x: hidden; }
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--off);
+  color: var(--text);
+  min-height: 100vh;
+  padding-bottom: 48px;
+}
+
+/* ── TOPBAR ── */
+.topbar {
+  background: var(--navy);
+  padding: 14px 20px;
+  display: flex; align-items: center; justify-content: space-between;
+  position: sticky; top: 0; z-index: 200;
+}
+.topbar-left { display: flex; align-items: center; gap: 10px; }
+.back-btn {
+  display: flex; align-items: center; gap: 6px;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.1);
+  color: rgba(255,255,255,0.7);
+  padding: 7px 13px 7px 10px; border-radius: 10px;
+  font-size: 13px; font-weight: 500; cursor: pointer;
+  transition: background 0.2s; font-family: 'DM Sans', sans-serif;
+}
+.back-btn:hover { background: rgba(255,255,255,0.14); }
+.topbar-title strong {
+  display: block; font-family: 'Fraunces', serif;
+  font-size: 15px; font-weight: 600; color: var(--white);
+}
+.topbar-title span { font-size: 10.5px; color: var(--muted); letter-spacing: 0.05em; text-transform: uppercase; }
+.add-btn {
+  display: flex; align-items: center; gap: 7px;
+  background: linear-gradient(135deg, var(--gold), var(--gold-2));
+  color: var(--navy); padding: 9px 18px; border-radius: 10px;
+  font-size: 13px; font-weight: 600; border: none; cursor: pointer;
+  transition: all 0.22s; font-family: 'DM Sans', sans-serif;
+  box-shadow: 0 4px 14px rgba(201,168,76,0.4);
+  position: relative; overflow: hidden;
+}
+.add-btn::after {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.25) 0%, transparent 60%);
+}
+.add-btn:hover { transform: translateY(-1px); box-shadow: 0 8px 20px rgba(201,168,76,0.5); }
+
+/* ── HERO ── */
+.hero {
+  background: var(--navy);
+  padding: 0 20px 28px; position: relative; overflow: hidden;
+  animation: fadeUp 0.4s ease both;
+}
+.hero-mesh {
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse 60% 80% at 95% 40%, rgba(139,92,246,0.12) 0%, transparent 70%),
+    radial-gradient(ellipse 40% 60% at 5%  90%, rgba(59,130,246,0.07) 0%, transparent 70%);
+}
+.hero-grid {
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(rgba(201,168,76,0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(201,168,76,0.06) 1px, transparent 1px);
+  background-size: 28px 28px;
+  -webkit-mask-image: linear-gradient(to bottom, transparent, black 40%, black 70%, transparent);
+  mask-image: linear-gradient(to bottom, transparent, black 40%, black 70%, transparent);
+}
+.hero-content { position: relative; z-index: 2; padding-top: 20px; }
+.hero-tag {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: rgba(139,92,246,0.15);
+  border: 1px solid rgba(139,92,246,0.3);
+  padding: 4px 12px; border-radius: 40px;
+  font-size: 11px; font-weight: 600; color: #C4B5FD;
+  letter-spacing: 0.04em; text-transform: uppercase; margin-bottom: 12px;
+}
+.hero-tag-dot { width: 6px; height: 6px; border-radius: 50%; background: #8B5CF6; animation: blink 1.8s ease-in-out infinite; }
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+.hero-title { font-family: 'Fraunces', serif; font-size: 24px; font-weight: 600; color: var(--white); line-height: 1.2; letter-spacing: -0.02em; margin-bottom: 6px; }
+.hero-title .accent { color: var(--gold-2); font-style: italic; }
+.hero-sub { font-size: 13px; color: rgba(255,255,255,0.45); }
+
+/* ── STATS ── */
+.stats-row {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 12px; padding: 18px 16px 0;
+  animation: fadeUp 0.4s ease 0.1s both;
+}
+.sf {
+  background: var(--card-bg); border-radius: 14px;
+  padding: 14px 10px 12px; text-align: center;
+  border: 1px solid var(--border); box-shadow: var(--card-shadow);
+  transition: all 0.22s; position: relative; overflow: hidden;
+}
+.sf::before {
+  content: ''; position: absolute; bottom: 0; left: 0; right: 0;
+  height: 3px; border-radius: 0 0 14px 14px; opacity: 0; transition: opacity 0.22s;
+}
+.sf.purple::before { background: linear-gradient(90deg, #8B5CF6, #A78BFA); }
+.sf.blue::before   { background: linear-gradient(90deg, #3B82F6, #60A5FA); }
+.sf.green::before  { background: linear-gradient(90deg, #10B981, #34D399); }
+.sf:hover { transform: translateY(-2px); box-shadow: 0 8px 22px rgba(0,0,0,0.1); }
+.sf:hover::before { opacity: 1; }
+.sf-emoji { font-size: 18px; margin-bottom: 6px; display: block; }
+.sf-num { font-family: 'Fraunces', serif; font-size: 22px; font-weight: 600; color: var(--navy); line-height: 1; margin-bottom: 3px; }
+.sf-label { font-size: 10px; color: var(--muted); font-weight: 500; letter-spacing: 0.04em; }
+
+/* ── SECTION ── */
+.section { padding: 22px 16px 0; }
+.sec-head { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 14px; }
+.sec-title { font-family: 'Fraunces', serif; font-size: 17px; font-weight: 600; color: var(--text); }
+.sec-sub { font-size: 12px; color: var(--muted); margin-top: 2px; }
+
+/* ── FORM CARD ── */
+.form-card {
+  background: var(--card-bg); border-radius: 20px;
+  border: 1px solid var(--border); box-shadow: var(--card-shadow);
+  overflow: hidden; display: none;
+  animation: fadeUp 0.35s ease both;
+}
+.form-card.open { display: block; }
+.form-card-header {
+  padding: 18px 20px 16px; border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.form-card-title { font-family: 'Fraunces', serif; font-size: 16px; font-weight: 600; color: var(--text); }
+.form-close {
+  width: 30px; height: 30px; border-radius: 8px;
+  background: var(--off); border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; cursor: pointer; color: var(--muted); transition: all 0.2s;
+}
+.form-close:hover { background: #FEE2E2; color: var(--danger); border-color: rgba(239,68,68,0.2); }
+
+.form-body { padding: 20px; }
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
+.form-group { display: flex; flex-direction: column; gap: 6px; }
+.form-group.full { grid-column: 1 / -1; }
+.form-group label {
+  font-size: 11px; font-weight: 600; color: var(--muted);
+  letter-spacing: 0.05em; text-transform: uppercase;
+}
+.form-group input,
+.form-group textarea,
+.form-group select {
+  padding: 12px 14px; border-radius: 11px;
+  border: 1.5px solid var(--border);
+  font-size: 13.5px; font-family: 'DM Sans', sans-serif;
+  outline: none; background: var(--off); color: var(--text);
+  transition: all 0.22s;
+}
+.form-group textarea { resize: none; height: 80px; }
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+  border-color: var(--gold); background: var(--white);
+  box-shadow: 0 0 0 3px rgba(201,168,76,0.12);
+}
+.form-group input::placeholder,
+.form-group textarea::placeholder { color: var(--muted); opacity: 0.7; }
+
+.form-actions { display: flex; gap: 10px; margin-top: 4px; }
+.save-btn {
+  flex: 1; padding: 13px;
+  background: linear-gradient(135deg, var(--gold), var(--gold-2));
+  color: var(--navy); border: none; border-radius: 12px;
+  font-size: 14px; font-weight: 600; font-family: 'DM Sans', sans-serif;
+  cursor: pointer; box-shadow: 0 6px 18px rgba(201,168,76,0.4);
+  transition: all 0.22s; position: relative; overflow: hidden;
+}
+.save-btn::after {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.25) 0%, transparent 60%);
+}
+.save-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 24px rgba(201,168,76,0.5); }
+.cancel-btn {
+  padding: 13px 20px; background: var(--off); color: var(--muted);
+  border: 1.5px solid var(--border); border-radius: 12px;
+  font-size: 14px; font-weight: 500; font-family: 'DM Sans', sans-serif;
+  cursor: pointer; transition: all 0.22s;
+}
+.cancel-btn:hover { border-color: var(--danger); color: var(--danger); background: #FEE2E2; }
+
+/* ── TIMETABLE SECTION ── */
+.tt-section {
+  background: var(--off); border-radius: 14px;
+  padding: 16px; margin-top: 4px; border: 1.5px solid var(--border);
+}
+.tt-section-title {
+  font-size: 12px; font-weight: 600; color: var(--muted);
+  text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 12px;
+  display: flex; align-items: center; gap: 6px;
+}
+.tt-section-title .tt-badge {
+  background: rgba(139,92,246,0.1); color: #5B21B6;
+  border: 1px solid rgba(139,92,246,0.2);
+  padding: 2px 8px; border-radius: 20px; font-size: 10px;
+}
+.add-period-row {
+  display: grid; grid-template-columns: 1fr 1fr 1fr auto; gap: 8px;
+  align-items: flex-end; margin-bottom: 12px;
+}
+.add-period-row input {
+  padding: 10px 12px; border-radius: 10px;
+  border: 1.5px solid var(--border);
+  font-size: 13px; font-family: 'DM Sans', sans-serif;
+  outline: none; background: var(--white); color: var(--text);
+  transition: all 0.22s;
+}
+.add-period-row input:focus { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(201,168,76,0.12); }
+.add-period-btn {
+  padding: 10px 14px; background: var(--navy); color: var(--white);
+  border: none; border-radius: 10px; font-size: 13px; font-weight: 600;
+  font-family: 'DM Sans', sans-serif; cursor: pointer; white-space: nowrap;
+  transition: all 0.2s;
+}
+.add-period-btn:hover { background: var(--navy-3); }
+
+.period-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+.period-tag {
+  display: inline-flex; align-items: center; gap: 5px;
+  background: var(--white); border: 1px solid var(--border);
+  padding: 4px 10px; border-radius: 20px;
+  font-size: 11px; font-weight: 500; color: var(--text);
+}
+.period-tag-del {
+  cursor: pointer; color: var(--muted); font-size: 11px;
+  line-height: 1; transition: color 0.2s;
+}
+.period-tag-del:hover { color: var(--danger); }
+
+/* Timetable grid */
+.tt-grid-wrap { overflow-x: auto; }
+.tt-grid {
+  display: grid;
+  border: 1px solid var(--border); border-radius: 10px; overflow: hidden;
+  min-width: 400px;
+}
+.tt-head-row {
+  display: grid;
+  background: var(--navy);
+}
+.tt-head-cell {
+  padding: 8px 4px; text-align: center;
+  font-size: 10px; font-weight: 600; color: rgba(255,255,255,0.7);
+  letter-spacing: 0.05em; text-transform: uppercase;
+}
+.tt-row {
+  display: grid; border-top: 1px solid var(--border);
+}
+.tt-row:nth-child(even) { background: rgba(0,0,0,0.01); }
+.tt-period-label {
+  padding: 9px 10px; font-size: 11px; font-weight: 600; color: var(--text);
+  border-right: 1px solid var(--border); display: flex; flex-direction: column;
+  justify-content: center;
+}
+.tt-period-time { font-size: 9.5px; color: var(--muted); font-weight: 400; margin-top: 1px; }
+.tt-cell {
+  padding: 8px 4px; text-align: center;
+  border-right: 1px solid var(--border);
+  cursor: pointer; transition: all 0.18s;
+  font-size: 10px; font-weight: 600;
+  display: flex; align-items: center; justify-content: center;
+  min-height: 42px; color: var(--muted);
+}
+.tt-cell:last-child { border-right: none; }
+.tt-cell:hover { background: rgba(201,168,76,0.08); }
+.tt-cell.occupied {
+  background: rgba(239,68,68,0.07);
+  color: #B91C1C;
+}
+.tt-cell.occupied:hover { background: rgba(239,68,68,0.14); }
+.tt-cell.occupied::after { content: '✗'; font-size: 13px; }
+.tt-cell:not(.occupied)::after { content: '–'; }
+
+.tt-legend {
+  display: flex; gap: 14px; margin-top: 8px; flex-wrap: wrap;
+}
+.tt-legend-item {
+  display: flex; align-items: center; gap: 5px;
+  font-size: 11px; color: var(--muted);
+}
+.tt-legend-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+}
+.tt-legend-dot.occ { background: var(--danger); }
+.tt-legend-dot.free { background: var(--success); }
+
+/* ── LAB CARDS ── */
+.lab-list { display: flex; flex-direction: column; gap: 12px; }
+
+.lab-card {
+  background: var(--card-bg); border-radius: 18px;
+  border: 1px solid var(--border); box-shadow: var(--card-shadow);
+  overflow: hidden; transition: all 0.25s;
+}
+.lab-card:hover { transform: translateY(-2px); box-shadow: 0 10px 28px rgba(8,23,46,0.1); }
+.lab-card-strip { height: 4px; background: linear-gradient(90deg, #8B5CF6, #A78BFA); }
+
+.lab-card-top {
+  padding: 16px 18px 14px;
+  display: flex; align-items: center; gap: 14px;
+}
+.lab-icon {
+  width: 46px; height: 46px; flex-shrink: 0;
+  border-radius: 13px;
+  background: linear-gradient(135deg, rgba(139,92,246,0.10), rgba(167,139,250,0.16));
+  display: flex; align-items: center; justify-content: center; font-size: 22px;
+}
+.lab-info { flex: 1; min-width: 0; }
+.lab-name { font-size: 15px; font-weight: 600; color: var(--text); margin-bottom: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.lab-name-row { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; flex-wrap: wrap; }
+.lab-code-badge {
+  display: inline-flex; align-items: center;
+  background: rgba(139,92,246,0.1); border: 1px solid rgba(139,92,246,0.2);
+  color: #5B21B6; padding: 2px 9px; border-radius: 20px;
+  font-size: 11px; font-weight: 600; letter-spacing: 0.03em;
+}
+
+/* Availability badge */
+.avail-badge {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 3px 10px; border-radius: 20px;
+  font-size: 11px; font-weight: 600; letter-spacing: 0.02em;
+}
+.avail-badge.available { background: #D1FAE5; color: #065F46; border: 1px solid #6EE7B7; }
+.avail-badge.occupied  { background: #FEE2E2; color: #991B1B; border: 1px solid #FECACA; }
+.avail-badge.notset    { background: rgba(143,163,188,0.12); color: var(--muted); border: 1px solid rgba(143,163,188,0.2); }
+.avail-dot { width: 6px; height: 6px; border-radius: 50%; }
+.avail-badge.available .avail-dot { background: var(--success); animation: pulse 1.8s ease-in-out infinite; }
+.avail-badge.occupied  .avail-dot { background: var(--danger); }
+.avail-badge.notset    .avail-dot { background: var(--muted); }
+@keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.5;transform:scale(1.3)} }
+
+.lab-actions { display: flex; gap: 7px; flex-shrink: 0; }
+.act-btn {
+  padding: 7px 14px; border-radius: 9px; font-size: 12px; font-weight: 600;
+  border: none; cursor: pointer; transition: all 0.2s; font-family: 'DM Sans', sans-serif;
+  white-space: nowrap;
+}
+.act-btn.edit   { background: rgba(16,185,129,0.1); color: #065F46; border: 1px solid rgba(16,185,129,0.2); }
+.act-btn.edit:hover   { background: #10B981; color: var(--white); }
+.act-btn.delete { background: rgba(239,68,68,0.1); color: #991B1B; border: 1px solid rgba(239,68,68,0.2); }
+.act-btn.delete:hover { background: #EF4444; color: var(--white); }
+
+.lab-details {
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  border-top: 1px solid var(--border);
+}
+.lab-detail-cell {
+  padding: 12px 14px;
+  border-right: 1px solid var(--border);
+  text-align: center;
+}
+.lab-detail-cell:last-child { border-right: none; }
+.detail-label { font-size: 10px; color: var(--muted); font-weight: 500; letter-spacing: 0.04em; text-transform: uppercase; margin-bottom: 4px; }
+.detail-value { font-size: 13px; font-weight: 600; color: var(--text); }
+
+.lab-equipment {
+  padding: 10px 16px 14px;
+  border-top: 1px solid var(--border);
+  display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+}
+.equip-label { font-size: 11px; color: var(--muted); font-weight: 500; flex-shrink: 0; }
+.equip-tag {
+  background: var(--off); border: 1px solid var(--border);
+  padding: 3px 10px; border-radius: 20px;
+  font-size: 11px; font-weight: 500; color: var(--text);
+}
+
+.lab-guide {
+  padding: 10px 16px 14px;
+  border-top: 1px solid var(--border);
+  display: flex; align-items: flex-start; gap: 8px;
+}
+.guide-icon { font-size: 14px; flex-shrink: 0; margin-top: 1px; }
+.guide-text { font-size: 12px; color: var(--muted); line-height: 1.5; }
+
+/* Timetable preview on card */
+.lab-tt-strip {
+  padding: 10px 16px 12px; border-top: 1px solid var(--border);
+}
+.tt-strip-label { font-size: 10px; color: var(--muted); font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; margin-bottom: 8px; }
+.tt-strip-row { display: flex; gap: 4px; flex-wrap: wrap; }
+.tt-strip-chip {
+  padding: 3px 9px; border-radius: 8px; font-size: 10px; font-weight: 600;
+  border: 1px solid transparent;
+}
+.tt-strip-chip.occ  { background: rgba(239,68,68,0.08); color: #991B1B; border-color: rgba(239,68,68,0.15); }
+.tt-strip-chip.free { background: rgba(16,185,129,0.08); color: #065F46; border-color: rgba(16,185,129,0.15); }
+
+/* Empty state */
+.empty-state {
+  text-align: center; padding: 40px 20px;
+  background: var(--card-bg); border-radius: 16px;
+  border: 1px solid var(--border); box-shadow: var(--card-shadow);
+}
+.empty-state span { font-size: 40px; display: block; margin-bottom: 12px; }
+.empty-state h3 { font-family: 'Fraunces', serif; font-size: 16px; color: var(--text); margin-bottom: 6px; }
+.empty-state p  { font-size: 13px; color: var(--muted); }
+
+/* ── TOAST ── */
+.toast {
+  position: fixed; top: 20px; left: 50%;
+  transform: translateX(-50%) translateY(-80px);
+  padding: 12px 20px; border-radius: 12px;
+  font-size: 13px; font-weight: 500;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+  z-index: 500; transition: transform 0.35s ease;
+  display: flex; align-items: center; gap: 8px;
+  white-space: nowrap; font-family: 'DM Sans', sans-serif;
+}
+.toast.show { transform: translateX(-50%) translateY(0); }
+.toast.success { background: #F0FDF4; color: #065F46; border: 1px solid #A7F3D0; }
+.toast.error   { background: #FEF2F2; color: #991B1B; border: 1px solid #FECACA; }
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.section:nth-of-type(1) { animation: fadeUp 0.4s ease 0.12s both; }
+.section:nth-of-type(2) { animation: fadeUp 0.4s ease 0.18s both; }
+
+@media (max-width: 520px) {
+  .form-grid { grid-template-columns: 1fr; }
+  .add-period-row { grid-template-columns: 1fr 1fr; }
+  .add-period-row .add-period-btn { grid-column: 1 / -1; }
+  .lab-details { grid-template-columns: repeat(2, 1fr); }
+  .lab-details .lab-detail-cell:nth-child(2) { border-right: none; }
+  .lab-details .lab-detail-cell:nth-child(3) { border-top: 1px solid var(--border); }
+  .lab-actions { flex-direction: column; }
+  .act-btn { font-size: 11px; padding: 6px 10px; }
+}
+</style>
+</head>
+<body>
+
+<div class="toast" id="toast"><span id="toastMsg"></span></div>
+
+<!-- TOPBAR -->
+<header class="topbar">
+  <div class="topbar-left">
+    <button class="back-btn" onclick="location.href='admin-dashboard.html'">← Back</button>
+    <div class="topbar-title">
+      <strong>Lab Management</strong>
+      <span>Admin Panel</span>
+    </div>
+  </div>
+  <button class="add-btn" onclick="openForm()">＋ Add Lab</button>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-mesh"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-content">
+    <div class="hero-tag"><span class="hero-tag-dot"></span>Lab Control</div>
+    <h1 class="hero-title"><span class="accent">Laboratory</span> Management</h1>
+    <p class="hero-sub">Add, edit and manage campus labs — availability updates automatically from timetable</p>
+  </div>
+</section>
+
+<!-- STATS -->
+<div class="stats-row">
+  <div class="sf purple">
+    <span class="sf-emoji">🧪</span>
+    <div class="sf-num" id="totalCount">0</div>
+    <div class="sf-label">Total Labs</div>
+  </div>
+  <div class="sf blue">
+    <span class="sf-emoji">🏢</span>
+    <div class="sf-num" id="blockCount">0</div>
+    <div class="sf-label">Blocks</div>
+  </div>
+  <div class="sf green">
+    <span class="sf-emoji">✅</span>
+    <div class="sf-num" id="availCount">0</div>
+    <div class="sf-label">Available Now</div>
+  </div>
+</div>
+
+<!-- FORM -->
+<div class="section">
+  <div class="form-card" id="formCard">
+    <div class="form-card-header">
+      <div class="form-card-title" id="formTitle">Add New Lab</div>
+      <div class="form-close" onclick="closeForm()">✕</div>
+    </div>
+    <div class="form-body">
+
+      <!-- Basic info -->
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Lab Name *</label>
+          <input id="labName" placeholder="e.g. Computer Science Lab 1"/>
+        </div>
+        <div class="form-group">
+          <label>Lab Code *</label>
+          <input id="labCode" placeholder="e.g. CSE-LAB-01"/>
+        </div>
+        <div class="form-group">
+          <label>Block *</label>
+          <input id="block" placeholder="e.g. CS Block"/>
+        </div>
+        <div class="form-group">
+          <label>Floor</label>
+          <input id="floor" placeholder="e.g. Ground Floor"/>
+        </div>
+        <div class="form-group">
+          <label>Room Number</label>
+          <input id="room" placeholder="e.g. 101"/>
+        </div>
+        <div class="form-group">
+          <label>Capacity</label>
+          <input id="capacity" type="number" placeholder="e.g. 40"/>
+        </div>
+        <div class="form-group full">
+          <label>Equipment (comma separated)</label>
+          <input id="equipment" placeholder="e.g. Computers, Projector, Whiteboard"/>
+        </div>
+        <div class="form-group full">
+          <label>Navigation Guide</label>
+          <textarea id="guide" placeholder="e.g. Enter main gate, go straight to CS Block, take left on ground floor..."></textarea>
+        </div>
+      </div>
+
+      <!-- TIMETABLE -->
+      <div class="tt-section">
+        <div class="tt-section-title">
+          🗓️ Weekly Timetable
+          <span class="tt-badge">Auto-Availability</span>
+        </div>
+        <p style="font-size:12px;color:var(--muted);margin-bottom:12px;line-height:1.5;">
+          Add time periods, then click the day cells to mark when this lab is <strong>occupied</strong>.
+          Availability status will update automatically in real-time.
+        </p>
+
+        <!-- Add period -->
+        <div class="add-period-row">
+          <input id="pLabel" placeholder="Period (e.g. P1)"/>
+          <input id="class" placeholder="AI&DS 'A' - 2nd year III sem"/>
+          <input type="time" id="pStart" value="08:00"/>
+          <input type="time" id="pEnd" value="09:00"/>
+          <button class="add-period-btn" onclick="addPeriod()">+ Period</button>
+        </div>
+
+        <div class="period-tags" id="periodTags"></div>
+
+        <div id="ttGridWrap" style="display:none">
+          <div class="tt-grid-wrap">
+            <div class="tt-grid" id="ttGrid"></div>
+          </div>
+          <div class="tt-legend">
+            <div class="tt-legend-item"><div class="tt-legend-dot occ"></div>Occupied (class scheduled)</div>
+            <div class="tt-legend-item"><div class="tt-legend-dot free"></div>Free / available</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-actions" style="margin-top:16px">
+        <button class="save-btn" onclick="saveLab()">💾 Save Lab</button>
+        <button class="cancel-btn" onclick="closeForm()">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- LAB LIST -->
+<div class="section" style="padding-bottom: 24px;">
+  <div class="sec-head">
+    <div>
+      <div class="sec-title">All Laboratories</div>
+      <div class="sec-sub" id="lastRefresh">Live availability from timetable</div>
+    </div>
+  </div>
+  <div class="lab-list" id="labList">
+    <div class="empty-state">
+      <span>🧪</span>
+      <h3>No labs yet</h3>
+      <p>Tap "+ Add Lab" to register your first laboratory</p>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+import { db } from "./js/firebase.js";
+import { ref, push, onValue, update, remove, get }
+  from "https://www.gstatic.com/firebasejs/12.9.0/firebase-database.js";
+
+const labRef = ref(db, "labs");
+const DAYS   = ["Mon","Tue","Wed","Thu","Fri","Sat"];
+
+let editId    = null;
+let labsData  = {};
+
+/* ─── Form-level timetable state ─── */
+let formPeriods   = [];   // [{label, start, end}]
+let formTimetable = {};   // { "P1_Mon": true, ... }
+
+/* ─── AVAILABILITY ENGINE ─── */
+function computeAvailability(timetable, periods) {
+  if (!timetable || !periods || !periods.length) return "notset";
+  const now     = new Date();
+  const dayIdx  = now.getDay(); // 0=Sun … 6=Sat
+  const dayMap  = [null,"Mon","Tue","Wed","Thu","Fri","Sat"];
+  const todayKey= (dayIdx >= 1 && dayIdx <= 6) ? dayMap[dayIdx] : null;
+  if (!todayKey) return "available"; // Weekend → available
+  const hhmm = now.getHours() * 60 + now.getMinutes();
+  for (const p of periods) {
+    const key = p.label + "_" + todayKey;
+    if (timetable[key]) {
+      const [sh, sm] = p.start.split(":").map(Number);
+      const [eh, em] = p.end.split(":").map(Number);
+      if (hhmm >= sh * 60 + sm && hhmm < eh * 60 + em) return "occupied";
+    }
+  }
+  return "available";
+}
+
+function availBadgeHTML(status) {
+  if (status === "available") return `<span class="avail-badge available"><span class="avail-dot"></span>Available Now</span>`;
+  if (status === "occupied")  return `<span class="avail-badge occupied"><span class="avail-dot"></span>Occupied</span>`;
+  return `<span class="avail-badge notset"><span class="avail-dot"></span>No Timetable</span>`;
+}
+
+/* ─── REALTIME LOAD ─── */
+onValue(labRef, snapshot => {
+  const list = document.getElementById("labList");
+  if (!snapshot.exists()) {
+    labsData = {};
+    list.innerHTML = `<div class="empty-state"><span>🧪</span><h3>No labs yet</h3><p>Tap "+ Add Lab" to register your first laboratory</p></div>`;
+    updateStats({});
+    return;
+  }
+  labsData = snapshot.val();
+  renderLabList();
+  updateStats(labsData);
+});
+
+function renderLabList() {
+  const list = document.getElementById("labList");
+  list.innerHTML = Object.keys(labsData).map(id => {
+    const l      = labsData[id];
+    const periods= l.periods || [];
+    const tt     = l.timetable || {};
+    const status = computeAvailability(tt, periods);
+
+    /* Equipment tags */
+    const equipTags = (l.equipment && l.equipment !== "-")
+      ? l.equipment.split(",").map(e => `<span class="equip-tag">${e.trim()}</span>`).join("")
+      : '<span class="equip-tag">—</span>';
+
+    /* Timetable summary chips for today */
+    const now      = new Date();
+    const dayIdx   = now.getDay();
+    const dayMap   = [null,"Mon","Tue","Wed","Thu","Fri","Sat"];
+    const todayKey = (dayIdx >= 1 && dayIdx <= 6) ? dayMap[dayIdx] : null;
+
+    let ttChips = "";
+    if (periods.length && todayKey) {
+      ttChips = periods.map(p => {
+        const occ = tt[p.label + "_" + todayKey];
+        return `<span class="tt-strip-chip ${occ ? "occ" : "free"}">${p.label} ${occ ? "✗" : "✓"}</span>`;
+      }).join("");
+    }
+
+    return `
+      <div class="lab-card" id="card_${id}">
+        <div class="lab-card-strip"></div>
+        <div class="lab-card-top">
+          <div class="lab-icon">🧪</div>
+          <div class="lab-info">
+            <div class="lab-name-row">
+              <span class="lab-name">${l.name || "Unnamed Lab"}</span>
+              ${availBadgeHTML(status)}
+            </div>
+            <span class="lab-code-badge">${l.code || "—"}</span>
+          </div>
+          <div class="lab-actions">
+            <button class="act-btn edit"   onclick="editLab('${id}')">✏️ Edit</button>
+            <button class="act-btn delete" onclick="deleteLab('${id}')">🗑️ Delete</button>
+          </div>
+        </div>
+        <div class="lab-details">
+          <div class="lab-detail-cell">
+            <div class="detail-label">Block</div>
+            <div class="detail-value">${l.block || "—"}</div>
+          </div>
+          <div class="lab-detail-cell">
+            <div class="detail-label">Floor</div>
+            <div class="detail-value">${l.floor || "—"}</div>
+          </div>
+          <div class="lab-detail-cell">
+            <div class="detail-label">Room</div>
+            <div class="detail-value">${l.room || "—"}</div>
+          </div>
+          <div class="lab-detail-cell">
+            <div class="detail-label">Capacity</div>
+            <div class="detail-value">${l.capacity || "—"}</div>
+          </div>
+        </div>
+        <div class="lab-equipment">
+          <span class="equip-label">🔧 Equipment:</span>
+          ${equipTags}
+        </div>
+        ${ttChips ? `
+        <div class="lab-tt-strip">
+          <div class="tt-strip-label">📅 Today's Schedule</div>
+          <div class="tt-strip-row">${ttChips}</div>
+        </div>` : ""}
+        ${(l.guide && l.guide !== "-") ? `
+        <div class="lab-guide">
+          <span class="guide-icon">🧭</span>
+          <span class="guide-text">${l.guide}</span>
+        </div>` : ""}
+      </div>`;
+  }).join("");
+}
+
+/* Refresh availability badges every minute without refetching Firebase */
+setInterval(() => {
+  if (!Object.keys(labsData).length) return;
+  renderLabList();
+  updateStats(labsData);
+}, 60000);
+
+/* ─── STATS ─── */
+function updateStats(data) {
+  const keys  = Object.keys(data);
+  const blocks= new Set(keys.map(k => data[k].block).filter(Boolean)).size;
+  const avail = keys.filter(k => {
+    const l = data[k];
+    return computeAvailability(l.timetable || {}, l.periods || []) === "available";
+  }).length;
+  document.getElementById("totalCount").innerText = keys.length;
+  document.getElementById("blockCount").innerText = blocks;
+  document.getElementById("availCount").innerText = avail;
+}
+
+/* ─── FORM: Period management ─── */
+window.addPeriod = function() {
+  const lbl  = document.getElementById("pLabel").value.trim();
+  const cls  = document.getElementById("class").value.trim(); // ✅ add this
+  const st   = document.getElementById("pStart").value;
+  const en   = document.getElementById("pEnd").value;
+  if (!lbl || !st || !en) { showToast("Fill period label, start and end time", "error"); return; }
+  if (formPeriods.find(p => p.label === lbl)) { showToast("Period label already exists", "error"); return; }
+  formPeriods.push({ label: lbl, class: cls, start: st, end: en }); // ✅ include class
+  document.getElementById("pLabel").value = "";
+  document.getElementById("class").value = ""; // ✅ clear it
+  renderPeriodTags();
+  renderTTGrid();
+};
+
+window.removePeriod = function(lbl) {
+  formPeriods = formPeriods.filter(p => p.label !== lbl);
+  Object.keys(formTimetable).forEach(k => { if (k.startsWith(lbl + "_")) delete formTimetable[k]; });
+  renderPeriodTags();
+  renderTTGrid();
+};
+
+window.toggleCell = function(periodLabel, day) {
+  const k = periodLabel + "_" + day;
+  formTimetable[k] = !formTimetable[k];
+  renderTTGrid();
+};
+
+function renderPeriodTags() {
+  const el = document.getElementById("periodTags");
+  el.innerHTML = formPeriods.map(p =>
+    `<span class="period-tag">
+       ${p.label} (${p.start}–${p.end})
+       <span class="period-tag-del" onclick="removePeriod('${p.label}')">✕</span>
+     </span>`
+  ).join("");
+  document.getElementById("ttGridWrap").style.display = formPeriods.length ? "block" : "none";
+}
+
+function renderTTGrid() {
+  const g = document.getElementById("ttGrid");
+  if (!formPeriods.length) { g.innerHTML = ""; return; }
+
+  const cols = formPeriods.length > 0 ? `140px repeat(${DAYS.length}, 1fr)` : "";
+  g.style.gridTemplateColumns = cols;
+
+  /* Header row */
+  let html = `<div class="tt-head-row" style="grid-column:1/-1;display:grid;grid-template-columns:${cols}">`;
+  html += `<div class="tt-head-cell" style="background:transparent;text-align:left;padding-left:10px;color:rgba(255,255,255,0.5)">Period</div>`;
+  DAYS.forEach(d => { html += `<div class="tt-head-cell">${d}</div>`; });
+  html += `</div>`;
+
+  /* Data rows */
+  formPeriods.forEach(p => {
+    html += `<div class="tt-row" style="display:contents">`;
+    html += `<div class="tt-period-label">${p.label}<div class="tt-period-class">${p.class}<div class="tt-period-time">${p.start} – ${p.end}</div></div></div>`;
+    DAYS.forEach(d => {
+      const k   = p.label + "_" + d;
+      const occ = formTimetable[k];
+      html += `<div class="tt-cell ${occ ? "occupied" : ""}" onclick="toggleCell('${p.label}','${d}')"></div>`;
+    });
+    html += `</div>`;
+  });
+
+  g.innerHTML = html;
+  g.style.gridTemplateColumns = cols;
+}
+
+/* ─── SAVE ─── */
+window.saveLab = async function() {
+  const labData = {
+    name:      document.getElementById("labName").value.trim()   || "-",
+    code:      document.getElementById("labCode").value.trim()   || "-",
+    block:     document.getElementById("block").value.trim()     || "-",
+    floor:     document.getElementById("floor").value.trim()     || "-",
+    room:      document.getElementById("room").value.trim()      || "-",
+    capacity:  document.getElementById("capacity").value.trim()  || "-",
+    equipment: document.getElementById("equipment").value.trim() || "-",
+    guide:     document.getElementById("guide").value.trim()     || "-",
+    periods:   formPeriods,
+    timetable: formTimetable
+  };
+
+  if (labData.name === "-" || labData.code === "-" || labData.block === "-") {
+    showToast("Please fill Lab Name, Code and Block (*)", "error"); return;
+  }
+
+  const btn = document.querySelector(".save-btn");
+  btn.innerText = "Saving...";
+  try {
+    if (editId) {
+      await update(ref(db, "labs/" + editId), labData);
+      showToast("✅ Lab updated successfully!", "success");
+    } else {
+      await push(labRef, labData);
+      showToast("✅ Lab added successfully!", "success");
+    }
+    closeForm(); resetForm();
+  } catch (err) {
+    showToast("❌ Failed to save. Try again.", "error");
+  }
+  btn.innerText = "💾 Save Lab";
+};
+
+/* ─── EDIT ─── */
+window.editLab = async function(id) {
+  editId = id;
+  const snap = await get(ref(db, "labs/" + id));
+  const d    = snap.val();
+
+  document.getElementById("labName").value   = d.name      !== "-" ? d.name      : "";
+  document.getElementById("labCode").value   = d.code      !== "-" ? d.code      : "";
+  document.getElementById("block").value     = d.block     !== "-" ? d.block     : "";
+  document.getElementById("floor").value     = d.floor     !== "-" ? d.floor     : "";
+  document.getElementById("room").value      = d.room      !== "-" ? d.room      : "";
+  document.getElementById("capacity").value  = d.capacity  !== "-" ? d.capacity  : "";
+  document.getElementById("equipment").value = d.equipment !== "-" ? d.equipment : "";
+  document.getElementById("guide").value     = d.guide     !== "-" ? d.guide     : "";
+
+  /* Restore timetable */
+  formPeriods   = Array.isArray(d.periods)   ? d.periods   : [];
+  formTimetable = (d.timetable && typeof d.timetable === "object") ? { ...d.timetable } : {};
+  renderPeriodTags();
+  renderTTGrid();
+
+  document.getElementById("formTitle").innerText = "Edit Lab";
+  openForm();
+  window.scrollTo({ top: 0, behavior: "smooth" });
+};
+
+/* ─── DELETE ─── */
+window.deleteLab = function(id) {
+  if (confirm("Are you sure you want to delete this lab?")) {
+    remove(ref(db, "labs/" + id))
+      .then(() => showToast("🗑️ Lab deleted", "success"))
+      .catch(() => showToast("❌ Delete failed", "error"));
+  }
+};
+
+/* ─── FORM CONTROLS ─── */
+window.openForm = function() {
+  document.getElementById("formCard").classList.add("open");
+};
+window.closeForm = function() {
+  document.getElementById("formCard").classList.remove("open");
+  resetForm();
+};
+function resetForm() {
+  editId = null;
+  ["labName","labCode","block","floor","room","capacity","equipment","guide"]
+    .forEach(id => { document.getElementById(id).value = ""; });
+  formPeriods   = [];
+  formTimetable = {};
+  renderPeriodTags();
+  renderTTGrid();
+  document.getElementById("formTitle").innerText = "Add New Lab";
+}
+
+/* ─── TOAST ─── */
+window.showToast = function(msg, type = "success") {
+  const toast = document.getElementById("toast");
+  document.getElementById("toastMsg").innerText = msg;
+  toast.className = `toast ${type} show`;
+  setTimeout(() => toast.classList.remove("show"), 3500);
+};
+</script>
+
+</body>
+</html>

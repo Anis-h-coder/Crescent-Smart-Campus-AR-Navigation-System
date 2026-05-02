@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Student Login — Crescent Campus</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;1,9..144,300&display=swap" rel="stylesheet"/>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --navy:      #08172E;
+  --navy-2:    #0F2340;
+  --navy-3:    #162F54;
+  --gold:      #C9A84C;
+  --gold-2:    #DDB95E;
+  --gold-3:    #EDD080;
+  --gold-pale: #FBF3DC;
+  --white:     #FFFFFF;
+  --off:       #F4F6F9;
+  --muted:     #8FA3BC;
+  --text:      #0F2340;
+  --border:    rgba(0,0,0,0.09);
+}
+
+body.dark {
+  --off:    #07111F;
+  --text:   #E8EEF5;
+  --muted:  #6B85A0;
+  --border: rgba(255,255,255,0.08);
+}
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--navy);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 20px 40px;
+  position: relative;
+  overflow: hidden;
+  transition: background 0.3s;
+}
+
+body.accessible { font-size: 18px; line-height: 1.7; }
+
+/* ── BACKGROUND ── */
+.bg-mesh {
+  position: fixed; inset: 0; z-index: 0;
+  background:
+    radial-gradient(ellipse 70% 60% at 15% 20%, rgba(201,168,76,0.1) 0%, transparent 65%),
+    radial-gradient(ellipse 60% 70% at 90% 80%, rgba(59,130,246,0.07) 0%, transparent 65%),
+    radial-gradient(ellipse 40% 40% at 80% 10%, rgba(201,168,76,0.06) 0%, transparent 60%);
+}
+
+.bg-grid {
+  position: fixed; inset: 0; z-index: 0;
+  background-image:
+    linear-gradient(rgba(201,168,76,0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(201,168,76,0.05) 1px, transparent 1px);
+  background-size: 32px 32px;
+}
+
+/* Floating nodes decoration */
+.bg-nodes {
+  position: fixed; z-index: 0;
+  pointer-events: none;
+}
+.bg-nodes.top-right { top: 0; right: 0; width: 220px; height: 220px; opacity: 0.5; }
+.bg-nodes.bot-left  { bottom: 0; left: 0; width: 180px; height: 180px; opacity: 0.35; }
+
+/* ── TOP LOGO STRIP ── */
+.top-logo {
+  position: relative; z-index: 1;
+  width: 100%; max-width: 380px;
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 28px;
+}
+
+.top-logo img {
+  max-width: 260px; width: 80%;
+  opacity: 0.85;
+}
+
+/* ── CARD ── */
+.card {
+  position: relative; z-index: 1;
+  width: 100%; max-width: 380px;
+  background: rgba(255,255,255,0.96);
+  border-radius: 24px;
+  padding: 36px 30px 30px;
+  box-shadow:
+    0 32px 64px rgba(0,0,0,0.3),
+    0 0 0 1px rgba(255,255,255,0.08);
+  animation: fadeUp 0.55s ease both;
+  backdrop-filter: blur(20px);
+}
+
+body.dark .card {
+  background: rgba(15,35,64,0.95);
+  box-shadow: 0 32px 64px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.06);
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(28px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── CARD HEADER ── */
+.card-header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.logo-wrap {
+  width: 72px; height: 72px;
+  margin: 0 auto 16px;
+  position: relative;
+}
+
+.logo-ring {
+  width: 100%; height: 100%;
+  border-radius: 50%;
+  border: 2px solid rgba(201,168,76,0.35);
+  padding: 4px;
+  animation: spinRing 14s linear infinite;
+}
+
+@keyframes spinRing {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+.logo-ring::after {
+  content: '';
+  position: absolute;
+  width: 8px; height: 8px;
+  background: var(--gold);
+  border-radius: 50%;
+  top: 3px; left: 50%;
+  transform: translateX(-50%);
+  box-shadow: 0 0 8px var(--gold);
+}
+
+.logo-inner {
+  width: 100%; height: 100%;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--navy), var(--navy-3));
+  display: flex; align-items: center; justify-content: center;
+  animation: spinRing 14s linear infinite reverse;
+}
+
+.logo-inner img {
+  width: 40px; height: 40px; object-fit: contain;
+  filter: brightness(1);
+}
+
+.logo-inner .logo-fallback { font-size: 28px; }
+
+.card-header h2 {
+  font-family: 'Fraunces', serif;
+  font-size: 22px; font-weight: 600;
+  color: var(--navy); letter-spacing: -0.01em;
+  margin-bottom: 5px;
+}
+body.dark .card-header h2 { color: var(--white); }
+
+.card-header p {
+  font-size: 13px; color: var(--muted);
+  line-height: 1.4;
+}
+
+/* Role badge */
+.role-badge {
+  display: inline-flex; align-items: center; gap: 5px;
+  background: rgba(201,168,76,0.12);
+  border: 1px solid rgba(201,168,76,0.25);
+  padding: 4px 12px; border-radius: 20px;
+  font-size: 11px; font-weight: 600;
+  color: #92660A; letter-spacing: 0.04em;
+  text-transform: uppercase; margin-top: 10px;
+}
+.role-dot {
+  width: 5px; height: 5px; border-radius: 50%;
+  background: var(--gold);
+  animation: blink 1.8s ease-in-out infinite;
+}
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+/* ── FIELDS ── */
+.field { margin-top: 18px; }
+
+.field label {
+  display: block;
+  font-size: 12px; font-weight: 500;
+  color: var(--muted);
+  margin-bottom: 7px;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+.input-wrap { position: relative; }
+
+.field input {
+  width: 100%;
+  padding: 13px 44px 13px 16px;
+  border-radius: 12px;
+  border: 1.5px solid var(--border);
+  font-size: 14px; font-weight: 400;
+  font-family: 'DM Sans', sans-serif;
+  outline: none;
+  background: var(--off);
+  color: var(--text);
+  transition: all 0.22s;
+}
+
+body.dark .field input {
+  background: rgba(255,255,255,0.05);
+  color: var(--white);
+}
+
+.field input::placeholder { color: var(--muted); opacity: 0.7; }
+
+.field input:focus {
+  border-color: var(--gold);
+  background: var(--white);
+  box-shadow: 0 0 0 3px rgba(201,168,76,0.15);
+}
+body.dark .field input:focus { background: rgba(255,255,255,0.08); }
+
+.input-icon {
+  position: absolute; left: 14px; top: 50%;
+  transform: translateY(-50%);
+  font-size: 16px; pointer-events: none;
+  opacity: 0.5;
+}
+
+.field input.has-icon { padding-left: 42px; }
+
+.eye-btn {
+  position: absolute; right: 12px; top: 50%;
+  transform: translateY(-50%);
+  font-size: 17px; cursor: pointer;
+  color: var(--muted); padding: 4px;
+  transition: opacity 0.2s; user-select: none;
+}
+.eye-btn:hover { opacity: 0.7; }
+
+/* Input valid/error states */
+.field input.valid   { border-color: #10B981; }
+.field input.invalid { border-color: #EF4444; }
+
+.field-hint {
+  font-size: 11px; margin-top: 5px;
+  color: var(--muted); display: none;
+}
+.field-hint.show { display: block; }
+.field-hint.err  { color: #EF4444; }
+.field-hint.ok   { color: #10B981; }
+
+/* ── LOGIN BUTTON ── */
+.login-btn {
+  width: 100%; margin-top: 26px;
+  padding: 14px;
+  border-radius: 13px; border: none;
+  font-size: 15px; font-weight: 600;
+  font-family: 'DM Sans', sans-serif;
+  background: linear-gradient(135deg, var(--gold), var(--gold-2));
+  color: var(--navy); cursor: pointer;
+  box-shadow: 0 8px 24px rgba(201,168,76,0.4);
+  transition: all 0.25s;
+  position: relative; overflow: hidden;
+  letter-spacing: 0.01em;
+}
+.login-btn::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.25) 0%, transparent 60%);
+}
+.login-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 32px rgba(201,168,76,0.5);
+}
+.login-btn:active { transform: scale(0.98); }
+
+.login-btn.loading {
+  pointer-events: none;
+  opacity: 0.8;
+}
+
+/* ── DIVIDER ── */
+.divider {
+  display: flex; align-items: center; gap: 10px;
+  margin: 20px 0 0;
+}
+.divider::before, .divider::after {
+  content: ''; flex: 1;
+  height: 1px; background: var(--border);
+}
+.divider span { font-size: 11px; color: var(--muted); white-space: nowrap; }
+
+/* ── FOOTER ── */
+.card-footer {
+  margin-top: 18px; text-align: center;
+  font-size: 12px; color: var(--muted); line-height: 1.5;
+}
+
+.card-footer a {
+  color: var(--gold); font-weight: 500;
+  text-decoration: none; cursor: pointer;
+}
+.card-footer a:hover { text-decoration: underline; }
+
+/* ── BACK LINK ── */
+.back-link {
+  position: relative; z-index: 1;
+  margin-top: 22px;
+  display: flex; align-items: center; gap: 7px;
+  font-size: 13px; color: rgba(255,255,255,0.45);
+  cursor: pointer; transition: color 0.2s;
+  background: none; border: none;
+  font-family: 'DM Sans', sans-serif;
+  padding: 0;
+}
+.back-link:hover { color: rgba(255,255,255,0.75); }
+
+/* ── ERROR TOAST ── */
+.toast {
+  position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-80px);
+  background: #FEF2F2; color: #991B1B;
+  border: 1px solid #FECACA;
+  padding: 12px 20px; border-radius: 12px;
+  font-size: 13px; font-weight: 500;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+  z-index: 500; transition: transform 0.35s ease;
+  display: flex; align-items: center; gap: 8px;
+  white-space: nowrap;
+}
+.toast.show { transform: translateX(-50%) translateY(0); }
+
+</style>
+</head>
+<body>
+
+<script>
+  if (localStorage.dark === "on")   document.body.classList.add("dark");
+  if (localStorage.access === "on") document.body.classList.add("accessible");
+</script>
+
+<!-- Background layers -->
+<div class="bg-mesh"></div>
+<div class="bg-grid"></div>
+
+<!-- Top-right decorative nodes -->
+<div class="bg-nodes top-right">
+  <svg viewBox="0 0 220 220" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="180" cy="30"  r="6" fill="rgba(201,168,76,0.6)"/>
+    <circle cx="120" cy="60"  r="4" fill="rgba(201,168,76,0.4)"/>
+    <circle cx="190" cy="100" r="5" fill="rgba(201,168,76,0.5)"/>
+    <circle cx="80"  cy="40"  r="3" fill="rgba(201,168,76,0.3)"/>
+    <line x1="180" y1="30"  x2="120" y2="60"  stroke="rgba(201,168,76,0.2)" stroke-width="1"/>
+    <line x1="120" y1="60"  x2="190" y2="100" stroke="rgba(201,168,76,0.2)" stroke-width="1"/>
+    <line x1="80"  y1="40"  x2="120" y2="60"  stroke="rgba(201,168,76,0.15)" stroke-width="1"/>
+  </svg>
+</div>
+<div class="bg-nodes bot-left">
+  <svg viewBox="0 0 180 180" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="30"  cy="150" r="5" fill="rgba(201,168,76,0.5)"/>
+    <circle cx="80"  cy="120" r="4" fill="rgba(201,168,76,0.35)"/>
+    <circle cx="20"  cy="90"  r="3" fill="rgba(201,168,76,0.3)"/>
+    <line x1="30" y1="150" x2="80"  y2="120" stroke="rgba(201,168,76,0.2)" stroke-width="1"/>
+    <line x1="80" y1="120" x2="20"  y2="90"  stroke="rgba(201,168,76,0.15)" stroke-width="1"/>
+  </svg>
+</div>
+
+<!-- Top logo -->
+<div class="top-logo">
+  <img src="assets/crescent-logo.png" alt="Crescent University"
+       onerror="this.style.display='none'"/>
+</div>
+
+<!-- Error toast -->
+<div class="toast" id="toast">⚠️ <span id="toastMsg">Invalid email or password</span></div>
+
+<!-- Login Card -->
+<div class="card">
+
+  <div class="card-header">
+    <div class="logo-wrap">
+      <div class="logo-ring">
+        <div class="logo-inner">
+          <img src="assets/cres-logo1.png" alt="Crescent"
+               onerror="this.style.display='none';this.nextElementSibling.style.display='block'"/>
+          <span class="logo-fallback" style="display:none">🎓</span>
+        </div>
+      </div>
+    </div>
+
+    <h2>Student Login</h2>
+    <p>Crescent Smart Navigation System</p>
+    <div class="role-badge">
+      <span class="role-dot"></span>
+      Student Portal
+    </div>
+  </div>
+
+  <!-- Email -->
+  <div class="field">
+    <label>College Email</label>
+    <div class="input-wrap">
+      <input
+        id="email"
+        type="email"
+        class="has-icon"
+        placeholder="student@crescent.education"
+        oninput="validateEmail(this)"
+        autocomplete="email"
+      />
+      <span class="input-icon">✉️</span>
+    </div>
+    <div class="field-hint" id="emailHint"></div>
+  </div>
+
+  <!-- Password -->
+  <div class="field">
+    <label>Password</label>
+    <div class="input-wrap">
+      <input
+        id="pass"
+        type="password"
+        class="has-icon"
+        placeholder="Enter your password"
+        autocomplete="current-password"
+      />
+      <span class="input-icon">🔒</span>
+      <span class="eye-btn" id="eyeBtn" onclick="togglePass()">👁️</span>
+    </div>
+  </div>
+
+  <!-- Login Button -->
+  <button class="login-btn" id="loginBtn" onclick="login()">
+    Sign In to Campus
+  </button>
+
+  <div class="divider"><span>secured by Crescent IT</span></div>
+
+  <div class="card-footer">
+    Access restricted to Crescent students only.<br/>
+    <a onclick="location.href='dashboard.html'">← Back to home</a>
+  </div>
+
+</div>
+
+<!-- Back button -->
+<button class="back-link" onclick="location.href='dashboard.html'">
+  ← Return to Dashboard
+</button>
+
+<!-- Firebase module script -->
+<script type="module">
+  import { auth } from "./js/firebase.js";
+  import { signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
+
+  /* ── SHOW / HIDE PASSWORD ── */
+  const passInput = document.getElementById("pass");
+  const eyeBtn    = document.getElementById("eyeBtn");
+
+  window.togglePass = function() {
+    const isText = passInput.type === "text";
+    passInput.type = isText ? "password" : "text";
+    eyeBtn.innerText = isText ? "👁️" : "🙈";
+  };
+
+  /* ── EMAIL VALIDATION ── */
+  window.validateEmail = function(input) {
+    const hint = document.getElementById("emailHint");
+    const val  = input.value.trim();
+    if (!val) {
+      input.classList.remove("valid", "invalid");
+      hint.className = "field-hint";
+      hint.innerText = "";
+      return;
+    }
+    if (val.endsWith("@crescent.education")) {
+      input.classList.add("valid");
+      input.classList.remove("invalid");
+      hint.className = "field-hint show ok";
+      hint.innerText = "✓ Valid Crescent email";
+    } else {
+      input.classList.add("invalid");
+      input.classList.remove("valid");
+      hint.className = "field-hint show err";
+      hint.innerText = "Use your @crescent.education email";
+    }
+  };
+
+  /* ── TOAST ── */
+  window.showToast = function(msg) {
+    const toast = document.getElementById("toast");
+    document.getElementById("toastMsg").innerText = msg;
+    toast.classList.add("show");
+    setTimeout(() => toast.classList.remove("show"), 3500);
+  };
+
+  /* ── LOGIN ── */
+  window.login = async function() {
+    const email    = document.getElementById("email").value.trim();
+    const password = passInput.value.trim();
+    const btn      = document.getElementById("loginBtn");
+
+    if (!email || !password) {
+      showToast("Please enter your email and password");
+      return;
+    }
+
+    if (!email.endsWith("@crescent.education")) {
+      showToast("Use your @crescent.education email");
+      return;
+    }
+
+    /* Loading state */
+    btn.classList.add("loading");
+    btn.innerText = "Signing in...";
+
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+      localStorage.setItem("student", email);
+      btn.innerText = "✓ Redirecting...";
+      setTimeout(() => { location.href = "student-dashboard.html"; }, 600);
+    } catch (error) {
+      btn.classList.remove("loading");
+      btn.innerText = "Sign In to Campus";
+      showToast("Invalid email or password. Please try again.");
+    }
+  };
+
+  /* ── ENTER KEY ── */
+  document.addEventListener("keydown", e => {
+    if (e.key === "Enter") window.login();
+  });
+</script>
+
+</body>
+</html>

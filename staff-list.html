@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Staff List — Crescent Campus</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;1,9..144,300&display=swap" rel="stylesheet"/>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --navy:        #08172E;
+  --navy-2:      #0F2340;
+  --navy-3:      #162F54;
+  --gold:        #C9A84C;
+  --gold-2:      #DDB95E;
+  --gold-3:      #EDD080;
+  --gold-pale:   #FBF3DC;
+  --white:       #FFFFFF;
+  --off:         #F4F6F9;
+  --muted:       #8FA3BC;
+  --text:        #0F2340;
+  --card-bg:     #FFFFFF;
+  --border:      rgba(0,0,0,0.06);
+  --card-shadow: 0 2px 14px rgba(8,23,46,0.07);
+}
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--off);
+  color: var(--text);
+  min-height: 100vh;
+  padding-bottom: 40px;
+  overflow-x: hidden;
+}
+
+/* ── HERO ── */
+.hero {
+  background: var(--navy);
+  padding: 20px 20px 52px;
+  position: relative; overflow: hidden;
+}
+.hero-mesh {
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse 70% 80% at 100% 20%, rgba(236,72,153,0.1) 0%, transparent 70%),
+    radial-gradient(ellipse 50% 60% at 0%  90%, rgba(59,130,246,0.07) 0%, transparent 70%);
+}
+.hero-grid {
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(rgba(201,168,76,0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(201,168,76,0.06) 1px, transparent 1px);
+  background-size: 26px 26px;
+  -webkit-mask-image: linear-gradient(to bottom, transparent, black 40%, black 70%, transparent);
+  mask-image: linear-gradient(to bottom, transparent, black 40%, black 70%, transparent);
+}
+.hero-top {
+  position: relative; z-index: 2;
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 20px;
+}
+.back-btn {
+  display: flex; align-items: center; gap: 6px;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.1);
+  color: rgba(255,255,255,0.75);
+  padding: 8px 14px 8px 10px; border-radius: 10px;
+  font-size: 13px; font-weight: 500; cursor: pointer;
+  transition: background 0.2s; font-family: 'DM Sans', sans-serif;
+}
+.back-btn:hover { background: rgba(255,255,255,0.14); }
+
+.dept-chip {
+  display: flex; align-items: center; gap: 5px;
+  background: rgba(236,72,153,0.15);
+  border: 1px solid rgba(236,72,153,0.3);
+  padding: 5px 12px; border-radius: 20px;
+  font-size: 11px; font-weight: 700; color: #F9A8D4;
+  letter-spacing: 0.06em; text-transform: uppercase;
+}
+
+.hero-body { position: relative; z-index: 2; }
+.hero-title {
+  font-family: 'Fraunces', serif;
+  font-size: 24px; font-weight: 600; color: var(--white);
+  line-height: 1.2; letter-spacing: -0.02em; margin-bottom: 6px;
+}
+.hero-title .accent { color: var(--gold-2); font-style: italic; }
+.hero-sub { font-size: 13px; color: rgba(255,255,255,0.45); }
+
+/* ── SEARCH BAR ── */
+.search-wrap {
+  padding: 0 16px;
+  margin-top: -28px; position: relative; z-index: 20;
+  animation: fadeUp 0.4s ease 0.05s both;
+}
+.search-bar {
+  display: flex; align-items: center; gap: 10px;
+  background: var(--card-bg); border: 1.5px solid var(--border);
+  border-radius: 14px; padding: 12px 16px;
+  box-shadow: 0 8px 24px rgba(8,23,46,0.1);
+  transition: border-color 0.2s;
+}
+.search-bar:focus-within { border-color: var(--gold); }
+.search-icon { font-size: 17px; flex-shrink: 0; opacity: 0.45; }
+#searchInput {
+  flex: 1; border: none; outline: none;
+  font-size: 14px; font-family: 'DM Sans', sans-serif;
+  background: transparent; color: var(--text);
+}
+#searchInput::placeholder { color: var(--muted); }
+.search-clear {
+  font-size: 14px; cursor: pointer; color: var(--muted);
+  display: none; transition: color 0.2s;
+}
+.search-clear.show { display: block; }
+.search-clear:hover { color: var(--text); }
+
+/* ── STATS ── */
+.stats-row {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 10px; padding: 14px 16px 0;
+  animation: fadeUp 0.4s ease 0.1s both;
+}
+.sf {
+  background: var(--card-bg); border-radius: 12px;
+  padding: 12px 8px 10px; text-align: center;
+  border: 1px solid var(--border); box-shadow: var(--card-shadow);
+  transition: all 0.22s;
+}
+.sf:hover { transform: translateY(-2px); }
+.sf-emoji { font-size: 16px; margin-bottom: 4px; display: block; }
+.sf-num { font-family: 'Fraunces', serif; font-size: 19px; font-weight: 600; color: var(--navy); line-height: 1; margin-bottom: 2px; }
+.sf-label { font-size: 9.5px; color: var(--muted); font-weight: 500; letter-spacing: 0.04em; }
+
+/* ── SECTION ── */
+.section { padding: 18px 16px 0; }
+.designation-header {
+  display: flex; align-items: center; gap: 10px;
+  margin-bottom: 10px; margin-top: 20px;
+}
+.designation-header:first-of-type { margin-top: 0; }
+.desig-label {
+  font-family: 'Fraunces', serif; font-size: 14px; font-weight: 600; color: var(--text);
+}
+.desig-count {
+  font-size: 11px; color: var(--muted);
+  background: var(--off); border: 1px solid var(--border);
+  padding: 2px 8px; border-radius: 20px;
+}
+.desig-line { flex: 1; height: 1px; background: var(--border); }
+
+/* ── STAFF CARDS ── */
+.staff-list { display: flex; flex-direction: column; gap: 10px; }
+
+.staff-card {
+  background: var(--card-bg); border-radius: 16px;
+  border: 1px solid var(--border); box-shadow: var(--card-shadow);
+  display: flex; align-items: stretch; overflow: hidden;
+  cursor: pointer; transition: all 0.25s;
+  animation: fadeUp 0.35s ease both;
+}
+.staff-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 30px rgba(8,23,46,0.1);
+}
+.staff-card:active { transform: scale(0.98); }
+
+.staff-stripe { width: 4px; flex-shrink: 0; background: linear-gradient(to bottom, #EC4899, #F472B6); }
+.staff-stripe.active-st   { background: linear-gradient(to bottom, #10B981, #34D399); }
+.staff-stripe.inactive-st { background: linear-gradient(to bottom, #EF4444, #F87171); }
+
+.staff-inner { flex: 1; display: flex; align-items: center; gap: 13px; padding: 13px 13px 12px 13px; }
+
+/* Avatar */
+.staff-av {
+  width: 46px; height: 46px; border-radius: 50%; flex-shrink: 0;
+  overflow: hidden; border: 2px solid rgba(236,72,153,0.2);
+}
+.staff-av img {
+  width: 100%; height: 100%; object-fit: cover; display: block;
+}
+.av-fallback {
+  width: 100%; height: 100%;
+  background: linear-gradient(135deg, #EC4899, #F472B6);
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Fraunces', serif; font-size: 18px; font-weight: 600;
+  color: var(--white);
+}
+
+.staff-info { flex: 1; min-width: 0; }
+.staff-name { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.staff-meta { font-size: 11.5px; color: var(--muted); margin-bottom: 6px; }
+.staff-tags { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+
+.status-pill {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 2px 9px; border-radius: 20px; font-size: 10.5px; font-weight: 600;
+}
+.status-pill.available { background: rgba(16,185,129,0.1); color: #065F46; border: 1px solid rgba(16,185,129,0.2); }
+.status-pill.inclass   { background: rgba(239,68,68,0.1);  color: #991B1B; border: 1px solid rgba(239,68,68,0.2); }
+.status-pill.onleave   { background: rgba(107,114,128,0.1);color: #374151; border: 1px solid rgba(107,114,128,0.2); }
+.status-dot { width: 4px; height: 4px; border-radius: 50%; }
+.available .status-dot { background: #10B981; animation: blink 2s ease-in-out infinite; }
+.inclass   .status-dot { background: #EF4444; }
+.onleave   .status-dot { background: #6B7280; }
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+.staff-chevron {
+  width: 30px; height: 30px; border-radius: 8px;
+  background: var(--off); border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; color: var(--muted); flex-shrink: 0;
+  transition: all 0.22s;
+}
+.staff-card:hover .staff-chevron { background: var(--navy); color: var(--white); transform: translateX(2px); }
+
+/* ── SKELETON ── */
+.sk-card {
+  background: var(--card-bg); border-radius: 16px;
+  border: 1px solid var(--border); padding: 13px;
+  display: flex; align-items: center; gap: 12px; margin-bottom: 10px;
+}
+.skeleton {
+  background: linear-gradient(90deg, #e8edf2 25%, #f4f6f9 50%, #e8edf2 75%);
+  background-size: 200% 100%; animation: sk 1.5s ease infinite; border-radius: 8px;
+}
+@keyframes sk { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+.sk-av { width: 46px; height: 46px; border-radius: 50%; flex-shrink: 0; }
+.sk-bd { flex: 1; display: flex; flex-direction: column; gap: 7px; }
+.sk-l1 { height: 13px; width: 55%; }
+.sk-l2 { height: 11px; width: 40%; }
+
+/* ── EMPTY ── */
+.empty-state {
+  text-align: center; padding: 36px 20px;
+  background: var(--card-bg); border-radius: 16px;
+  border: 1px solid var(--border); box-shadow: var(--card-shadow);
+}
+.empty-state span { font-size: 36px; display: block; margin-bottom: 10px; }
+.empty-state h3 { font-family: 'Fraunces', serif; font-size: 16px; color: var(--text); margin-bottom: 5px; }
+.empty-state p  { font-size: 13px; color: var(--muted); }
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.hero { animation: fadeUp 0.4s ease both; }
+.section { animation: fadeUp 0.4s ease 0.18s both; }
+</style>
+</head>
+<body>
+
+<!-- ── HERO ── -->
+<div class="hero">
+  <div class="hero-mesh"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-top">
+    <button class="back-btn" onclick="history.back()">← Back</button>
+    <div class="dept-chip" id="deptChip">—</div>
+  </div>
+  <div class="hero-body">
+    <h1 class="hero-title"><span class="accent">Staff</span> Locations</h1>
+    <p class="hero-sub" id="deptSubTitle">Loading department...</p>
+  </div>
+</div>
+
+<!-- ── SEARCH BAR ── -->
+<div class="search-wrap">
+  <div class="search-bar">
+    <span class="search-icon">🔍</span>
+    <input id="searchInput" type="text" placeholder="Search faculty by name or designation..."
+           autocomplete="off"/>
+    <span class="search-clear" id="searchClear" onclick="clearSearch()">✕</span>
+  </div>
+</div>
+
+<!-- ── STATS ── -->
+<div class="stats-row">
+  <div class="sf">
+    <span class="sf-emoji">👨‍🏫</span>
+    <div class="sf-num" id="totalStat">—</div>
+    <div class="sf-label">Total</div>
+  </div>
+  <div class="sf">
+    <span class="sf-emoji">✅</span>
+    <div class="sf-num" id="availStat">—</div>
+    <div class="sf-label">Available</div>
+  </div>
+  <div class="sf">
+    <span class="sf-emoji">📚</span>
+    <div class="sf-num" id="classStat">—</div>
+    <div class="sf-label">In Class</div>
+  </div>
+</div>
+
+<!-- ── STAFF LIST ── -->
+<div class="section" id="staffSection">
+  <div id="staffContainer">
+    <div class="sk-card" id="sk1"><div class="sk-av skeleton"></div><div class="sk-bd"><div class="sk-l1 skeleton"></div><div class="sk-l2 skeleton"></div></div></div>
+    <div class="sk-card" id="sk2"><div class="sk-av skeleton"></div><div class="sk-bd"><div class="sk-l1 skeleton"></div><div class="sk-l2 skeleton"></div></div></div>
+    <div class="sk-card" id="sk3"><div class="sk-av skeleton"></div><div class="sk-bd"><div class="sk-l1 skeleton"></div><div class="sk-l2 skeleton"></div></div></div>
+  </div>
+</div>
+
+<script type="module">
+import { db } from "./js/firebase.js";
+import { ref, onValue }
+  from "https://www.gstatic.com/firebasejs/12.9.0/firebase-database.js";
+
+const params    = new URLSearchParams(location.search);
+const dept      = (params.get("dept") || "").toLowerCase();
+const container = document.getElementById("staffContainer");
+const searchInput = document.getElementById("searchInput");
+
+/* Dept display names */
+const deptNames = {
+  cse: "Computer Science", ece: "Electronics & Comm.",
+  eee: "Electrical Eng.",  civil: "Civil Engineering",
+  mech: "Mechanical Eng.", arch: "Architecture"
+};
+const deptLabel = deptNames[dept] || dept.toUpperCase();
+
+document.getElementById("deptChip").innerText = dept.toUpperCase();
+document.getElementById("deptSubTitle").innerText = deptLabel + " Department";
+
+let allStaff = [];
+
+function clearSkeletons() {
+  ["sk1","sk2","sk3"].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.remove();
+  });
+}
+
+if (!dept) {
+  clearSkeletons();
+  container.innerHTML = `
+    <div class="empty-state"><span>🏛️</span>
+      <h3>No department selected</h3><p>Please go back and choose a department</p></div>`;
+} else {
+  onValue(ref(db, "faculty/" + dept), snapshot => {
+    clearSkeletons();
+
+    if (!snapshot.exists()) {
+      container.innerHTML = `
+        <div class="empty-state"><span>👨‍🏫</span>
+          <h3>No staff found</h3><p>No faculty added for this department yet</p></div>`;
+      ["totalStat","availStat","classStat"].forEach(id =>
+        document.getElementById(id).innerText = "0");
+      return;
+    }
+
+    allStaff = Object.values(snapshot.val());
+
+    /* Stats */
+    const avail  = allStaff.filter(s => s.status === "Available").length;
+    const inClass = allStaff.filter(s => s.status === "In Class").length;
+    document.getElementById("totalStat").innerText = allStaff.length;
+    document.getElementById("availStat").innerText = avail;
+    document.getElementById("classStat").innerText = inClass;
+
+    renderStaff(allStaff);
+  });
+}
+
+/* ── SEARCH ── */
+searchInput.addEventListener("input", () => {
+  const q = searchInput.value.trim();
+  document.getElementById("searchClear").classList.toggle("show", q.length > 0);
+  const filtered = allStaff.filter(s =>
+    (s.name || "").toLowerCase().includes(q.toLowerCase()) ||
+    (s.designation || "").toLowerCase().includes(q.toLowerCase())
+  );
+  renderStaff(filtered);
+});
+
+window.clearSearch = function() {
+  searchInput.value = "";
+  document.getElementById("searchClear").classList.remove("show");
+  renderStaff(allStaff);
+};
+
+/* ── RENDER ── */
+function renderStaff(list) {
+  container.innerHTML = "";
+
+  if (!list.length) {
+    container.innerHTML = `
+      <div class="empty-state"><span>🔍</span>
+        <h3>No staff found</h3><p>Try a different name or designation</p></div>`;
+    return;
+  }
+
+  /* Group by designation */
+  const grouped = {};
+  list.forEach(s => {
+    const key = s.designation || "Faculty";
+    if (!grouped[key]) grouped[key] = [];
+    grouped[key].push(s);
+  });
+
+  let delay = 0;
+  Object.keys(grouped).forEach(designation => {
+    const members = grouped[designation];
+
+    /* Designation header */
+    const header = document.createElement("div");
+    header.className = "designation-header";
+    header.innerHTML = `
+      <div class="desig-label">${designation}</div>
+      <div class="desig-count">${members.length}</div>
+      <div class="desig-line"></div>`;
+    container.appendChild(header);
+
+    /* Staff list for this designation */
+    const list = document.createElement("div");
+    list.className = "staff-list";
+
+    members.forEach(staff => {
+      const statusClass =
+        staff.status === "Available" ? "available" :
+        staff.status === "In Class"  ? "inclass"   : "onleave";
+
+      const statusLabel = staff.status || "Unknown";
+
+      const stripeClass =
+        staff.status === "Available" ? "active-st" :
+        staff.status === "In Class"  ? "inactive-st" : "";
+
+      const initial = (staff.name || "S").charAt(0).toUpperCase();
+
+      const card = document.createElement("div");
+      card.className = "staff-card";
+      card.style.animationDelay = (delay * 0.05) + "s";
+      delay++;
+
+      card.innerHTML = `
+        <div class="staff-stripe ${stripeClass}"></div>
+        <div class="staff-inner">
+          <div class="staff-av">
+            ${staff.photo
+              ? `<img src="${staff.photo}" alt="${staff.name}"
+                      onerror="this.outerHTML='<div class=av-fallback>${initial}</div>'">`
+              : `<div class="av-fallback">${initial}</div>`}
+          </div>
+          <div class="staff-info">
+            <div class="staff-name">${staff.name || "—"}</div>
+            <div class="staff-meta">🚪 ${staff.cabin || "—"} &nbsp;·&nbsp; ${staff.floor || "—"}</div>
+            <div class="staff-tags">
+              <span class="status-pill ${statusClass}">
+                <span class="status-dot"></span>
+                ${statusLabel}
+              </span>
+            </div>
+          </div>
+          <div class="staff-chevron">›</div>
+        </div>`;
+
+      card.onclick = () => {
+        const p = new URLSearchParams({
+          name:        staff.name,
+          dept,
+          designation: staff.designation || "",
+          block:       dept.toUpperCase() + " Block",
+          floor:       staff.floor  || "",
+          cabin:       staff.cabin  || "",
+          status:      staff.status || ""
+        });
+        location.href = `staff-detail.html?${p.toString()}`;
+      };
+
+      list.appendChild(card);
+    });
+
+    container.appendChild(list);
+  });
+}
+</script>
+
+</body>
+</html>
+

@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Building Info — Crescent Campus</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;1,9..144,300&display=swap" rel="stylesheet"/>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --navy:        #08172E;
+  --navy-2:      #0F2340;
+  --navy-3:      #162F54;
+  --gold:        #C9A84C;
+  --gold-2:      #DDB95E;
+  --gold-3:      #EDD080;
+  --gold-pale:   #FBF3DC;
+  --white:       #FFFFFF;
+  --off:         #F4F6F9;
+  --muted:       #8FA3BC;
+  --text:        #0F2340;
+  --card-bg:     #FFFFFF;
+  --border:      rgba(0,0,0,0.06);
+  --card-shadow: 0 2px 14px rgba(8,23,46,0.07);
+  --danger:      #EF4444;
+}
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--off);
+  color: var(--text);
+  min-height: 100vh;
+  padding-bottom: 40px;
+  overflow-x: hidden;
+}
+
+/* ── HERO HEADER ── */
+.hero {
+  background: var(--navy);
+  padding: 20px 20px 64px;
+  position: relative; overflow: hidden;
+}
+.hero-mesh {
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse 70% 90% at 100% 30%, rgba(201,168,76,0.13) 0%, transparent 70%),
+    radial-gradient(ellipse 50% 60% at 0%  100%, rgba(59,130,246,0.07) 0%, transparent 70%);
+}
+.hero-grid {
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(rgba(201,168,76,0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(201,168,76,0.06) 1px, transparent 1px);
+  background-size: 26px 26px;
+  -webkit-mask-image: linear-gradient(to bottom, transparent, black 40%, black 70%, transparent);
+  mask-image: linear-gradient(to bottom, transparent, black 40%, black 70%, transparent);
+}
+
+.hero-top {
+  position: relative; z-index: 2;
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 22px;
+}
+.back-btn {
+  display: flex; align-items: center; gap: 6px;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.1);
+  color: rgba(255,255,255,0.75);
+  padding: 8px 14px 8px 10px; border-radius: 10px;
+  font-size: 13px; font-weight: 500; cursor: pointer;
+  transition: background 0.2s; font-family: 'DM Sans', sans-serif;
+}
+.back-btn:hover { background: rgba(255,255,255,0.14); }
+
+.role-chip {
+  display: flex; align-items: center; gap: 5px;
+  background: rgba(201,168,76,0.15);
+  border: 1px solid rgba(201,168,76,0.3);
+  padding: 5px 12px; border-radius: 20px;
+  font-size: 11px; font-weight: 600; color: var(--gold-2);
+  letter-spacing: 0.04em; text-transform: uppercase;
+}
+.role-dot {
+  width: 5px; height: 5px; border-radius: 50%;
+  background: var(--gold);
+  animation: blink 1.8s ease-in-out infinite;
+}
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+.hero-body { position: relative; z-index: 2; }
+.building-tag {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.1);
+  padding: 4px 12px; border-radius: 20px;
+  font-size: 11px; color: rgba(255,255,255,0.5);
+  letter-spacing: 0.06em; text-transform: uppercase;
+  margin-bottom: 10px;
+}
+
+.hero-title {
+  font-family: 'Fraunces', serif;
+  font-size: 26px; font-weight: 600; color: var(--white);
+  line-height: 1.18; letter-spacing: -0.02em;
+  margin-bottom: 6px; min-height: 32px;
+}
+
+.hero-sub { font-size: 13px; color: rgba(255,255,255,0.45); }
+
+/* ── INFO CARD (floats over hero) ── */
+.info-card {
+  background: var(--card-bg);
+  border-radius: 20px;
+  margin: -44px 16px 0;
+  border: 1px solid var(--border);
+  box-shadow: 0 16px 40px rgba(8,23,46,0.13);
+  overflow: hidden;
+  position: relative; z-index: 10;
+  animation: fadeUp 0.45s ease both;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.card-strip {
+  height: 4px;
+  background: linear-gradient(90deg, var(--gold), var(--gold-3), var(--gold));
+  background-size: 200% 100%;
+  animation: shimmer 3s ease-in-out infinite;
+}
+@keyframes shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* ── INFO SECTIONS ── */
+.info-section {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: flex-start; gap: 13px;
+  transition: background 0.18s;
+}
+.info-section:last-child { border-bottom: none; }
+.info-section:hover { background: var(--off); }
+
+.info-icon {
+  width: 38px; height: 38px; flex-shrink: 0;
+  border-radius: 11px;
+  display: flex; align-items: center; justify-content: center; font-size: 18px;
+  margin-top: 1px;
+}
+.info-icon.gold   { background: rgba(201,168,76,0.12); }
+.info-icon.blue   { background: rgba(59,130,246,0.10); }
+.info-icon.green  { background: rgba(16,185,129,0.10); }
+.info-icon.purple { background: rgba(139,92,246,0.10); }
+
+.info-content { flex: 1; min-width: 0; }
+.info-label {
+  font-size: 10.5px; font-weight: 600; color: var(--muted);
+  letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 7px;
+}
+.info-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+.info-tag {
+  background: var(--off); border: 1px solid var(--border);
+  padding: 4px 11px; border-radius: 20px;
+  font-size: 12px; font-weight: 500; color: var(--text);
+  transition: all 0.18s;
+}
+.info-tag:hover { border-color: var(--gold); background: var(--gold-pale); color: var(--navy); }
+
+.info-text { font-size: 13px; color: var(--text); line-height: 1.5; }
+
+/* Empty state for a section */
+.info-empty { font-size: 12.5px; color: var(--muted); font-style: italic; }
+
+/* ── ACTION BUTTONS ── */
+.actions {
+  padding: 16px;
+  display: flex; flex-direction: column; gap: 10px;
+  animation: fadeUp 0.45s ease 0.15s both;
+}
+
+.nav-btn {
+  width: 100%; padding: 15px;
+  background: linear-gradient(135deg, var(--gold), var(--gold-2));
+  color: var(--navy); border: none; border-radius: 14px;
+  font-size: 15px; font-weight: 600;
+  font-family: 'DM Sans', sans-serif; cursor: pointer;
+  box-shadow: 0 8px 24px rgba(201,168,76,0.4);
+  transition: all 0.25s; position: relative; overflow: hidden;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+}
+.nav-btn::after {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.25) 0%, transparent 60%);
+}
+.nav-btn:hover { transform: translateY(-2px); box-shadow: 0 12px 32px rgba(201,168,76,0.5); }
+.nav-btn:active { transform: scale(0.98); }
+
+.back-action-btn {
+  width: 100%; padding: 13px;
+  background: var(--off); color: var(--muted);
+  border: 1.5px solid var(--border); border-radius: 14px;
+  font-size: 14px; font-weight: 500;
+  font-family: 'DM Sans', sans-serif; cursor: pointer;
+  transition: all 0.22s;
+  display: flex; align-items: center; justify-content: center; gap: 7px;
+}
+.back-action-btn:hover { background: var(--navy); color: var(--white); border-color: var(--navy); }
+
+/* ── ACCESS DENIED ── */
+.access-denied {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  min-height: 100vh; padding: 32px 24px; text-align: center;
+}
+.denied-icon {
+  width: 80px; height: 80px; border-radius: 50%;
+  background: rgba(239,68,68,0.1); border: 2px solid rgba(239,68,68,0.25);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 36px; margin-bottom: 20px;
+}
+.denied-title {
+  font-family: 'Fraunces', serif;
+  font-size: 22px; font-weight: 600; color: var(--navy); margin-bottom: 8px;
+}
+.denied-sub { font-size: 14px; color: var(--muted); margin-bottom: 28px; line-height: 1.5; }
+.denied-btn {
+  padding: 13px 28px; border-radius: 13px; border: none;
+  background: var(--navy); color: var(--white);
+  font-size: 14px; font-weight: 600;
+  font-family: 'DM Sans', sans-serif; cursor: pointer;
+  transition: all 0.22s;
+  box-shadow: 0 6px 20px rgba(8,23,46,0.25);
+}
+.denied-btn:hover { transform: translateY(-2px); }
+
+/* ── NOT FOUND ── */
+.not-found {
+  margin: 40px 16px 0;
+  background: var(--card-bg); border-radius: 18px;
+  border: 1px solid var(--border); box-shadow: var(--card-shadow);
+  padding: 40px 24px; text-align: center;
+}
+.not-found span { font-size: 40px; display: block; margin-bottom: 12px; }
+.not-found h3 { font-family: 'Fraunces', serif; font-size: 17px; color: var(--text); margin-bottom: 6px; }
+.not-found p  { font-size: 13px; color: var(--muted); }
+
+/* ── SKELETON LOADER ── */
+.skeleton {
+  background: linear-gradient(90deg, #e8edf2 25%, #f4f6f9 50%, #e8edf2 75%);
+  background-size: 200% 100%;
+  animation: skeleton-anim 1.5s ease infinite;
+  border-radius: 8px;
+}
+@keyframes skeleton-anim {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+.sk-title { height: 28px; width: 60%; margin-bottom: 8px; }
+.sk-sub   { height: 14px; width: 40%; }
+</style>
+</head>
+<body>
+
+<!-- ── HERO ── -->
+<div class="hero">
+  <div class="hero-mesh"></div>
+  <div class="hero-grid"></div>
+
+  <div class="hero-top">
+    <button class="back-btn" onclick="goBack()">← Back</button>
+    <div class="role-chip">
+      <span class="role-dot"></span>
+      <span id="roleLabel">Visitor</span>
+    </div>
+  </div>
+
+  <div class="hero-body">
+    <div class="building-tag">🏢 Campus Building</div>
+    <h1 class="hero-title" id="heroTitle">
+      <span class="skeleton sk-title"></span>
+    </h1>
+    <p class="hero-sub" id="heroSub">Loading building information...</p>
+  </div>
+</div>
+
+<!-- ── INFO CARD ── -->
+<div class="info-card" id="infoCard" style="display:none;">
+  <div class="card-strip"></div>
+  <div id="infoSections"></div>
+</div>
+
+<!-- Not found placeholder -->
+<div class="not-found" id="notFound" style="display:none;">
+  <span>🏢</span>
+  <h3>Building not found</h3>
+  <p>We couldn't find information for this building in our database.</p>
+</div>
+
+<!-- ── ACTIONS ── -->
+<div class="actions" id="actionsArea" style="display:none;">
+  <button class="nav-btn" onclick="startNavigation()">🧭 Start AR Navigation</button>
+  <button class="back-action-btn" onclick="goBack()">← Go Back</button>
+</div>
+
+<script>
+  /* ── READ URL PARAMS ── */
+  const params   = new URLSearchParams(location.search);
+  const rawName  = params.get("name") || "";
+  const role     = params.get("role") || "visitor";
+
+  const name = rawName.replaceAll("_", " ");
+
+  /* Role label */
+  const roleLabels = { student: "Student", admin: "Admin", visitor: "Visitor" };
+  document.getElementById("roleLabel").innerText = roleLabels[role] || "Visitor";
+
+  /* ── HELPERS ── */
+  function clean(text) {
+    return text.toLowerCase().replace(/[^a-z0-9 ]/g, "").trim();
+  }
+
+  function makeTags(arr) {
+    if (!arr || !arr.length) return '<span class="info-empty">Not available</span>';
+    return arr.map(item =>
+      `<span class="info-tag">${item}</span>`
+    ).join("");
+  }
+
+  function makeText(val) {
+    if (!val) return '<span class="info-empty">Not available</span>';
+    return `<span class="info-text">${val}</span>`;
+  }
+
+  /* ── LOAD DATA ── */
+  fetch("data/locations.json")
+    .then(res => res.json())
+    .then(data => {
+
+      const cleanDetected = clean(name);
+
+      const building = data.find(b => {
+        const cleanJson = clean(b.name);
+        return (
+          cleanDetected.includes(cleanJson) ||
+          cleanJson.includes(cleanDetected) ||
+          cleanJson.replace("school of", "").trim() === cleanDetected ||
+          cleanDetected.replace("block", "").trim() === cleanJson
+        );
+      });
+
+      /* ── NOT FOUND ── */
+      if (!building) {
+        document.getElementById("heroTitle").innerHTML = name || "Unknown Building";
+        document.getElementById("heroSub").innerText  = "Building not in database";
+        document.getElementById("notFound").style.display = "block";
+        document.getElementById("actionsArea").style.display = "flex";
+        return;
+      }
+
+      /* ── ACCESS CHECK ── */
+      if (building.access && !building.access.includes(role)) {
+        document.getElementById("heroTitle").innerText = building.name;
+        document.getElementById("heroSub").innerText = "Limited access — view only";
+     // Show info but disable navigation
+     document.getElementById("actionsArea").innerHTML = `
+     <button class="nav-btn" disabled style="opacity:0.5;cursor:not-allowed;">
+      🚫 Navigation Restricted
+      </button>
+      <button class="back-action-btn" onclick="goBack()">← Go Back</button>`;
+    }
+
+      /* ── POPULATE HERO ── */
+      document.getElementById("heroTitle").innerText = building.name;
+      document.getElementById("heroSub").innerText  =
+        building.description || "Campus building — Crescent University";
+
+      /* ── INFO SECTIONS ── */
+      const sections = [
+        {
+          icon: "🏛️", iconClass: "gold", label: "Departments",
+          content: makeTags(building.departments)
+        },
+        {
+          icon: "🔬", iconClass: "blue", label: "Laboratories",
+          content: makeTags(building.labs)
+        },
+        {
+          icon: "🛎️", iconClass: "green", label: "Facilities",
+          content: makeTags(building.facilities)
+        },
+        {
+          icon: "🏢", iconClass: "purple", label: "Office",
+          content: makeText(building.office)
+        }
+      ];
+
+      document.getElementById("infoSections").innerHTML = sections.map(s => `
+        <div class="info-section">
+          <div class="info-icon ${s.iconClass}">${s.icon}</div>
+          <div class="info-content">
+            <div class="info-label">${s.label}</div>
+            <div class="info-tags">${s.content}</div>
+          </div>
+        </div>
+      `).join("");
+
+      document.getElementById("infoCard").style.display   = "block";
+      document.getElementById("actionsArea").style.display = "flex";
+    })
+    .catch(() => {
+      document.getElementById("heroTitle").innerText = name || "Building";
+      document.getElementById("heroSub").innerText   = "Could not load data";
+      document.getElementById("notFound").style.display    = "block";
+      document.getElementById("actionsArea").style.display = "flex";
+    });
+
+  /* ── START NAVIGATION ── */
+  function startNavigation() {
+    fetch("data/locations.json")
+      .then(res => res.json())
+      .then(data => {
+        const targetIndex = data.findIndex(b =>
+          clean(b.name) === clean(rawName)
+        );
+        if (targetIndex === -1) {
+          alert("Navigation data could not be loaded");
+          return;
+        }
+        window.location.href = "confirm.html?place=" + targetIndex;
+      })
+      .catch(() => alert("Could not load navigation data"));
+  }
+
+  /* ── BACK ── */
+  function goBack() { history.back(); }
+
+  /* ── EXPOSE clean for inline use ── */
+  function clean(text) {
+    return text.toLowerCase().replace(/[^a-z0-9 ]/g, "").trim();
+  }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Lab Detail — Crescent Campus</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;1,9..144,300&display=swap" rel="stylesheet"/>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --navy:        #08172E;
+  --navy-2:      #0F2340;
+  --navy-3:      #162F54;
+  --gold:        #C9A84C;
+  --gold-2:      #DDB95E;
+  --gold-3:      #EDD080;
+  --gold-pale:   #FBF3DC;
+  --white:       #FFFFFF;
+  --off:         #F4F6F9;
+  --muted:       #8FA3BC;
+  --text:        #0F2340;
+  --card-bg:     #FFFFFF;
+  --border:      rgba(0,0,0,0.06);
+  --card-shadow: 0 2px 14px rgba(8,23,46,0.07);
+}
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--off);
+  color: var(--text);
+  min-height: 100vh;
+  padding-bottom: 40px;
+  overflow-x: hidden;
+}
+
+/* ── HERO ── */
+.hero {
+  background: var(--navy);
+  padding: 20px 20px 62px;
+  position: relative; overflow: hidden;
+}
+.hero-mesh {
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse 70% 80% at 100% 20%, rgba(139,92,246,0.13) 0%, transparent 70%),
+    radial-gradient(ellipse 50% 60% at 0%  100%, rgba(59,130,246,0.07) 0%, transparent 70%);
+}
+.hero-grid {
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(rgba(201,168,76,0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(201,168,76,0.06) 1px, transparent 1px);
+  background-size: 26px 26px;
+  -webkit-mask-image: linear-gradient(to bottom, transparent, black 40%, black 70%, transparent);
+  mask-image: linear-gradient(to bottom, transparent, black 40%, black 70%, transparent);
+}
+.hero-top {
+  position: relative; z-index: 2;
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 20px;
+}
+.back-btn {
+  display: flex; align-items: center; gap: 6px;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.1);
+  color: rgba(255,255,255,0.75);
+  padding: 8px 14px 8px 10px; border-radius: 10px;
+  font-size: 13px; font-weight: 500; cursor: pointer;
+  transition: background 0.2s; font-family: 'DM Sans', sans-serif;
+}
+.back-btn:hover { background: rgba(255,255,255,0.14); }
+
+.avail-badge {
+  display: flex; align-items: center; gap: 5px;
+  padding: 5px 12px; border-radius: 20px;
+  font-size: 11px; font-weight: 600; letter-spacing: 0.03em;
+}
+.avail-badge.available { background: rgba(16,185,129,0.15); border: 1px solid rgba(16,185,129,0.3);  color: #34D399; }
+.avail-badge.occupied  { background: rgba(239,68,68,0.15);  border: 1px solid rgba(239,68,68,0.3);   color: #FCA5A5; }
+.avail-badge.notset    { background: rgba(139,92,246,0.15); border: 1px solid rgba(139,92,246,0.3);  color: #C4B5FD; }
+.avail-dot { width: 5px; height: 5px; border-radius: 50%; }
+.avail-badge.available .avail-dot { background: #10B981; animation: blink 1.8s ease-in-out infinite; }
+.avail-badge.occupied  .avail-dot { background: #EF4444; }
+.avail-badge.notset    .avail-dot { background: #8B5CF6; }
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+.hero-body { position: relative; z-index: 2; }
+.hero-eyebrow {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: rgba(139,92,246,0.15); border: 1px solid rgba(139,92,246,0.3);
+  padding: 4px 12px; border-radius: 20px;
+  font-size: 11px; font-weight: 600; color: #C4B5FD;
+  letter-spacing: 0.04em; text-transform: uppercase; margin-bottom: 10px;
+}
+.eyebrow-dot { width: 5px; height: 5px; border-radius: 50%; background: #8B5CF6; animation: blink 1.8s ease-in-out infinite; }
+
+.hero-title {
+  font-family: 'Fraunces', serif;
+  font-size: 26px; font-weight: 600; color: var(--white);
+  line-height: 1.2; letter-spacing: -0.02em; margin-bottom: 8px; min-height: 32px;
+}
+.sk-line {
+  border-radius: 8px;
+  background: linear-gradient(90deg, rgba(255,255,255,0.06) 25%, rgba(255,255,255,0.12) 50%, rgba(255,255,255,0.06) 75%);
+  background-size: 200% 100%; animation: sk 1.5s ease infinite; display: block;
+}
+@keyframes sk { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+.sk-title { height: 28px; width: 65%; }
+
+.hero-sub-row {
+  display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+  font-size: 12.5px; color: rgba(255,255,255,0.45);
+}
+.hero-sub-dot { width: 3px; height: 3px; border-radius: 50%; background: rgba(255,255,255,0.25); }
+
+/* ── MAIN CARD ── */
+.main-card {
+  background: var(--card-bg); border-radius: 20px;
+  margin: -44px 16px 0;
+  border: 1px solid var(--border);
+  box-shadow: 0 16px 40px rgba(8,23,46,0.13);
+  overflow: hidden; position: relative; z-index: 10;
+  animation: fadeUp 0.45s ease both;
+}
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.card-strip {
+  height: 4px;
+  background: linear-gradient(90deg, #8B5CF6, #A78BFA, #8B5CF6);
+  background-size: 200% 100%; animation: shimmer 3s ease-in-out infinite;
+}
+@keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+
+.info-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 1px; background: var(--border);
+}
+.info-cell { background: var(--card-bg); padding: 15px 18px; transition: background 0.18s; }
+.info-cell:hover { background: var(--off); }
+.info-cell.full { grid-column: 1 / -1; }
+.cell-icon {
+  width: 30px; height: 30px; border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; margin-bottom: 7px;
+}
+.cell-icon.purple { background: rgba(139,92,246,0.10); }
+.cell-icon.blue   { background: rgba(59,130,246,0.10); }
+.cell-icon.green  { background: rgba(16,185,129,0.10); }
+.cell-icon.gold   { background: rgba(201,168,76,0.12); }
+.cell-icon.orange { background: rgba(249,115,22,0.10); }
+.cell-label { font-size: 10.5px; font-weight: 600; color: var(--muted); letter-spacing: 0.04em; text-transform: uppercase; margin-bottom: 4px; }
+.cell-value { font-size: 13.5px; font-weight: 600; color: var(--text); }
+
+/* ── TODAY'S SCHEDULE CARD ── */
+.today-card {
+  margin: 14px 16px 0;
+  background: var(--card-bg); border-radius: 16px;
+  border: 1px solid var(--border); box-shadow: var(--card-shadow);
+  overflow: hidden;
+  animation: fadeUp 0.45s ease 0.08s both;
+}
+.today-header {
+  padding: 14px 18px 12px;
+  display: flex; align-items: center; justify-content: space-between;
+  border-bottom: 1px solid var(--border);
+}
+.today-title-row { display: flex; align-items: center; gap: 8px; }
+.today-icon {
+  width: 30px; height: 30px; border-radius: 8px;
+  background: rgba(201,168,76,0.12);
+  display: flex; align-items: center; justify-content: center; font-size: 15px;
+}
+.today-title { font-size: 13px; font-weight: 600; color: var(--text); }
+.today-day-badge {
+  font-size: 10px; font-weight: 600; color: #5B21B6;
+  background: rgba(139,92,246,0.1); border: 1px solid rgba(139,92,246,0.2);
+  padding: 2px 9px; border-radius: 20px; letter-spacing: 0.03em;
+}
+
+/* Period timeline */
+.period-timeline { padding: 10px 16px 14px; }
+.period-row {
+  display: flex; align-items: center; gap: 10px;
+  padding: 8px 10px; border-radius: 10px;
+  margin-bottom: 4px; transition: all 0.2s;
+  border: 1px solid transparent;
+}
+.period-row:last-child { margin-bottom: 0; }
+.period-row.current-slot {
+  background: rgba(239,68,68,0.07);
+  border-color: rgba(239,68,68,0.18);
+}
+.period-row.free-slot {
+  background: rgba(16,185,129,0.05);
+  border-color: rgba(16,185,129,0.12);
+}
+.period-row.occupied-slot {
+  background: rgba(239,68,68,0.04);
+  border-color: rgba(239,68,68,0.1);
+}
+.period-row.past-slot { opacity: 0.45; }
+.period-time {
+  font-size: 11px; font-weight: 600; color: var(--muted);
+  min-width: 110px; flex-shrink: 0;  /* was 100px, bump to 110px */
+}
+.period-name { font-size: 13px; font-weight: 600; color: var(--text); flex: 1; }
+.period-status-chip {
+  padding: 3px 10px; border-radius: 20px;
+  font-size: 10px; font-weight: 600; flex-shrink: 0;
+}
+.period-status-chip.occ  { background: rgba(239,68,68,0.1);  color: #991B1B; border: 1px solid rgba(239,68,68,0.2); }
+.period-status-chip.free { background: rgba(16,185,129,0.1); color: #065F46; border: 1px solid rgba(16,185,129,0.2); }
+.period-now-tag {
+  font-size: 9px; font-weight: 700; letter-spacing: 0.06em;
+  background: #EF4444; color: var(--white);
+  padding: 2px 7px; border-radius: 20px; text-transform: uppercase;
+}
+.no-timetable {
+  padding: 20px; text-align: center;
+  font-size: 13px; color: var(--muted); line-height: 1.6;
+}
+.no-timetable span { font-size: 28px; display: block; margin-bottom: 8px; }
+
+/* ── WEEKLY VIEW ── */
+.weekly-card {
+  margin: 14px 16px 0;
+  background: var(--card-bg); border-radius: 16px;
+  border: 1px solid var(--border); box-shadow: var(--card-shadow);
+  overflow: hidden;
+  animation: fadeUp 0.45s ease 0.12s both;
+}
+.weekly-header {
+  padding: 14px 18px 12px; border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 8px;
+}
+.weekly-icon {
+  width: 30px; height: 30px; border-radius: 8px;
+  background: rgba(59,130,246,0.10);
+  display: flex; align-items: center; justify-content: center; font-size: 15px;
+}
+.weekly-title { font-size: 13px; font-weight: 600; color: var(--text); }
+
+.weekly-grid-wrap { overflow-x: auto; padding: 12px 14px 14px; }
+
+/* Weekly grid — flat row-by-row approach, no display:contents */
+.wg-table { min-width: 380px; border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
+
+.wg-header-row {
+  display: grid;
+  background: var(--navy);
+}
+.wg-head-cell {
+  padding: 8px 4px; text-align: center;
+  font-size: 10px; font-weight: 600; color: rgba(255,255,255,0.6);
+  letter-spacing: 0.05em; text-transform: uppercase;
+}
+.wg-head-cell.period-col { text-align: left; padding-left: 10px; color: rgba(255,255,255,0.4); }
+.wg-head-cell.today-col  { color: var(--gold-2); }
+
+.wg-data-row {
+  display: grid;
+  border-top: 1px solid var(--border);
+}
+.wg-data-row:nth-child(even) { background: rgba(0,0,0,0.01); }
+
+.wg-period-label {
+  padding: 9px 10px;
+  font-size: 11px; font-weight: 600; color: var(--text);
+  border-right: 1px solid var(--border);
+  display: flex; flex-direction: column; justify-content: center;
+  background: var(--card-bg);
+}
+.wg-label-time { font-size: 9.5px; color: var(--muted); font-weight: 400; margin-top: 1px; }
+
+.wg-day-cell {
+  padding: 8px 4px; text-align: center;
+  border-right: 1px solid var(--border);
+  font-size: 11px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+  min-height: 44px;
+}
+.wg-day-cell:last-child { border-right: none; }
+.wg-day-cell.occ  { background: rgba(239,68,68,0.07);  color: #B91C1C; }
+.wg-day-cell.free { background: rgba(16,185,129,0.05); color: #065F46; }
+.wg-day-cell.today-col { background: rgba(201,168,76,0.05); }
+.wg-day-cell.occ.today-col  { background: rgba(239,68,68,0.12); }
+.wg-day-cell.free.today-col { background: rgba(16,185,129,0.09); }
+.wg-day-cell.now-active {
+  outline: 2px solid #EF4444; outline-offset: -2px; border-radius: 4px;
+}
+
+/* ── EQUIPMENT ── */
+.equip-section {
+  margin: 14px 16px 0;
+  background: var(--card-bg); border-radius: 16px;
+  border: 1px solid var(--border); box-shadow: var(--card-shadow);
+  padding: 16px 18px;
+  animation: fadeUp 0.45s ease 0.16s both;
+}
+.equip-title {
+  font-size: 11px; font-weight: 600; color: var(--muted);
+  letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 12px;
+  display: flex; align-items: center; gap: 7px;
+}
+.equip-icon-sm {
+  width: 26px; height: 26px; border-radius: 7px;
+  background: rgba(139,92,246,0.10);
+  display: flex; align-items: center; justify-content: center; font-size: 13px;
+}
+.equip-tags { display: flex; flex-wrap: wrap; gap: 8px; }
+.equip-chip {
+  background: rgba(139,92,246,0.08); border: 1px solid rgba(139,92,246,0.18); color: #5B21B6;
+  padding: 5px 13px; border-radius: 20px; font-size: 12px; font-weight: 500; transition: all 0.18s;
+}
+.equip-chip:hover { background: rgba(139,92,246,0.15); }
+
+/* ── GUIDE ── */
+.guide-section {
+  margin: 14px 16px 0;
+  background: var(--navy); border-radius: 16px; padding: 16px 18px;
+  border: 1px solid rgba(255,255,255,0.05);
+  box-shadow: 0 8px 24px rgba(8,23,46,0.18);
+  position: relative; overflow: hidden;
+  animation: fadeUp 0.45s ease 0.2s both;
+}
+.guide-section::before {
+  content: ''; position: absolute; right: -10px; top: -10px;
+  width: 80px; height: 80px;
+  background: radial-gradient(circle, rgba(139,92,246,0.15) 0%, transparent 70%);
+}
+.guide-header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; position: relative; z-index: 1; }
+.guide-icon {
+  width: 36px; height: 36px; border-radius: 10px;
+  background: rgba(139,92,246,0.15); border: 1px solid rgba(139,92,246,0.25);
+  display: flex; align-items: center; justify-content: center; font-size: 18px;
+}
+.guide-label { font-size: 11px; font-weight: 600; color: rgba(255,255,255,0.45); text-transform: uppercase; letter-spacing: 0.04em; }
+.guide-text { font-size: 13px; color: rgba(255,255,255,0.75); line-height: 1.6; position: relative; z-index: 1; }
+
+/* ── ACTIONS ── */
+.actions {
+  padding: 16px 16px 0;
+  display: flex; flex-direction: column; gap: 10px;
+  animation: fadeUp 0.45s ease 0.24s both;
+}
+.nav-btn {
+  width: 100%; padding: 15px; border: none; border-radius: 14px;
+  font-size: 15px; font-weight: 600; font-family: 'DM Sans', sans-serif;
+  cursor: pointer; transition: all 0.25s;
+  background: linear-gradient(135deg, var(--gold), var(--gold-2));
+  color: var(--navy); box-shadow: 0 8px 24px rgba(201,168,76,0.4);
+  position: relative; overflow: hidden;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+}
+.nav-btn::after {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.25) 0%, transparent 60%);
+}
+.nav-btn:hover { transform: translateY(-2px); box-shadow: 0 12px 32px rgba(201,168,76,0.5); }
+.nav-btn:active { transform: scale(0.98); }
+.nav-btn:disabled { opacity: 0.5; pointer-events: none; }
+
+.back-action-btn {
+  width: 100%; padding: 13px; border: none; border-radius: 14px;
+  font-size: 14px; font-weight: 500; font-family: 'DM Sans', sans-serif;
+  cursor: pointer; transition: all 0.22s;
+  background: var(--off); color: var(--muted);
+  border: 1.5px solid var(--border);
+  display: flex; align-items: center; justify-content: center; gap: 7px;
+}
+.back-action-btn:hover { background: var(--navy); color: var(--white); border-color: var(--navy); }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-mesh"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-top">
+    <button class="back-btn" onclick="history.back()">← Back</button>
+    <div class="avail-badge notset" id="availBadge">
+      <span class="avail-dot"></span>
+      <span id="availLabel">Loading</span>
+    </div>
+  </div>
+  <div class="hero-body">
+    <div class="hero-eyebrow"><span class="eyebrow-dot"></span>Laboratory</div>
+    <h1 class="hero-title" id="labTitle"><span class="sk-line sk-title"></span></h1>
+    <div class="hero-sub-row">
+      <span id="subBlock">—</span>
+      <span class="hero-sub-dot"></span>
+      <span id="subFloor">—</span>
+      <span class="hero-sub-dot"></span>
+      <span id="subCode">—</span>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN INFO CARD -->
+<div class="main-card">
+  <div class="card-strip"></div>
+  <div class="info-grid" id="infoGrid"></div>
+</div>
+
+<!-- TODAY'S SCHEDULE -->
+<div id="todayCardWrap"></div>
+
+<!-- WEEKLY TIMETABLE -->
+<div id="weeklyCardWrap"></div>
+
+<!-- EQUIPMENT -->
+<div id="equipSection"></div>
+
+<!-- GUIDE -->
+<div id="guideSection"></div>
+
+<!-- ACTIONS -->
+<div class="actions">
+  <button class="nav-btn" id="navBtn" onclick="startNavigation()">🧭 Start AR Navigation</button>
+  <button class="back-action-btn" onclick="history.back()">← Go Back</button>
+</div>
+
+<script type="module">
+import { db } from "./js/firebase.js";
+import { ref, onValue }
+  from "https://www.gstatic.com/firebasejs/12.9.0/firebase-database.js";
+
+const params = new URLSearchParams(location.search);
+const labId  = params.get("id");
+if (!labId) { alert("Invalid Lab ID"); history.back(); }
+
+const DAYS     = [null,"Mon","Tue","Wed","Thu","Fri","Sat"];
+const DAY_FULL = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+
+/* ─── AVAILABILITY ENGINE ─── */
+function computeAvailability(timetable, periods) {
+  if (!timetable || !periods || !periods.length) return "notset";
+  const now      = new Date();
+  const dayIdx   = now.getDay();
+  const todayKey = (dayIdx >= 1 && dayIdx <= 6) ? DAYS[dayIdx] : null;
+  if (!todayKey) return "available";
+  const hhmm = now.getHours() * 60 + now.getMinutes();
+  for (const p of periods) {
+    if (timetable[p.label + "_" + todayKey]) {
+      const [sh, sm] = p.start.split(":").map(Number);
+      const [eh, em] = p.end.split(":").map(Number);
+      if (hhmm >= sh * 60 + sm && hhmm < eh * 60 + em) return "occupied";
+    }
+  }
+  return "available";
+}
+
+/* ─── FORMAT 24h → 12h ─── */
+function fmt12(time24) {
+  if (!time24 || !time24.includes(":")) return time24;
+  const [h, m] = time24.split(":").map(Number);
+  const ampm = h >= 12 ? "PM" : "AM";
+  const h12  = h % 12 || 12;
+  return `${h12}:${String(m).padStart(2,"0")} ${ampm}`;
+}
+
+/* ─── FIREBASE ─── */
+onValue(ref(db, "labs/" + labId), snapshot => {
+  if (!snapshot.exists()) { alert("Lab not found"); return; }
+  const lab = snapshot.val();
+  renderPage(lab);
+});
+
+function renderPage(lab) {
+  const periods   = Array.isArray(lab.periods)   ? lab.periods   : [];
+  const timetable = (lab.timetable && typeof lab.timetable === "object") ? lab.timetable : {};
+  const status    = computeAvailability(timetable, periods);
+
+  /* ── HERO ── */
+  document.getElementById("labTitle").innerText = lab.name  || "Lab";
+  document.getElementById("subBlock").innerText = lab.block || "—";
+  document.getElementById("subFloor").innerText = lab.floor || "—";
+  document.getElementById("subCode").innerText  = lab.code  || "—";
+
+  const badge = document.getElementById("availBadge");
+  const labelMap = { available: "Available Now", occupied: "Occupied", notset: "No Timetable" };
+  badge.className = `avail-badge ${status}`;
+  document.getElementById("availLabel").innerText = labelMap[status];
+
+  /* ── INFO GRID ── */
+  document.getElementById("infoGrid").innerHTML = `
+    <div class="info-cell">
+      <div class="cell-icon purple">🔬</div>
+      <div class="cell-label">Lab Code</div>
+      <div class="cell-value">${lab.code || "—"}</div>
+    </div>
+    <div class="info-cell">
+      <div class="cell-icon green">👥</div>
+      <div class="cell-label">Capacity</div>
+      <div class="cell-value">${lab.capacity && lab.capacity !== "-" ? lab.capacity + " students" : "—"}</div>
+    </div>
+    <div class="info-cell">
+      <div class="cell-icon blue">🏢</div>
+      <div class="cell-label">Block</div>
+      <div class="cell-value">${lab.block || "—"}</div>
+    </div>
+    <div class="info-cell">
+      <div class="cell-icon gold">🏗️</div>
+      <div class="cell-label">Floor</div>
+      <div class="cell-value">${lab.floor || "—"}</div>
+    </div>
+    <div class="info-cell full">
+      <div class="cell-icon orange">🚪</div>
+      <div class="cell-label">Room Number</div>
+      <div class="cell-value">${lab.room && lab.room !== "-" ? lab.room : "—"}</div>
+    </div>`;
+
+  /* ── TODAY'S SCHEDULE ── */
+  const todayWrap = document.getElementById("todayCardWrap");
+  const now       = new Date();
+  const dayIdx    = now.getDay();
+  const todayKey  = (dayIdx >= 1 && dayIdx <= 6) ? DAYS[dayIdx] : null;
+  const hhmm      = now.getHours() * 60 + now.getMinutes();
+
+  if (!periods.length) {
+    todayWrap.innerHTML = `
+      <div class="today-card">
+        <div class="today-header">
+          <div class="today-title-row">
+            <div class="today-icon">📅</div>
+            <span class="today-title">Today's Schedule</span>
+          </div>
+          <span class="today-day-badge">${todayKey || "Weekend"}</span>
+        </div>
+        <div class="no-timetable">
+          <span>📋</span>
+          No timetable set for this lab yet.<br/>
+          <span style="font-size:12px">Availability is shown as free until a timetable is configured.</span>
+        </div>
+      </div>`;
+  } else {
+    let rowsHtml = "";
+    periods.forEach(p => {
+      const [sh, sm] = p.start.split(":").map(Number);
+      const [eh, em] = p.end.split(":").map(Number);
+      const startMin = sh * 60 + sm;
+      const endMin   = eh * 60 + em;
+
+      /* isOcc = this period has a class on today's day */
+      const isOcc    = !!(todayKey && timetable[p.label + "_" + todayKey]);
+      /* isCurrent = right now falls within this period's time window */
+      const isCurrent = hhmm >= startMin && hhmm < endMin;
+      const isPast    = hhmm >= endMin;
+
+      /*
+        Slot styling:
+        - current-slot  = right now AND class is happening
+        - occupied-slot = class exists today but not current time
+        - free-slot     = no class today for this period
+      */
+      const slotClass = (isCurrent && isOcc) ? "current-slot"
+                      : isOcc               ? "occupied-slot"
+                      : "free-slot";
+      const rowClass  = `period-row ${slotClass} ${isPast ? "past-slot" : ""}`;
+
+      rowsHtml += `
+        <div class="${rowClass}">
+    <div class="period-time">${fmt12(p.start)} – ${fmt12(p.end)}</div>
+    <div style="flex:1;min-width:0;">
+      <div class="period-name">${p.label}</div>
+      <div style="font-size:11px;color:var(--muted);font-weight:400;margin-top:1px;
+                  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
+        ${p.class || ""}
+      </div>
+    </div>
+    ${isCurrent ? '<span class="period-now-tag">NOW</span>' : ""}
+    <span class="period-status-chip ${isOcc ? "occ" : "free"}">${isOcc ? "Occupied" : "Free"}</span>
+  </div>`;
+    });
+
+    todayWrap.innerHTML = `
+      <div class="today-card">
+        <div class="today-header">
+          <div class="today-title-row">
+            <div class="today-icon">📅</div>
+            <span class="today-title">Today's Schedule</span>
+          </div>
+          <span class="today-day-badge">${todayKey ? DAY_FULL[dayIdx] : "Weekend"}</span>
+        </div>
+        <div class="period-timeline">${rowsHtml}</div>
+      </div>`;
+  }
+
+  /* ── WEEKLY TIMETABLE ── */
+  /*
+    FIX: Use explicit row-by-row grid divs instead of display:contents.
+    Each row (header + data) is its own div with display:grid and the
+    same grid-template-columns. This avoids the browser rendering bug
+    where display:contents children collapse parent grid columns.
+  */
+  const weeklyWrap = document.getElementById("weeklyCardWrap");
+  if (periods.length) {
+    const cols = `120px repeat(6, 1fr)`;
+
+    /* Header row */
+    let headerCells = `<div class="wg-head-cell period-col">Period</div>`;
+    for (let d = 1; d <= 6; d++) {
+      const isToday = d === dayIdx;
+      headerCells += `<div class="wg-head-cell ${isToday ? "today-col" : ""}">${DAYS[d]}${isToday ? " ●" : ""}</div>`;
+    }
+
+    /* Data rows — one div per period */
+    let dataRowsHtml = "";
+    periods.forEach(p => {
+      const [sh, sm] = p.start.split(":").map(Number);
+      const [eh, em] = p.end.split(":").map(Number);
+      const startMin = sh * 60 + sm;
+      const endMin   = eh * 60 + em;
+
+      let cells = `
+      <div class="wg-period-label">
+        <div style="font-size:12px;font-weight:700;color:var(--text);">${p.label}</div>
+        <div style="font-size:10px;color:var(--muted);font-weight:400;margin-top:2px;
+                max-width:110px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
+                ${p.class || ""}
+        </div>
+      <div class="wg-label-time">${fmt12(p.start)} – ${fmt12(p.end)}</div>
+      </div>`;
+
+      for (let d = 1; d <= 6; d++) {
+        const isOcc   = !!(timetable[p.label + "_" + DAYS[d]]);
+        const isToday = d === dayIdx;
+        const isNow   = isToday && hhmm >= startMin && hhmm < endMin;
+        const cls     = [
+          "wg-day-cell",
+          isOcc   ? "occ"        : "free",
+          isToday ? "today-col"  : "",
+          isNow   ? "now-active" : ""
+        ].filter(Boolean).join(" ");
+        cells += `<div class="${cls}">${isOcc ? "✗" : "✓"}</div>`;
+      }
+
+      dataRowsHtml += `<div class="wg-data-row" style="grid-template-columns:${cols}">${cells}</div>`;
+    });
+
+    weeklyWrap.innerHTML = `
+      <div class="weekly-card">
+        <div class="weekly-header">
+          <div class="weekly-icon">🗓️</div>
+          <span class="weekly-title">Weekly Timetable</span>
+        </div>
+        <div class="weekly-grid-wrap">
+          <div class="wg-table">
+            <div class="wg-header-row" style="grid-template-columns:${cols}">${headerCells}</div>
+            ${dataRowsHtml}
+          </div>
+        </div>
+      </div>`;
+  }
+
+  /* ── EQUIPMENT ── */
+  if (lab.equipment && lab.equipment !== "-") {
+    const chips = lab.equipment.split(",")
+      .map(e => `<span class="equip-chip">${e.trim()}</span>`).join("");
+    document.getElementById("equipSection").innerHTML = `
+      <div class="equip-section">
+        <div class="equip-title"><div class="equip-icon-sm">🔧</div>Equipment Available</div>
+        <div class="equip-tags">${chips}</div>
+      </div>`;
+  }
+
+  /* ── GUIDE ── */
+  if (lab.guide && lab.guide !== "-") {
+    document.getElementById("guideSection").innerHTML = `
+      <div class="guide-section">
+        <div class="guide-header">
+          <div class="guide-icon">🧭</div>
+          <div class="guide-label">Navigation Guide</div>
+        </div>
+        <div class="guide-text">${lab.guide}</div>
+      </div>`;
+  }
+
+  /* Auto-refresh badge + schedule every 60s */
+  setInterval(() => {
+    renderPage(lab);
+  }, 60000);
+}
+
+/* ─── AR NAVIGATION ─── */
+window.startNavigation = function() {
+  let block = (document.getElementById("subBlock")?.innerText || "").trim().toLowerCase();
+  if (!block || block === "—") { alert("Block information not available for this lab."); return; }
+  const blockMap = {
+    "cse":   "computer science block",
+    "ece":   "basic sciences block",
+    "eee":   "basic sciences block",
+    "mech":  "school of mechanical sciences",
+    "civil": "crescent school of architecture",
+    "mba":   "school of management"
+  };
+  if (blockMap[block]) block = blockMap[block];
+
+  fetch("./data/locations.json")
+    .then(res => res.json())
+    .then(locations => {
+      const index = locations.findIndex(loc => loc.name.toLowerCase().includes(block));
+      if (index === -1) { alert("AR navigation not available for this building."); return; }
+      location.href = `confirm.html?place=${index}&role=student`;
+    })
+    .catch(() => alert("Unable to load navigation data."));
+};
+</script>
+
+</body>
+</html>

@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Destinations — Crescent Campus</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;1,9..144,300&display=swap" rel="stylesheet"/>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --navy:        #08172E;
+  --navy-2:      #0F2340;
+  --navy-3:      #162F54;
+  --gold:        #C9A84C;
+  --gold-2:      #DDB95E;
+  --gold-3:      #EDD080;
+  --gold-pale:   #FBF3DC;
+  --white:       #FFFFFF;
+  --off:         #F4F6F9;
+  --muted:       #8FA3BC;
+  --text:        #0F2340;
+  --card-bg:     #FFFFFF;
+  --border:      rgba(0,0,0,0.06);
+  --card-shadow: 0 2px 14px rgba(8,23,46,0.07);
+}
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--off);
+  color: var(--text);
+  min-height: 100vh;
+  padding-bottom: 40px;
+  overflow-x: hidden;
+}
+
+/* ── HERO ── */
+.hero {
+  background: var(--navy);
+  padding: 20px 20px 52px;
+  position: relative; overflow: hidden;
+}
+.hero-mesh {
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse 70% 80% at 100% 20%, rgba(201,168,76,0.13) 0%, transparent 70%),
+    radial-gradient(ellipse 50% 60% at 0%  90%, rgba(59,130,246,0.07) 0%, transparent 70%);
+}
+.hero-grid {
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(rgba(201,168,76,0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(201,168,76,0.06) 1px, transparent 1px);
+  background-size: 26px 26px;
+  -webkit-mask-image: linear-gradient(to bottom, transparent, black 40%, black 70%, transparent);
+  mask-image: linear-gradient(to bottom, transparent, black 40%, black 70%, transparent);
+}
+
+.hero-top {
+  position: relative; z-index: 2;
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 20px;
+}
+.back-btn {
+  display: flex; align-items: center; gap: 6px;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.1);
+  color: rgba(255,255,255,0.75);
+  padding: 8px 14px 8px 10px; border-radius: 10px;
+  font-size: 13px; font-weight: 500; cursor: pointer;
+  transition: background 0.2s; font-family: 'DM Sans', sans-serif;
+}
+.back-btn:hover { background: rgba(255,255,255,0.14); }
+
+.role-chip {
+  display: flex; align-items: center; gap: 5px;
+  background: rgba(201,168,76,0.15);
+  border: 1px solid rgba(201,168,76,0.3);
+  padding: 5px 12px; border-radius: 20px;
+  font-size: 11px; font-weight: 600; color: var(--gold-2);
+  letter-spacing: 0.04em; text-transform: uppercase;
+}
+.role-dot {
+  width: 5px; height: 5px; border-radius: 50%;
+  background: var(--gold);
+  animation: blink 1.8s ease-in-out infinite;
+}
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+.hero-body { position: relative; z-index: 2; }
+.hero-tag {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: rgba(255,255,255,0.07);
+  border: 1px solid rgba(255,255,255,0.1);
+  padding: 4px 12px; border-radius: 20px;
+  font-size: 11px; color: rgba(255,255,255,0.5);
+  letter-spacing: 0.06em; text-transform: uppercase;
+  margin-bottom: 10px;
+}
+.hero-title {
+  font-family: 'Fraunces', serif;
+  font-size: 26px; font-weight: 600; color: var(--white);
+  line-height: 1.2; letter-spacing: -0.02em; margin-bottom: 6px;
+}
+.hero-title .accent { color: var(--gold-2); font-style: italic; }
+.hero-sub { font-size: 13px; color: rgba(255,255,255,0.45); }
+
+/* ── SEARCH BAR ── */
+.search-wrap {
+  padding: 0 16px;
+  margin-top: -28px;
+  position: relative; z-index: 10;
+  animation: fadeUp 0.4s ease 0.05s both;
+}
+.search-bar {
+  display: flex; align-items: center; gap: 10px;
+  background: var(--card-bg);
+  border: 1.5px solid var(--border);
+  border-radius: 14px; padding: 12px 16px;
+  box-shadow: 0 8px 24px rgba(8,23,46,0.1);
+  transition: border-color 0.2s;
+}
+.search-bar:focus-within { border-color: var(--gold); }
+.search-icon { font-size: 17px; flex-shrink: 0; opacity: 0.5; }
+.search-bar input {
+  flex: 1; border: none; outline: none;
+  font-size: 14px; font-family: 'DM Sans', sans-serif;
+  background: transparent; color: var(--text);
+}
+.search-bar input::placeholder { color: var(--muted); }
+.search-clear {
+  font-size: 14px; cursor: pointer; color: var(--muted);
+  display: none; padding: 2px;
+  transition: color 0.2s;
+}
+.search-clear.show { display: block; }
+.search-clear:hover { color: var(--text); }
+
+/* ── STATS STRIP ── */
+.stats-strip {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 10px; padding: 14px 16px 0;
+  animation: fadeUp 0.4s ease 0.1s both;
+}
+.stat-chip {
+  background: var(--card-bg); border-radius: 12px;
+  padding: 12px 8px 10px; text-align: center;
+  border: 1px solid var(--border); box-shadow: var(--card-shadow);
+  transition: all 0.22s;
+}
+.stat-chip:hover { transform: translateY(-2px); }
+.chip-icon  { font-size: 16px; margin-bottom: 4px; display: block; }
+.chip-val {
+  font-family: 'Fraunces', serif;
+  font-size: 18px; font-weight: 600; color: var(--navy); line-height: 1; margin-bottom: 2px;
+}
+.chip-label { font-size: 9.5px; color: var(--muted); font-weight: 500; letter-spacing: 0.04em; }
+
+/* ── SECTION ── */
+.section { padding: 18px 16px 0; }
+.sec-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+.sec-title { font-family: 'Fraunces', serif; font-size: 16px; font-weight: 600; color: var(--text); }
+.sec-count {
+  font-size: 11px; color: var(--muted); font-weight: 500;
+  background: var(--off); border: 1px solid var(--border);
+  padding: 3px 10px; border-radius: 20px;
+}
+
+/* ── DESTINATION CARDS ── */
+.dest-list { display: flex; flex-direction: column; gap: 10px; }
+
+.dest-card {
+  background: var(--card-bg); border-radius: 16px;
+  border: 1px solid var(--border); box-shadow: var(--card-shadow);
+  display: flex; align-items: stretch; overflow: hidden;
+  cursor: pointer; transition: all 0.25s;
+  animation: fadeUp 0.35s ease both;
+}
+.dest-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 30px rgba(8,23,46,0.11);
+}
+.dest-card:active { transform: scale(0.98); }
+
+/* Left stripe — cycles through accent colors */
+.dest-stripe { width: 4px; flex-shrink: 0; }
+
+.dest-inner {
+  flex: 1; display: flex; align-items: center;
+  gap: 13px; padding: 15px 14px;
+}
+
+.dest-icon {
+  width: 46px; height: 46px; flex-shrink: 0;
+  border-radius: 13px;
+  display: flex; align-items: center; justify-content: center; font-size: 22px;
+}
+
+.dest-body { flex: 1; min-width: 0; }
+.dest-name { font-size: 14.5px; font-weight: 600; color: var(--text); margin-bottom: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.dest-meta { font-size: 11.5px; color: var(--muted); margin-bottom: 6px; }
+.dest-badge {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 2px 9px; border-radius: 20px;
+  font-size: 10px; font-weight: 600;
+}
+
+.dest-chevron {
+  width: 32px; height: 32px; border-radius: 9px;
+  background: var(--off); border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; color: var(--muted); flex-shrink: 0;
+  transition: all 0.22s;
+}
+.dest-card:hover .dest-chevron { background: var(--navy); color: var(--white); transform: translateX(2px); }
+
+/* Color palette cycling for stripes & icons */
+.accent-0 .dest-stripe  { background: linear-gradient(to bottom, var(--gold), var(--gold-3)); }
+.accent-0 .dest-icon    { background: rgba(201,168,76,0.12); }
+.accent-0 .dest-badge   { background: rgba(201,168,76,0.12); color: #92660A; }
+
+.accent-1 .dest-stripe  { background: linear-gradient(to bottom, #3B82F6, #60A5FA); }
+.accent-1 .dest-icon    { background: rgba(59,130,246,0.10); }
+.accent-1 .dest-badge   { background: rgba(59,130,246,0.10); color: #1D4ED8; }
+
+.accent-2 .dest-stripe  { background: linear-gradient(to bottom, #10B981, #34D399); }
+.accent-2 .dest-icon    { background: rgba(16,185,129,0.10); }
+.accent-2 .dest-badge   { background: rgba(16,185,129,0.10); color: #065F46; }
+
+.accent-3 .dest-stripe  { background: linear-gradient(to bottom, #8B5CF6, #A78BFA); }
+.accent-3 .dest-icon    { background: rgba(139,92,246,0.10); }
+.accent-3 .dest-badge   { background: rgba(139,92,246,0.10); color: #5B21B6; }
+
+.accent-4 .dest-stripe  { background: linear-gradient(to bottom, #F97316, #FB923C); }
+.accent-4 .dest-icon    { background: rgba(249,115,22,0.10); }
+.accent-4 .dest-badge   { background: rgba(249,115,22,0.10); color: #9A3412; }
+
+.accent-5 .dest-stripe  { background: linear-gradient(to bottom, #EC4899, #F472B6); }
+.accent-5 .dest-icon    { background: rgba(236,72,153,0.10); }
+.accent-5 .dest-badge   { background: rgba(236,72,153,0.10); color: #9D174D; }
+
+/* ── EMPTY / LOADING STATES ── */
+.state-card {
+  text-align: center; padding: 40px 20px;
+  background: var(--card-bg); border-radius: 16px;
+  border: 1px solid var(--border); box-shadow: var(--card-shadow);
+}
+.state-card span { font-size: 36px; display: block; margin-bottom: 10px; }
+.state-card h3 { font-family: 'Fraunces', serif; font-size: 16px; color: var(--text); margin-bottom: 5px; }
+.state-card p  { font-size: 13px; color: var(--muted); }
+
+/* Skeleton loader */
+.skeleton {
+  background: linear-gradient(90deg, #e8edf2 25%, #f4f6f9 50%, #e8edf2 75%);
+  background-size: 200% 100%;
+  animation: skeleton-anim 1.5s ease infinite;
+  border-radius: 8px;
+}
+@keyframes skeleton-anim {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+.sk-card {
+  background: var(--card-bg); border-radius: 16px;
+  border: 1px solid var(--border); padding: 16px 14px;
+  display: flex; align-items: center; gap: 13px;
+  margin-bottom: 10px;
+}
+.sk-icon  { width: 46px; height: 46px; border-radius: 13px; flex-shrink: 0; }
+.sk-body  { flex: 1; display: flex; flex-direction: column; gap: 8px; }
+.sk-line1 { height: 14px; width: 60%; }
+.sk-line2 { height: 11px; width: 40%; }
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.hero { animation: fadeUp 0.4s ease both; }
+
+/* icons for each location type */
+.icon-gate        { font-size: 24px; }
+</style>
+</head>
+<body>
+
+<!-- ── HERO ── -->
+<div class="hero">
+  <div class="hero-mesh"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-top">
+    <button class="back-btn" onclick="history.back()">← Back</button>
+    <div class="role-chip">
+      <span class="role-dot"></span>
+      <span id="roleLabel">Visitor</span>
+    </div>
+  </div>
+  <div class="hero-body">
+    <div class="hero-tag">🏫 Crescent Campus</div>
+    <h1 class="hero-title">Select <span class="accent">Destination</span></h1>
+    <p class="hero-sub">Choose where you want to navigate to</p>
+  </div>
+</div>
+
+<!-- ── SEARCH ── -->
+<div class="search-wrap">
+  <div class="search-bar">
+    <span class="search-icon">🔍</span>
+    <input id="searchInput" placeholder="Search locations..." oninput="filterSearch(this.value)"/>
+    <span class="search-clear" id="searchClear" onclick="clearSearch()">✕</span>
+  </div>
+</div>
+
+<!-- ── STATS ── -->
+<div class="stats-strip">
+  <div class="stat-chip">
+    <span class="chip-icon">📍</span>
+    <div class="chip-val" id="totalLoc">—</div>
+    <div class="chip-label">Locations</div>
+  </div>
+  <div class="stat-chip">
+    <span class="chip-icon">🔓</span>
+    <div class="chip-val" id="accessLoc">—</div>
+    <div class="chip-label">Accessible</div>
+  </div>
+  <div class="stat-chip">
+    <span class="chip-icon">🧭</span>
+    <div class="chip-val">AR</div>
+    <div class="chip-label">Mode</div>
+  </div>
+</div>
+
+<!-- ── DESTINATION LIST ── -->
+<div class="section">
+  <div class="sec-head">
+    <div class="sec-title">All Destinations</div>
+    <div class="sec-count" id="visibleCount">Loading...</div>
+  </div>
+  <div class="dest-list" id="list">
+    <!-- Skeleton loaders -->
+    <div class="sk-card" id="sk1"><div class="sk-icon skeleton"></div><div class="sk-body"><div class="sk-line1 skeleton"></div><div class="sk-line2 skeleton"></div></div></div>
+    <div class="sk-card" id="sk2"><div class="sk-icon skeleton"></div><div class="sk-body"><div class="sk-line1 skeleton"></div><div class="sk-line2 skeleton"></div></div></div>
+    <div class="sk-card" id="sk3"><div class="sk-icon skeleton"></div><div class="sk-body"><div class="sk-line1 skeleton"></div><div class="sk-line2 skeleton"></div></div></div>
+  </div>
+</div>
+
+<script>
+  const role      = new URLSearchParams(location.search).get("role") || "visitor";
+  const roleLabels = { student: "Student", admin: "Admin", visitor: "Visitor" };
+  document.getElementById("roleLabel").innerText = roleLabels[role] || "Visitor";
+
+  /* Icon map for location names */
+  const iconMap = {
+    "gate":         "🚪",
+    "main":         "🚪",
+    "computer":     "💻",
+    "electrical":   "⚡",
+    "mechanical":   "⚙️",
+    "convocation":  "🎓",
+    "science":      "🔬",
+    "library":      "📚",
+    "canteen":      "🍽️",
+    "medical":      "🏥",
+    "parking":      "🅿️",
+    "hostel":       "🏠",
+    "admin":        "🏛️",
+    "sports":       "🏆",
+    "block":        "🏢"
+  };
+
+  function getIcon(name) {
+    const lower = (name || "").toLowerCase();
+    for (const [key, icon] of Object.entries(iconMap)) {
+      if (lower.includes(key)) return icon;
+    }
+    return "📍";
+  }
+
+  const accentCount = 6;
+  let allCards = [];
+
+  /* ── LOAD LOCATIONS ── */
+  fetch("data/locations.json")
+    .then(r => r.json())
+    .then(data => {
+
+      /* Remove skeleton cards */
+      ["sk1","sk2","sk3"].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.remove();
+      });
+
+      const accessible = data.filter(l => l.access && l.access.includes(role));
+
+      document.getElementById("totalLoc").innerText   = data.length;
+      document.getElementById("accessLoc").innerText  = accessible.length;
+      document.getElementById("visibleCount").innerText = accessible.length + " location" + (accessible.length !== 1 ? "s" : "");
+
+      const list = document.getElementById("list");
+
+      if (!accessible.length) {
+        list.innerHTML = `
+          <div class="state-card">
+            <span>🔒</span>
+            <h3>No accessible locations</h3>
+            <p>No destinations are available for your role (${role})</p>
+          </div>`;
+        return;
+      }
+
+      let accentIdx = 0;
+
+      data.forEach((l, i) => {
+        if (!l.access || !l.access.includes(role)) return;
+
+        const accent = `accent-${accentIdx % accentCount}`;
+        accentIdx++;
+
+        const card = document.createElement("div");
+        card.className = `dest-card ${accent}`;
+        card.dataset.name = (l.name || "").toLowerCase();
+        card.style.animationDelay = (accentIdx * 0.04) + "s";
+
+        card.innerHTML = `
+          <div class="dest-stripe"></div>
+          <div class="dest-inner">
+            <div class="dest-icon">${getIcon(l.name)}</div>
+            <div class="dest-body">
+              <div class="dest-name">${l.name}</div>
+              <div class="dest-meta">📍 Crescent Campus &nbsp;·&nbsp; ${role}</div>
+              <span class="dest-badge">🧭 AR Navigate</span>
+            </div>
+            <div class="dest-chevron">›</div>
+          </div>`;
+
+        card.onclick = () => {
+          location.href = `confirm.html?place=${i}&role=${role}`;
+        };
+
+        list.appendChild(card);
+        allCards.push(card);
+      });
+    })
+    .catch(() => {
+      document.getElementById("list").innerHTML = `
+        <div class="state-card">
+          <span>⚠️</span>
+          <h3>Could not load locations</h3>
+          <p>Please check your connection and try again</p>
+        </div>`;
+    });
+
+  /* ── SEARCH ── */
+  function filterSearch(val) {
+    const q = val.trim().toLowerCase();
+    const clearBtn = document.getElementById("searchClear");
+    clearBtn.classList.toggle("show", q.length > 0);
+
+    let visible = 0;
+    allCards.forEach(card => {
+      const match = card.dataset.name.includes(q);
+      card.style.display = match ? "flex" : "none";
+      if (match) visible++;
+    });
+
+    document.getElementById("visibleCount").innerText =
+      visible + " location" + (visible !== 1 ? "s" : "");
+
+    /* Empty search state */
+    const list  = document.getElementById("list");
+    const empty = list.querySelector(".state-card.search-empty");
+    if (visible === 0 && q) {
+      if (!empty) {
+        const div = document.createElement("div");
+        div.className = "state-card search-empty";
+        div.innerHTML = `<span>🔍</span><h3>No results for "${val}"</h3><p>Try a different building name</p>`;
+        list.appendChild(div);
+      }
+    } else if (empty) {
+      empty.remove();
+    }
+  }
+
+  function clearSearch() {
+    document.getElementById("searchInput").value = "";
+    filterSearch("");
+  }
+</script>
+
+</body>
+</html>
